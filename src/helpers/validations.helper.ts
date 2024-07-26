@@ -116,5 +116,3 @@ export const validatePassword = (password: string) => {
 
   return missingCharacters;
 };
-
-export default validateInputs;

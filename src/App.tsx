@@ -1,9 +1,10 @@
+import Router from '@/routes/Router';
 
 function App() {
   return (
-    <main className="text-red-600 w-full h-[100vh] flex items-center justify-center">
-      App
-    </main>
+    <>
+      <Router />
+    </>
   );
 }
 
