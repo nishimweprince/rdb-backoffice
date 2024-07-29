@@ -84,7 +84,7 @@ const Login = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <figure className="w-full flex flex-col gap-4 my-2">
-          <img src={rdbLogo} alt="RDB Logo" className="w-auto mx-auto" />
+          <img src={rdbLogo} alt="RDB Logo" className="w-auto max-w-40 mx-auto" />
         </figure>
         <hr className="h-[1.5px] bg-primary" />
         <fieldset className="grid grid-rows-2 gap-5 w-full my-4">
@@ -150,7 +150,11 @@ const Login = () => {
           <Button primary submit>
             {loginIsLoading ? <Loader /> : 'Login'}
           </Button>
-          <Button styled={false} className="hover:underline">
+          <Button
+            styled={false}
+            route="/auth/reset-password/request"
+            className="hover:underline"
+          >
             Forgot password?
           </Button>
         </menu>
