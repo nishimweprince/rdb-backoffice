@@ -7,6 +7,9 @@ import VerifyPasswordReset from '@/pages/authentication/VerifyResetPassword';
 import NewResetPassword from '@/pages/authentication/NewResetPassword';
 import StaffDashboard from '@/pages/dashboard/StaffDashboard';
 import ReviewBusinessApplications from '@/pages/applications/review/ReviewBusinessApplications';
+import BusinessApplicationRoutes from './BusinessApplicationRoutes';
+import DomesticBusinessPreview from '@/pages/business-registration/domestic-business-registration/DomesticBusinessPreview';
+import AuthenticationRoutes from './AuthenticationRoutes';
 
 const Router = () => {
   return (
@@ -19,21 +22,31 @@ const Router = () => {
         closeOnClick
       />
       <Routes>
-        <Route path="/auth/login" element={<Login />} />
-        <Route
-          path="/auth/reset-password/request"
-          element={<RequestResetPassword />}
-        />
-        <Route
-          path="/auth/reset-password/verify"
-          element={<VerifyPasswordReset />}
-        />
-        <Route path="/auth/reset-password/new" element={<NewResetPassword />} />
+        {/* AUTHENTICATION ROUTES */}
+        <Route path="/auth" element={<AuthenticationRoutes />}>
+          <Route path="login" element={<Login />} />
+          <Route
+            path="reset-password/request"
+            element={<RequestResetPassword />}
+          />
+          <Route
+            path="reset-password/verify"
+            element={<VerifyPasswordReset />}
+          />
+          <Route path="reset-password/new" element={<NewResetPassword />} />
+        </Route>
         <Route path="/dashboard" element={<StaffDashboard />} />
         <Route
           path="/applications/business"
           element={<ReviewBusinessApplications />}
         />
+        {/* BUSINESS APPLICATION ROUTES */}
+        <Route path="/applications" element={<BusinessApplicationRoutes />}>
+          <Route
+            path="business-registration"
+            element={<DomesticBusinessPreview />}
+          />
+        </Route>
       </Routes>
     </>
   );

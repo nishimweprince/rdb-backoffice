@@ -1,7 +1,7 @@
 import StaffLayout from '@/containers/navigation/StaffLayout';
 
-const DomesticBusinessRegistration = () => {
-  return <StaffLayout>DomesticBusinessRegistration</StaffLayout>;
+const DomesticBusinessPreview = () => {
+  return <StaffLayout>DomesticBusinessPreview</StaffLayout>;
 };
 
-export default DomesticBusinessRegistration;
+export default DomesticBusinessPreview;
