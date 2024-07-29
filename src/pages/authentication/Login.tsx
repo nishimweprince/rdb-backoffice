@@ -64,7 +64,7 @@ const Login = () => {
       );
     } else if (loginIsSuccess) {
       dispatch(setToken(loginData?.data?.token));
-      dispatch(setUser(loginData?.data?.user));
+      dispatch(setUser(loginData?.data));
       navigate('/dashboard');
     }
   }, [
@@ -73,7 +73,7 @@ const Login = () => {
     loginError,
     dispatch,
     loginData?.data?.token,
-    loginData?.data?.user,
+    loginData?.data,
     navigate,
   ]);
 

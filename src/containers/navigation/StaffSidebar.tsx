@@ -4,10 +4,13 @@ import {
   faHouseChimney,
   faMagnifyingGlass,
   faUser,
+  faChevronDown,
+  faChevronUp,
+  faUserTie,
 } from '@fortawesome/free-solid-svg-icons';
 import { motion, useAnimation } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import rdb_logo from '/rdb-logo.png';
 import rdb_icon from '/rdb-icon.png';
@@ -24,6 +27,8 @@ const StaffSidebar = () => {
   const { isOpen: sidebarOpen } = useSelector(
     (state: RootState) => state.sidebar
   );
+  const [isApplicationsOpen, setIsApplicationsOpen] = useState(false);
+
   const sidebarNav = [
     {
       title: 'Dashboard',
@@ -32,20 +37,27 @@ const StaffSidebar = () => {
     },
     {
       title: 'Applications',
-      path: '/applications/review',
+      path: '#',
       icon: faMagnifyingGlass,
+      subcategories: [
+        {
+          title: 'Business Applications',
+          path: '/applications/business',
+          icon: faUserTie,
+        },
+        {
+          title: 'Collateral Applications',
+          path: '/collaterals/review',
+          icon: faHouseChimney,
+        },
+        {
+          title: 'Foreign Accounts',
+          path: '/foreign-applicants',
+          icon: faUser,
+        },
+      ],
     },
-    {
-      title: 'Foreign Accounts',
-      path: '/foreign-applicants',
-      icon: faUser,
-    },
-    {
-      title: 'Collaterals',
-      path: '/collaterals/review',
-      icon: faHouseChimney,
-    },
-  ].filter(Boolean);
+  ];
 
   // ANIMATION
   const controls = useAnimation();
@@ -93,7 +105,7 @@ const StaffSidebar = () => {
   }, [sidebarOpen, showLess, showMore]);
 
   return (
-    <aside
+    <nav
       className={`flex flex-col h-screen ${
         sidebarOpen ? 'w-[20vw]' : 'w-[5vw]'
       } transition-all duration-300`}
@@ -102,7 +114,7 @@ const StaffSidebar = () => {
         animate={controls}
         className={`flex flex-col items-center h-full bg-background text-white transition-all duration-300 px-4`}
       >
-        <figure
+        <header
           className={`w-full flex items-center gap-4 justify-between px-4 py-6 ${
             sidebarOpen ? 'flex-row' : 'flex-col gap-4'
           }`}
@@ -122,31 +134,68 @@ const StaffSidebar = () => {
             className="p-2 rounded-full bg-primary px-[9px] text-white text-[16px] cursor-pointer ease-in-out duration-150 hover:scale-[1.01]"
             icon={faBars}
           />
-        </figure>
-        <menu className="flex flex-col w-full h-full gap-2 mt-6">
+        </header>
+        <ul className="flex flex-col w-full h-full gap-2 mt-6">
           {sidebarNav?.map((nav, index) => {
             const selected = pathname === nav?.path;
             return (
-              <Link
-                to={nav?.path}
-                key={index}
-                className={`flex items-center gap-5 px-4 font-semibold text-[15px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
-                  selected && 'bg-white !text-primary'
-                } ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
-              >
-                <FontAwesomeIcon
-                  icon={nav?.icon}
-                  className={`text-secondary font-bold ${
-                    selected && '!text-primary'
-                  } ${sidebarOpen ? 'text-[20px]' : 'text-[16px]'}`}
-                />
-                {sidebarOpen ? nav?.title : null}
-              </Link>
+              <li key={index}>
+                <Link
+                  to={nav?.path}
+                  className={`flex items-center gap-5 px-4 font-semibold text-[15px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
+                    selected && 'bg-white !text-primary'
+                  } ${sidebarOpen ? 'justify-start' : 'justify-center'}`}
+                  onClick={(e) => {
+                    if (nav.subcategories) {
+                      e.preventDefault();
+                      setIsApplicationsOpen(!isApplicationsOpen);
+                    }
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={nav?.icon}
+                    className={`text-secondary font-bold ${
+                      selected && '!text-primary'
+                    } ${sidebarOpen ? 'text-[20px]' : 'text-[16px]'}`}
+                  />
+                  {sidebarOpen ? nav?.title : null}
+                  {nav.subcategories && sidebarOpen && (
+                    <FontAwesomeIcon
+                      icon={isApplicationsOpen ? faChevronUp : faChevronDown}
+                      className="ml-auto"
+                    />
+                  )}
+                </Link>
+                {nav.subcategories && sidebarOpen && isApplicationsOpen && (
+                  <ul className="p-2">
+                    {nav.subcategories.map((sub, subIndex) => (
+                      <li key={subIndex}>
+                        <Link
+                          to={sub.path}
+                          className={`flex items-center gap-5 px-4 font-semibold text-[15px] ease-in-out duration-200 hover:bg-white text-secondary rounded-md py-3 ${
+                            pathname === sub.path && 'bg-white !text-primary'
+                          } ${
+                            sidebarOpen ? 'justify-start' : 'justify-center'
+                          }`}
+                        >
+                          <FontAwesomeIcon
+                            icon={sub.icon}
+                            className={`text-secondary font-bold ${
+                              pathname === sub.path && '!text-primary'
+                            } ${sidebarOpen ? 'text-[20px]' : 'text-[16px]'}`}
+                          />
+                          {sidebarOpen ? sub.title : null}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
             );
           })}
-        </menu>
+        </ul>
       </motion.div>
-    </aside>
+    </nav>
   );
 };
 

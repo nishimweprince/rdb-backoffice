@@ -6,6 +6,7 @@ import RequestResetPassword from '@/pages/authentication/RequestResetPassword';
 import VerifyPasswordReset from '@/pages/authentication/VerifyResetPassword';
 import NewResetPassword from '@/pages/authentication/NewResetPassword';
 import StaffDashboard from '@/pages/dashboard/StaffDashboard';
+import ReviewBusinessApplications from '@/pages/applications/review/ReviewBusinessApplications';
 
 const Router = () => {
   return (
@@ -23,9 +24,16 @@ const Router = () => {
           path="/auth/reset-password/request"
           element={<RequestResetPassword />}
         />
-        <Route path='/auth/reset-password/verify' element={<VerifyPasswordReset />} />
+        <Route
+          path="/auth/reset-password/verify"
+          element={<VerifyPasswordReset />}
+        />
         <Route path="/auth/reset-password/new" element={<NewResetPassword />} />
         <Route path="/dashboard" element={<StaffDashboard />} />
+        <Route
+          path="/applications/business"
+          element={<ReviewBusinessApplications />}
+        />
       </Routes>
     </>
   );

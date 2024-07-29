@@ -87,3 +87,10 @@ export const staffDashboardCards = [
     route: '/staff',
   },
 ];
+
+export const navigationPaths = [
+  {
+    label: 'Dashboard',
+    route: '/dashboard',
+  },
+];

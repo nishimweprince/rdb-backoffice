@@ -1,4 +1,4 @@
-import { capitalizeString } from '@/helpers/strings';
+import { capitalizeString } from '@/helpers/strings.helper';
 import { Controller, useForm } from 'react-hook-form';
 import Select from '../inputs/SingleSelect';
 import { Button } from '../ui/button';

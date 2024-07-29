@@ -33,7 +33,7 @@ export const businessBaseQueryWithReauth: BaseQueryFn<
   if (result.error) {
     if ([403, 401].includes(Number(result?.error?.status))) {
       api.dispatch(setToken(''));
-      api.dispatch(setUser({}));
+      api.dispatch(setUser(undefined));
       window.location.href = '/auth/login';
     } else if (Number(result?.error?.status) === 500) {
       toast.error('An error occurred. Please try again later.');

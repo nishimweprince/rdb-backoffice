@@ -2,7 +2,6 @@ import {
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
@@ -12,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Link } from 'react-router-dom';
 
 type CustomBreadcrumbProps = {
   navigationLinks: { route: string; label: string }[];
@@ -45,12 +45,15 @@ const CustomBreadcrumb = ({ navigationLinks }: CustomBreadcrumbProps) => {
           </>
         )}
         {visibleLinks?.map((link, index: number) => (
-          <menu key={index} className="flex items-center gap-2">
+          <menu key={index} className="flex items-center gap-2 pl-2 w-fit">
             {index > 0 && <BreadcrumbSeparator />}
             <BreadcrumbItem>
-              <BreadcrumbLink href={link.route} className="text-[14px]">
+              <Link
+                to={link.route}
+                className="text-[14px] w-fit text-secondary hover:text-primary hover:font-medium"
+              >
                 {link.label}
-              </BreadcrumbLink>
+              </Link>
             </BreadcrumbItem>
           </menu>
         ))}

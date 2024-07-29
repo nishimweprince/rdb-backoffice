@@ -24,7 +24,6 @@ import {
 } from '@/components/ui/table';
 
 import { DataTablePagination } from './TablePagination';
-import TableToolbar from './TableToolbar';
 import { useState } from 'react';
 import { UnknownAction } from '@reduxjs/toolkit';
 
@@ -47,9 +46,7 @@ export default function Table<TData, TValue>({
   columns = [],
   data = [],
   rowClickHandler = undefined,
-  showFilter = true,
   showPagination = true,
-  showExport = true,
   page = 1,
   size = 10,
   totalElements,
@@ -126,7 +123,9 @@ export default function Table<TData, TValue>({
                       e.preventDefault();
                       rowClickHandler &&
                         row?.id !== 'no' &&
-                        rowClickHandler(row?.original as Row<TData>['original']);
+                        rowClickHandler(
+                          row?.original as Row<TData>['original']
+                        );
                     }}
                   >
                     {row.getVisibleCells().map((cell) => {
@@ -135,7 +134,14 @@ export default function Table<TData, TValue>({
                         'action',
                         'checkbox',
                         'actions',
-                      ].includes(cell.column.id || cell?.column?.accessorKey);
+                      ].includes(
+                        cell.column.id ||
+                          (
+                            cell as unknown as {
+                              column: { accessorKey: string };
+                            }
+                          )?.column?.accessorKey
+                      );
                       return (
                         <TableCell
                           className={`${
