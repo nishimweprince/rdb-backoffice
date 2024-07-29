@@ -5,7 +5,7 @@ import {
   fetchBaseQuery,
 } from '@reduxjs/toolkit/query/react';
 import store from 'store';
-import { businessRegApi } from '../../constants/environments';
+import { businessRegApi } from '../../constants/environments.constants';
 import { setToken, setUser } from '../features/userSlice';
 import { toast } from 'react-toastify';
 

@@ -32,3 +32,9 @@ export function capitalizeCamelCase(string: string) {
     })
     .trim();
 }
+
+// FORMAT NUMBERS
+export const formatNumbers = (number: number | string) => {
+  if (!number) return '';
+  return new Intl.NumberFormat().format(Number(number));
+};

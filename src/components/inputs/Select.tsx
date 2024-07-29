@@ -1,4 +1,3 @@
-import { FC } from "react";
 import {
   Select as SelectComponent,
   SelectContent,
@@ -6,10 +5,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { UUID } from "crypto";
+} from '@/components/ui/select';
+import { UUID } from 'crypto';
 
-interface SelectProps {
+type SelectProps = {
   label?: string | number | undefined;
   options?: Array<{ label: string | undefined; value: string | UUID }>;
   defaultValue?: string | undefined;
@@ -20,21 +19,20 @@ interface SelectProps {
   required?: boolean;
   labelClassName?: string | undefined;
   name?: string | undefined;
-}
+};
 
-const Select: FC<SelectProps> = ({
+const Select = ({
   options = [],
   defaultValue = undefined,
-  placeholder = "Select here...",
+  placeholder = 'Select here...',
   className = undefined,
-  value = "",
+  value = '',
   onChange,
   label = undefined,
   required = false,
   labelClassName = undefined,
   name = undefined,
-}) => {
-
+}: SelectProps) => {
   return (
     <label className={`flex flex-col gap-1 w-full ${labelClassName}`}>
       <p className={label ? 'flex items-center gap-1 text-[14px]' : 'hidden'}>

@@ -1,4 +1,4 @@
-import { userManagementApi } from '../../constants/environments';
+import { userManagementApi } from '../../constants/environments.constants';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import store from 'store';
 

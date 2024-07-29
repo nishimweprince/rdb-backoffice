@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import RequestResetPassword from '@/pages/authentication/RequestResetPassword';
 import VerifyPasswordReset from '@/pages/authentication/VerifyResetPassword';
 import NewResetPassword from '@/pages/authentication/NewResetPassword';
+import StaffDashboard from '@/pages/dashboard/StaffDashboard';
 
 const Router = () => {
   return (
@@ -24,6 +25,7 @@ const Router = () => {
         />
         <Route path='/auth/reset-password/verify' element={<VerifyPasswordReset />} />
         <Route path="/auth/reset-password/new" element={<NewResetPassword />} />
+        <Route path="/dashboard" element={<StaffDashboard />} />
       </Routes>
     </>
   );
