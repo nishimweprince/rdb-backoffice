@@ -4,19 +4,28 @@ import authApiSlice from './api/authApiSlice';
 import sidebarSlice from './features/sidebarSlice';
 import businessRegApiSlice from './api/businessRegApiSlice';
 import businessSlice from './features/businessSlice';
+import businessRegQueryApiSlice from './api/businessRegQueryApiSlice';
+import navigationFlowSlice from './features/navigationFlowSlice';
+import boardOfDirectorsSlice from './features/boardOfDirectorsSlice';
+import businessPeopleSlice from './features/businessPeopleSlice';
 
 export const store = configureStore({
   reducer: {
     [authApiSlice.reducerPath]: authApiSlice.reducer,
     [businessRegApiSlice.reducerPath]: businessRegApiSlice.reducer,
+    [businessRegQueryApiSlice.reducerPath]: businessRegQueryApiSlice.reducer,
     user: userSlice,
     sidebar: sidebarSlice,
     business: businessSlice,
+    navigationFlow: navigationFlowSlice,
+    boardOfDirectors: boardOfDirectorsSlice,
+    businessPeople: businessPeopleSlice,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(
       authApiSlice.middleware,
-      businessRegApiSlice.middleware
+      businessRegApiSlice.middleware,
+      businessRegQueryApiSlice.middleware
     );
   },
 });

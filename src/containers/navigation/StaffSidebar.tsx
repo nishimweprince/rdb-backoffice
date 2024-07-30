@@ -12,8 +12,6 @@ import { motion, useAnimation } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import rdb_logo from '/rdb-logo.png';
-import rdb_icon from '/rdb-icon.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/states/store';
 import { toggleSidebar } from '@/states/features/sidebarSlice';
@@ -108,24 +106,17 @@ const StaffSidebar = () => {
     <nav
       className={`flex flex-col h-screen ${
         sidebarOpen ? 'w-[20vw]' : 'w-[5vw]'
-      } transition-all duration-300`}
+      } transition-all duration-300 fixed top-[10vh]`}
     >
       <motion.div
         animate={controls}
         className={`flex flex-col items-center h-full bg-background text-white transition-all duration-300 px-4`}
       >
         <header
-          className={`w-full flex items-center gap-4 justify-between px-4 py-6 ${
+          className={`w-full flex items-center gap-4 justify-end px-4 py-4 ${
             sidebarOpen ? 'flex-row' : 'flex-col gap-4'
           }`}
         >
-          <img
-            src={sidebarOpen ? rdb_logo : rdb_icon}
-            className={`h-auto ${
-              sidebarOpen ? 'w-full max-w-[150px]' : 'max-w-[50px]'
-            }`}
-            alt="logo"
-          />
           <FontAwesomeIcon
             onClick={(e) => {
               e.preventDefault();
@@ -135,7 +126,7 @@ const StaffSidebar = () => {
             icon={faBars}
           />
         </header>
-        <ul className="flex flex-col w-full h-full gap-2 mt-6">
+        <ul className="flex flex-col w-full h-full gap-2">
           {sidebarNav?.map((nav, index) => {
             const selected = pathname === nav?.path;
             return (

@@ -70,3 +70,39 @@ export const attachmentColumns = [
     accessorKey: 'size',
   },
 ];
+
+// MANAGEMENT PEOPLE COLUMNS
+export const businessPeopleColumns = [
+  {
+    header: 'Position',
+    accessorKey: 'position',
+  },
+  {
+    header: 'Document No',
+    accessorKey: 'personDocNo',
+  },
+  {
+    header: 'First name',
+    accessorKey: 'firstName',
+  },
+  {
+    header: 'Last name',
+    accessorKey: 'lastName',
+  },
+  {
+    header: 'Email',
+    accessorKey: 'email',
+  },
+  {
+    header: 'Phone number',
+    accessorKey: 'phoneNumber',
+  },
+  {
+    header: 'Sex',
+    accessorKey: 'gender',
+  },
+  {
+    header: 'Nationality',
+    accessorKey: 'nationality',
+  },
+];

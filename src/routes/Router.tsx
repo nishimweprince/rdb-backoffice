@@ -10,6 +10,7 @@ import ReviewBusinessApplications from '@/pages/applications/review/ReviewBusine
 import BusinessApplicationRoutes from './BusinessApplicationRoutes';
 import DomesticBusinessPreview from '@/pages/business-registration/domestic-business-registration/DomesticBusinessPreview';
 import AuthenticationRoutes from './AuthenticationRoutes';
+import StaffAuthenticatedRoutes from '@/outlets/StaffAuthenticatedRoutes';
 
 const Router = () => {
   return (
@@ -41,11 +42,13 @@ const Router = () => {
           element={<ReviewBusinessApplications />}
         />
         {/* BUSINESS APPLICATION ROUTES */}
-        <Route path="/applications" element={<BusinessApplicationRoutes />}>
-          <Route
-            path="business-registration"
-            element={<DomesticBusinessPreview />}
-          />
+        <Route element={<StaffAuthenticatedRoutes />}>
+          <Route path="/applications" element={<BusinessApplicationRoutes />}>
+            <Route
+              path="business-registration"
+              element={<DomesticBusinessPreview />}
+            />
+          </Route>
         </Route>
       </Routes>
     </>

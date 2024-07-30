@@ -10,8 +10,8 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/states/store';
 import { FC, useState } from 'react';
-import rdb_logo from '/rdb-logo.png';
 import { setUser } from '@/states/features/userSlice';
+import rdbLogo from '/rdb-logo.png';
 
 type NavbarProps = {
   className?: string;
@@ -51,19 +51,9 @@ const Navbar = ({ className }: NavbarProps) => {
 
   return (
     <header
-      className={`w-full mx-auto px-4 py-3 flex items-center h-[10vh] fixed top-0 ${
-        !['/services'].includes(pathname)
-          ? 'justify-end px-14'
-          : 'justify-between'
-      }  z-[1000] bg-background ${className}`}
+      className={`w-full mx-auto px-4 py-3 flex items-center justify-between h-[10vh] fixed top-0 z-[10] bg-background ${className}`}
     >
-      <figure
-        className={`${
-          !['/services'].includes(pathname) && 'hidden'
-        } relative rounded-full w-full max-w-[10%]`}
-      >
-        <img src={rdb_logo} className="w-fit" />
-      </figure>
+      <img src={rdbLogo} className={`h-auto max-w-[150px] ml-3`} alt="logo" />
       <nav className="flex items-center gap-4 self-end max-[600px]:gap-3">
         <Link to={'#'} className="px-4 max-[600px]:px-2">
           <menu

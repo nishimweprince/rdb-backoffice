@@ -2,6 +2,7 @@ import { BusinessAttachment } from '@/types/models/attachment';
 import {
   Address,
   Business,
+  BusinessActivity,
   businessId,
   Details,
   EmploymentInfo,
@@ -10,6 +11,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import businessRegApiSlice from '../api/businessRegApiSlice';
 import { AppDispatch } from '../store';
 import { toast } from 'react-toastify';
+import businessRegQueryApiSlice from '../api/businessRegQueryApiSlice';
+import { UUID } from 'crypto';
 
 const initialState: {
   businessesList: Business[];
@@ -36,6 +39,13 @@ const initialState: {
   uploadAmendmentAttachmentIsSuccess: boolean;
   updateBusinessIsSuccess: boolean;
   updateBusinessIsLoading: boolean;
+  getBusinessIsFetching: boolean;
+  getBusinessIsSuccess: boolean;
+  getBusinessIsError: boolean;
+  businessActivitiesList?: {
+    mainBusinessActivity: BusinessActivity;
+    businessLine: BusinessActivity[];
+  };
 } = {
   businessesList: [],
   business: {} as Business,
@@ -58,6 +68,10 @@ const initialState: {
   uploadAmendmentAttachmentIsSuccess: false,
   updateBusinessIsSuccess: false,
   updateBusinessIsLoading: false,
+  getBusinessIsFetching: false,
+  getBusinessIsSuccess: false,
+  getBusinessIsError: false,
+  businessActivitiesList: undefined,
 };
 
 // FETCH BUSINESSES
@@ -92,7 +106,7 @@ export const fetchBusinessesThunk = createAsyncThunk<
   ) => {
     try {
       const response = await dispatch(
-        businessRegApiSlice.endpoints.fetchBusinesses.initiate({
+        businessRegQueryApiSlice.endpoints.fetchBusinesses.initiate({
           page,
           size,
           serviceId,
@@ -106,6 +120,25 @@ export const fetchBusinessesThunk = createAsyncThunk<
     }
   }
 );
+
+// FETCH BUSINESS THUNK
+export const getchBusinessThunk = createAsyncThunk<
+  Business,
+  UUID,
+  { dispatch: AppDispatch }
+>('business/getchBusiness', async (id, { dispatch }) => {
+  try {
+    const response = await dispatch(
+      businessRegQueryApiSlice.endpoints.getBusiness.initiate({
+        id,
+      })
+    ).unwrap();
+    return response.data;
+  } catch (error) {
+    toast.error('An error occurred while fetching business');
+    throw error;
+  }
+});
 
 // UPDATE BUSINESS THUNK
 export const updateBusinessThunk = createAsyncThunk<
@@ -129,6 +162,66 @@ export const updateBusinessThunk = createAsyncThunk<
     }
   }
 );
+
+// FETCH BUSINESS DETAILS THUNK
+export const fetchBusinessDetailsThunk = createAsyncThunk<
+  Details,
+  { businessId: businessId },
+  { dispatch: AppDispatch }
+>('business/fetchBusinessDetails', async ({businessId}, { dispatch }) => {
+  try {
+    const response = await dispatch(
+      businessRegQueryApiSlice.endpoints.fetchBusinessDetails.initiate({
+        businessId,
+      })
+    ).unwrap();
+    dispatch(setBusinessDetails(response.data));
+    return response.data;
+  } catch (error) {
+    toast.error('An error occurred while fetching business details');
+    throw error;
+  }
+});
+
+// FETCH BUSINESS ADDRESS THUNK
+export const fetchBusinessAddressThunk = createAsyncThunk<
+  Address,
+  { businessId: businessId },
+  { dispatch: AppDispatch }
+>('business/fetchBusinessAddress', async ({ businessId }, { dispatch }) => {
+  try {
+    const response = await dispatch(
+      businessRegQueryApiSlice.endpoints.fetchBusinessAddress.initiate({
+        businessId,
+      })
+    ).unwrap();
+    dispatch(setBusinessAddress(response.data));
+    return response.data;
+  } catch (error) {
+    toast.error('An error occurred while fetching business address');
+    throw error;
+  }
+});
+
+// FETCH BUSINESS ACTIVITIES
+export const fetchBusinessActivitiesThunk = createAsyncThunk<
+  BusinessAttachment[],
+  { businessId: businessId },
+  { dispatch: AppDispatch }
+>('business/fetchBusinessActivities', async ({ businessId }, { dispatch }) => {
+  try {
+    const response = await dispatch(
+      businessRegQueryApiSlice.endpoints.fetchBusinessActivities.initiate({
+        businessId,
+      })
+    ).unwrap();
+    dispatch(setBusinessActivitiesList(response?.data));
+    return response?.data;
+  } catch (error) {
+    toast.error('An error occurred while fetching business activities');
+    throw error;
+  }
+});
 
 export const businessSlice = createSlice({
   name: 'business',
@@ -209,7 +302,10 @@ export const businessSlice = createSlice({
     },
     setUpdateBusinessIsSuccess: (state, action) => {
       state.updateBusinessIsSuccess = action.payload;
-    }
+    },
+    setBusinessActivitiesList: (state, action) => {
+      state.businessActivitiesList = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBusinessesThunk.pending, (state) => {
@@ -254,6 +350,22 @@ export const businessSlice = createSlice({
       state.updateBusinessIsSuccess = false;
       state.updateBusinessIsLoading = true;
     });
+    builder.addCase(getchBusinessThunk.fulfilled, (state, action) => {
+      state.business = action.payload;
+      state.getBusinessIsFetching = false;
+      state.getBusinessIsSuccess = true;
+      state.getBusinessIsError = false;
+    });
+    builder.addCase(getchBusinessThunk.rejected, (state) => {
+      state.getBusinessIsFetching = false;
+      state.getBusinessIsSuccess = false;
+      state.getBusinessIsError = true;
+    });
+    builder.addCase(getchBusinessThunk.pending, (state) => {
+      state.getBusinessIsFetching = true;
+      state.getBusinessIsSuccess = false;
+      state.getBusinessIsError = false;
+    });
   },
 });
 
@@ -282,5 +394,6 @@ export const {
   removeFromBusinessesList,
   setUploadAmendmentAttachmentIsLoading,
   setUploadAmendmentAttachmentIsSuccess,
-  setUpdateBusinessIsSuccess
+  setUpdateBusinessIsSuccess,
+  setBusinessActivitiesList,
 } = businessSlice.actions;

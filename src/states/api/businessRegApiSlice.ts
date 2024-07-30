@@ -6,31 +6,6 @@ export const businessRegApiSlice = createApi({
   baseQuery: businessBaseQueryWithReauth,
   endpoints: (builder) => {
     return {
-      // SEARCH BUSINESSES
-      searchBusinesses: builder.query({
-        query: ({ type, companyName, tin, page, size }) => {
-          return {
-            url: `/search?companyName=${companyName}&tin=${tin}&type=${type}&page=${page}&size=${size}`,
-          };
-        },
-      }),
-
-      // FETCH BUSINESSES
-      fetchBusinesses: builder.query({
-        query: ({ page, size, applicationStatus, serviceId }) => {
-          let url = `/back-office?page=${page}&size=${size}`;
-          if (applicationStatus) {
-            url += `&applicationStatus=${applicationStatus}`;
-          }
-          if (serviceId) {
-            url += `&serviceId=${serviceId}`;
-          }
-          return {
-            url,
-          };
-        },
-      }),
-
       // UPDATE BUSINESS
       updateBusiness: builder.mutation({
         query: ({ businessId, applicationStatus }) => {
@@ -43,14 +18,43 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // CREATE NAVIGATION FLOW
+      createNavigationFlow: builder.mutation({
+        query: ({ businessId, massId, isActive }) => {
+          return {
+            url: `/navigation-flow`,
+            method: 'POST',
+            body: {
+              businessId,
+              massId,
+              isActive,
+            },
+          };
+        },
+      }),
+
+      // COMPLETE NAVIGATION FLOW
+      completeNavigationFlow: builder.mutation({
+        query: ({ isCompleted = true, navigationFlowId }) => {
+          return {
+            url: `/navigation-flow/complete`,
+            method: 'POST',
+            body: {
+              isCompleted,
+              navigationFlowId,
+            },
+          };
+        },
+      }),
     };
   },
 });
 
 export const {
-  useSearchBusinessesQuery,
-  useFetchBusinessesQuery,
   useUpdateBusinessMutation,
+  useCreateNavigationFlowMutation,
+  useCompleteNavigationFlowMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;
