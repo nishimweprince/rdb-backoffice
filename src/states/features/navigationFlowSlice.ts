@@ -7,6 +7,8 @@ import businessRegApiSlice from '../api/businessRegApiSlice';
 import { AppDispatch } from '../store';
 import { businessId } from '@/types/models/business';
 import { UUID } from 'crypto';
+import businessRegQueryApiSlice from '../api/businessRegQueryApiSlice';
+import { toast } from 'react-toastify';
 
 const initialState: {
   navigationFlowMassList?: NavigationFlowMass;
@@ -18,6 +20,7 @@ const initialState: {
   businessNavigationFlowIsLoading: false,
 };
 
+// CREATE NAVIGATION FLOW
 export const createNavigationFlowThunk = createAsyncThunk<
   NavigationFlow,
   { businessId: businessId; massId: string; isActive: boolean },
@@ -29,6 +32,7 @@ export const createNavigationFlowThunk = createAsyncThunk<
   return response.data;
 });
 
+// COMPLETE NAVIGATION FLOW
 export const completeNavigationFlowThunk = createAsyncThunk<
   NavigationFlow,
   { isCompleted: boolean; navigationFlowId?: UUID },
@@ -39,6 +43,28 @@ export const completeNavigationFlowThunk = createAsyncThunk<
   ).unwrap();
   return response.data;
 });
+
+// FETCH NAVIGATION FLOW MASS
+export const fetchNavigationFlowMassThunk = createAsyncThunk<
+  NavigationFlowMass,
+  { businessType: string },
+  { dispatch: AppDispatch }
+>(
+  'navigationFlow/fetchNavigationFlowMass',
+  async ({ businessType }, { dispatch }) => {
+    try {
+      const response = await dispatch(
+        businessRegQueryApiSlice.endpoints.fetchNavigationFlowMass.initiate({
+          businessType,
+        })
+      ).unwrap();
+      dispatch(setNavigationFlowMassList(response?.data));
+      return response.data;
+    } catch (error) {
+      toast.error('Failed to fetch navigation flow mass');
+    }
+  }
+);
 
 const navigationFlowSlice = createSlice({
   name: 'navigationFlow',

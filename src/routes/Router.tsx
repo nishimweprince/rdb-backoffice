@@ -6,9 +6,9 @@ import RequestResetPassword from '@/pages/authentication/RequestResetPassword';
 import VerifyPasswordReset from '@/pages/authentication/VerifyResetPassword';
 import NewResetPassword from '@/pages/authentication/NewResetPassword';
 import StaffDashboard from '@/pages/dashboard/StaffDashboard';
-import ReviewBusinessApplications from '@/pages/applications/review/ReviewBusinessApplications';
+import BusinessApplicationsList from '@/pages/applications/review/BusinessApplicationsList';
 import BusinessApplicationRoutes from './BusinessApplicationRoutes';
-import DomesticBusinessPreview from '@/pages/business-registration/domestic-business-registration/DomesticBusinessPreview';
+import BusinessApplicationReview from '@/pages/business-registration/BusinessApplicationReview';
 import AuthenticationRoutes from './AuthenticationRoutes';
 import StaffAuthenticatedRoutes from '@/outlets/StaffAuthenticatedRoutes';
 
@@ -39,15 +39,12 @@ const Router = () => {
         <Route path="/dashboard" element={<StaffDashboard />} />
         <Route
           path="/applications/business"
-          element={<ReviewBusinessApplications />}
+          element={<BusinessApplicationsList />}
         />
         {/* BUSINESS APPLICATION ROUTES */}
         <Route element={<StaffAuthenticatedRoutes />}>
           <Route path="/applications" element={<BusinessApplicationRoutes />}>
-            <Route
-              path="business-registration"
-              element={<DomesticBusinessPreview />}
-            />
+            <Route path=":id/review" element={<BusinessApplicationReview />} />
           </Route>
         </Route>
       </Routes>

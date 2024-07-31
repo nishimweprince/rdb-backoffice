@@ -2,7 +2,6 @@ import { BusinessAttachment } from '@/types/models/attachment';
 import {
   Address,
   Business,
-  BusinessActivity,
   businessId,
   Details,
   EmploymentInfo,
@@ -17,8 +16,7 @@ import { UUID } from 'crypto';
 const initialState: {
   businessesList: Business[];
   business: Business;
-  employmentInfo: EmploymentInfo;
-  businessAttachments: BusinessAttachment[];
+  businessAttachmentsList: BusinessAttachment[];
   page: number;
   size: number;
   totalElements: number;
@@ -42,14 +40,12 @@ const initialState: {
   getBusinessIsFetching: boolean;
   getBusinessIsSuccess: boolean;
   getBusinessIsError: boolean;
-  businessActivitiesList?: {
-    mainBusinessActivity: BusinessActivity;
-    businessLine: BusinessActivity[];
-  };
+  businessEmploymentInfo?: EmploymentInfo;
+  businessEmploymentInfoIsFetching: boolean;
+  businessEmploymentInfoIsSuccess: boolean
 } = {
   businessesList: [],
   business: {} as Business,
-  employmentInfo: {} as EmploymentInfo,
   page: 1,
   size: 10,
   totalElements: 0,
@@ -61,7 +57,7 @@ const initialState: {
   businessDetails: undefined,
   businessAddress: undefined,
   deleteBusiessAttachmentModal: false,
-  businessAttachments: [],
+  businessAttachmentsList: [],
   selectedBusinessAttachment: undefined,
   businessesIsFetching: false,
   uploadAmendmentAttachmentIsLoading: false,
@@ -71,7 +67,9 @@ const initialState: {
   getBusinessIsFetching: false,
   getBusinessIsSuccess: false,
   getBusinessIsError: false,
-  businessActivitiesList: undefined,
+  businessEmploymentInfo: undefined,
+  businessEmploymentInfoIsFetching: false,
+  businessEmploymentInfoIsSuccess: false,
 };
 
 // FETCH BUSINESSES
@@ -168,7 +166,7 @@ export const fetchBusinessDetailsThunk = createAsyncThunk<
   Details,
   { businessId: businessId },
   { dispatch: AppDispatch }
->('business/fetchBusinessDetails', async ({businessId}, { dispatch }) => {
+>('business/fetchBusinessDetails', async ({ businessId }, { dispatch }) => {
   try {
     const response = await dispatch(
       businessRegQueryApiSlice.endpoints.fetchBusinessDetails.initiate({
@@ -203,22 +201,43 @@ export const fetchBusinessAddressThunk = createAsyncThunk<
   }
 });
 
-// FETCH BUSINESS ACTIVITIES
-export const fetchBusinessActivitiesThunk = createAsyncThunk<
-  BusinessAttachment[],
+
+// FETCH BUSINESS EMPLOYMENT INFO
+export const fetchBusinessEmploymentInfoThunk = createAsyncThunk<
+  EmploymentInfo,
   { businessId: businessId },
   { dispatch: AppDispatch }
->('business/fetchBusinessActivities', async ({ businessId }, { dispatch }) => {
+>('business/fetchBusinessEmploymentInfo', async ({ businessId }, { dispatch }) => {
   try {
     const response = await dispatch(
-      businessRegQueryApiSlice.endpoints.fetchBusinessActivities.initiate({
+      businessRegQueryApiSlice.endpoints.fetchBusinessEmploymentInfo.initiate({
         businessId,
       })
     ).unwrap();
-    dispatch(setBusinessActivitiesList(response?.data));
-    return response?.data;
+    dispatch(setBusinessEmploymentInfo(response?.data));
+    return response.data;
   } catch (error) {
-    toast.error('An error occurred while fetching business activities');
+    toast.error('An error occurred while fetching business employment info');
+    throw error;
+  }
+});
+
+// FETCH BUSINESS ATTACHMENTS
+export const fetchBusinessAttachmentsThunk = createAsyncThunk<
+  BusinessAttachment[],
+  { businessId: businessId },
+  { dispatch: AppDispatch }
+>('business/fetchBusinessAttachments', async ({ businessId }, { dispatch }) => {
+  try {
+    const response = await dispatch(
+      businessRegQueryApiSlice.endpoints.fetchBusinessAttachments.initiate({
+        businessId,
+      })
+    ).unwrap();
+    dispatch(setBusinessAttachmentsList(response?.data));
+    return response.data;
+  } catch (error) {
+    toast.error('An error occurred while fetching business attachments');
     throw error;
   }
 });
@@ -251,8 +270,8 @@ export const businessSlice = createSlice({
     setBusinessAddress: (state, action) => {
       state.businessAddress = action.payload;
     },
-    setEmploymentInfo: (state, action) => {
-      state.employmentInfo = action.payload;
+    setBusinessEmploymentInfo: (state, action) => {
+      state.businessEmploymentInfo = action.payload;
     },
     setSelectedBusiness: (state, action) => {
       state.selectedBusiness = action.payload;
@@ -269,17 +288,17 @@ export const businessSlice = createSlice({
     setDeleteBusinessAttachmentModal: (state, action) => {
       state.deleteBusiessAttachmentModal = action.payload;
     },
-    setBusinessAttachments: (state, action) => {
-      state.businessAttachments = action.payload;
+    setBusinessAttachmentsList: (state, action) => {
+      state.businessAttachmentsList = action.payload;
     },
     addBusinessAttachment: (state, action) => {
-      state.businessAttachments = [
+      state.businessAttachmentsList = [
         action.payload,
-        ...state.businessAttachments,
+        ...state.businessAttachmentsList,
       ];
     },
     removeBusinessAttachment: (state, action) => {
-      state.businessAttachments = state.businessAttachments.filter(
+      state.businessAttachmentsList = state.businessAttachmentsList.filter(
         (attachment: BusinessAttachment) => attachment.id !== action.payload.id
       );
     },
@@ -302,9 +321,6 @@ export const businessSlice = createSlice({
     },
     setUpdateBusinessIsSuccess: (state, action) => {
       state.updateBusinessIsSuccess = action.payload;
-    },
-    setBusinessActivitiesList: (state, action) => {
-      state.businessActivitiesList = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -366,6 +382,22 @@ export const businessSlice = createSlice({
       state.getBusinessIsSuccess = false;
       state.getBusinessIsError = false;
     });
+    builder.addCase(fetchBusinessEmploymentInfoThunk.pending, (state) => {
+      state.businessEmploymentInfoIsFetching = true;
+      state.businessEmploymentInfoIsSuccess = false;
+    });
+    builder.addCase(
+      fetchBusinessEmploymentInfoThunk.fulfilled,
+      (state, action) => {
+        state.businessEmploymentInfo = action.payload;
+        state.businessEmploymentInfoIsFetching = false;
+        state.businessEmploymentInfoIsSuccess = true;
+      }
+    );
+    builder.addCase(fetchBusinessEmploymentInfoThunk.rejected, (state) => {
+      state.businessEmploymentInfoIsFetching = false;
+      state.businessEmploymentInfoIsSuccess = false;
+    });
   },
 });
 
@@ -378,7 +410,7 @@ export const {
   setBusinessTotalElements,
   setBusinessTotalPages,
   setBusiness,
-  setEmploymentInfo,
+  setBusinessEmploymentInfo,
   setDeleteBusinessModal,
   setSelectedBusiness,
   setNameAvailabilitiesList,
@@ -386,7 +418,7 @@ export const {
   setBusinessDetails,
   setBusinessAddress,
   setDeleteBusinessAttachmentModal,
-  setBusinessAttachments,
+  setBusinessAttachmentsList,
   addBusinessAttachment,
   removeBusinessAttachment,
   setSelectedBusinessAttachment,
@@ -395,5 +427,4 @@ export const {
   setUploadAmendmentAttachmentIsLoading,
   setUploadAmendmentAttachmentIsSuccess,
   setUpdateBusinessIsSuccess,
-  setBusinessActivitiesList,
 } = businessSlice.actions;

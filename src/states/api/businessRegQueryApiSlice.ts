@@ -88,9 +88,12 @@ export const businessRegQueryApiSlice = createApi({
 
       // FETCH MANAGEMENT OR BOARD PEOPLE
       fetchBusinessPeople: builder.query({
-        query: ({ businessId, route = 'management' }: {
-          businessId: businessId,
-          route: 'management' | 'board-member'
+        query: ({
+          businessId,
+          route = 'management',
+        }: {
+          businessId: businessId;
+          route: 'management' | 'board-member';
         }) => {
           return {
             url: `/${route}?businessId=${businessId}`,
@@ -106,6 +109,33 @@ export const businessRegQueryApiSlice = createApi({
       // GET PERSON ATTACHMENTS
       fetchPersonAttachments: builder.query({
         query: ({ personId }) => `/attachment/person?personId=${personId}`,
+      }),
+
+      // FETCH BUSINESS EMPLOYMENT INFO
+      fetchBusinessEmploymentInfo: builder.query({
+        query: ({ businessId }) => {
+          return {
+            url: `/employment-info?businessId=${businessId}`,
+          };
+        },
+      }),
+
+      // FETCH SHAREHOLDERS
+      fetchShareholders: builder.query({
+        query: ({ businessId }) => {
+          return {
+            url: `/founders?businessId=${businessId}`,
+          };
+        },
+      }),
+
+      // FETCH BUSINESS ATTACHMENTS
+      fetchBusinessAttachments: builder.query({
+        query: ({ businessId }) => {
+          return {
+            url: `/attachment/business?businessId=${businessId}`,
+          };
+        },
       }),
     };
   },
@@ -123,6 +153,9 @@ export const {
   useLazyFetchBusinessPeopleQuery,
   useLazyGetBusinessPersonDetailsQuery,
   useLazyFetchPersonAttachmentsQuery,
+  useLazyFetchBusinessEmploymentInfoQuery,
+  useLazyFetchShareholdersQuery,
+  useLazyFetchBusinessAttachmentsQuery,
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

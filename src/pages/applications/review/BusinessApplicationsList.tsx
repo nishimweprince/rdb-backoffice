@@ -72,7 +72,7 @@ const ReviewBusinessApplications = () => {
     if (updateBusinessIsSuccess && selectedBusiness) {
       dispatch(setUpdateBusinessIsSuccess(false));
       navigate(
-        `/applications${selectedBusiness?.service?.path}?businessId=${selectedBusiness?.id}`
+        `/applications/${selectedBusiness?.id}/review`
       );
       dispatch(setSelectedBusiness(undefined));
     }

@@ -8,6 +8,9 @@ import businessRegQueryApiSlice from './api/businessRegQueryApiSlice';
 import navigationFlowSlice from './features/navigationFlowSlice';
 import boardOfDirectorsSlice from './features/boardOfDirectorsSlice';
 import businessPeopleSlice from './features/businessPeopleSlice';
+import executiveManagementSlice from './features/executiveManagementSlice';
+import founderDetailSlice from './features/founderDetailSlice';
+import businessActivitiesSlice from './features/businessActivitiesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +23,9 @@ export const store = configureStore({
     navigationFlow: navigationFlowSlice,
     boardOfDirectors: boardOfDirectorsSlice,
     businessPeople: businessPeopleSlice,
+    executiveManagement: executiveManagementSlice,
+    founderDetail: founderDetailSlice,
+    businessActivities: businessActivitiesSlice,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(

@@ -106,3 +106,26 @@ export const businessPeopleColumns = [
     accessorKey: 'nationality',
   },
 ];
+
+export const founderDetailColumns = [
+  {
+    header: 'Document Number',
+    accessorKey: 'personDocNo',
+  },
+  {
+    header: 'Name',
+    accessorKey: 'name',
+  },
+  {
+    header: 'Type',
+    accessorKey: 'shareHolderType',
+  },
+  {
+    header: 'Number of shares',
+    accessorKey: 'shareQuantity',
+  },
+  {
+    header: 'Total value',
+    accessorKey: 'totalQuantity',
+  },
+];

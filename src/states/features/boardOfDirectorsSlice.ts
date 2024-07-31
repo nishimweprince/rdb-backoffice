@@ -11,12 +11,16 @@ const initialState: {
   size: number;
   totalElements: number;
   totalPages: number;
+  boardOfDirectorsIsFetching: boolean;
+  boardOfDirectorsIsSuccess: boolean;
 } = {
   boardOfDirectorsList: [],
   page: 1,
   size: 10,
   totalElements: 0,
   totalPages: 1,
+  boardOfDirectorsIsFetching: false,
+  boardOfDirectorsIsSuccess: false,
 };
 
 // FETCH BOARD OF DIRECTORS LIST
@@ -34,7 +38,6 @@ export const fetchBoardOfDirectorsThunk = createAsyncThunk<
           route,
         })
       ).unwrap();
-      dispatch(setBoardOfDirectorsList(response?.data));
       return response?.data;
     } catch (error) {
       toast.error('An error occurred while fetching business activities');
@@ -62,6 +65,21 @@ const boardOfDirectorsSlice = createSlice({
     setTotalPages: (state, action) => {
       state.totalPages = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchBoardOfDirectorsThunk.pending, (state) => {
+      state.boardOfDirectorsIsFetching = true;
+      state.boardOfDirectorsIsSuccess = false;
+    });
+    builder.addCase(fetchBoardOfDirectorsThunk.fulfilled, (state, action) => {
+      state.boardOfDirectorsIsFetching = false;
+      state.boardOfDirectorsIsSuccess = true;
+      state.boardOfDirectorsList = action.payload;
+    });
+    builder.addCase(fetchBoardOfDirectorsThunk.rejected, (state) => {
+      state.boardOfDirectorsIsFetching = false;
+      state.boardOfDirectorsIsSuccess = false;
+    });
   },
 });
 
