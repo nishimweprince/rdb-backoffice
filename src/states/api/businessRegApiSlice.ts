@@ -47,6 +47,30 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // CREATE BUSINESS REVIEW COMMENT
+      createBusinessReviewComment: builder.mutation({
+        query: ({ navigationFlowId, comment }) => {
+          return {
+            url: `/review-comments`,
+            method: 'POST',
+            body: {
+              navigationFlowId,
+              comment,
+            },
+          };
+        },
+      }),
+
+      // DELETE BUSINESS REVIEW COMMENT
+      deleteBusinessReviewComment: builder.mutation({
+        query: ({ id }) => {
+          return {
+            url: `/review-comments/${id}`,
+            method: 'DELETE',
+          };
+        },
+      }),
     };
   },
 });
@@ -55,6 +79,8 @@ export const {
   useUpdateBusinessMutation,
   useCreateNavigationFlowMutation,
   useCompleteNavigationFlowMutation,
+  useCreateBusinessReviewCommentMutation,
+  useDeleteBusinessReviewCommentMutation
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;

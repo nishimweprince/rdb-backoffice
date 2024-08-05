@@ -8,7 +8,7 @@ import NewResetPassword from '@/pages/authentication/NewResetPassword';
 import StaffDashboard from '@/pages/dashboard/StaffDashboard';
 import BusinessApplicationsList from '@/pages/applications/review/BusinessApplicationsList';
 import BusinessApplicationRoutes from './BusinessApplicationRoutes';
-import BusinessApplicationReview from '@/pages/business-registration/BusinessApplicationReview';
+import BusinessApplicationReview from '@/pages/business-review/BusinessApplicationReview';
 import AuthenticationRoutes from './AuthenticationRoutes';
 import StaffAuthenticatedRoutes from '@/outlets/StaffAuthenticatedRoutes';
 

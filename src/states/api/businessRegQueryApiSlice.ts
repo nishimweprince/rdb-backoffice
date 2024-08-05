@@ -137,6 +137,19 @@ export const businessRegQueryApiSlice = createApi({
           };
         },
       }),
+
+      // FETCH BUSINESS REVIEW COMMENTS
+      fetchBusinessReviewComments: builder.query({
+        query: ({ navigationFlowId, businessId }) => {
+          let url = `/review-comments?businessId=${businessId}`;
+          if (navigationFlowId) {
+            url += `&navigationFlowId=${navigationFlowId}`;
+          }
+          return {
+            url
+          };
+        },
+      }),
     };
   },
 });
@@ -156,6 +169,7 @@ export const {
   useLazyFetchBusinessEmploymentInfoQuery,
   useLazyFetchShareholdersQuery,
   useLazyFetchBusinessAttachmentsQuery,
+  useLazyFetchBusinessReviewCommentsQuery,
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

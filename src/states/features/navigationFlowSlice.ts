@@ -14,10 +14,14 @@ const initialState: {
   navigationFlowMassList?: NavigationFlowMass;
   businessNavigationFlowsList: NavigationFlow[];
   businessNavigationFlowIsLoading: boolean;
+  businessNavigationFlowsIsFetching: boolean;
+  selectedBusinessNavigationFlow?: NavigationFlow;
 } = {
   navigationFlowMassList: undefined,
   businessNavigationFlowsList: [],
   businessNavigationFlowIsLoading: false,
+  businessNavigationFlowsIsFetching: false,
+  selectedBusinessNavigationFlow: undefined,
 };
 
 // CREATE NAVIGATION FLOW
@@ -66,6 +70,24 @@ export const fetchNavigationFlowMassThunk = createAsyncThunk<
   }
 );
 
+// FETCH BUSINESS NAVIGATION FLOWS
+export const fetchBusinessNavigationFlowsThunk = createAsyncThunk<
+  NavigationFlow[],
+  { businessId: businessId },
+  { dispatch: AppDispatch }
+>(
+  'navigationFlow/fetchBusinessNavigationFlows',
+  async ({ businessId }, { dispatch }) => {
+    const response = await dispatch(
+      businessRegQueryApiSlice.endpoints.fetchBusinessNavigationFlows.initiate({
+        businessId,
+      })
+    ).unwrap();
+    dispatch(setBusinessNavigationFlowsList(response?.data));
+    return response.data;
+  }
+);
+
 const navigationFlowSlice = createSlice({
   name: 'navigationFlow',
   initialState,
@@ -88,6 +110,9 @@ const navigationFlowSlice = createSlice({
     setBusinessNavigationFlowIsLoading: (state, action) => {
       state.businessNavigationFlowIsLoading = action.payload;
     },
+    setSelectedBusinessNavigationFlow: (state, action) => {
+      state.selectedBusinessNavigationFlow = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -123,6 +148,12 @@ const navigationFlowSlice = createSlice({
       .addCase(completeNavigationFlowThunk.rejected, (state) => {
         state.businessNavigationFlowIsLoading = false;
       });
+    builder.addCase(fetchNavigationFlowMassThunk.pending, (state) => {
+      state.businessNavigationFlowsIsFetching = true;
+    });
+    builder.addCase(fetchNavigationFlowMassThunk.fulfilled, (state) => {
+      state.businessNavigationFlowsIsFetching = false;
+    });
   },
 });
 
@@ -132,6 +163,7 @@ export const {
   addBusinessNavigationFlow,
   removeBusinessNavigationFlow,
   setBusinessNavigationFlowIsLoading,
+  setSelectedBusinessNavigationFlow
 } = navigationFlowSlice.actions;
 
 export default navigationFlowSlice.reducer;

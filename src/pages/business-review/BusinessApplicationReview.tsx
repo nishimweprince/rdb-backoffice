@@ -1,6 +1,6 @@
 import BusinessPreviewCard from '@/components/applications-review/BusinessPreviewCard';
 import StaffLayout from '@/containers/navigation/StaffLayout';
-import { findNavigationFlowMassIdByStepName } from '@/helpers/business.helper';
+import { findNavigationFlowByStepName } from '@/helpers/business.helper';
 import { AppDispatch, RootState } from '@/states/store';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +17,10 @@ import { UUID } from 'crypto';
 import { capitalizeString } from '@/helpers/strings.helper';
 import BusinessPeopleTable from './BusinessPeopleTable';
 import { fetchBoardOfDirectorsThunk } from '@/states/features/boardOfDirectorsSlice';
-import { fetchNavigationFlowMassThunk } from '@/states/features/navigationFlowSlice';
+import {
+  fetchBusinessNavigationFlowsThunk,
+  fetchNavigationFlowMassThunk,
+} from '@/states/features/navigationFlowSlice';
 import { fetchExecutiveManagementListThunk } from '@/states/features/executiveManagementSlice';
 import moment from 'moment';
 import { fetchFounderDetailsListThunk } from '@/states/features/founderDetailSlice';
@@ -27,13 +30,15 @@ import Button from '@/components/inputs/Button';
 import CustomBreadcrumb from '@/components/navigation/CustomBreadcrumb';
 import { navigationPaths } from '@/constants/dashboard.constants';
 import { fetchBusinessActivitiesThunk } from '@/states/features/businessActivitiesSlice';
+import CreateBusinessReviewComment from './CreateBusinessReviewComment';
+import ListBusinessReviewComments from './ListBusinessReviewComments';
+import DeleteBusinessReviewComment from './DeleteBusinessReviewComment';
 
 const BusinessApplicationReview = () => {
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
-  const { navigationFlowMassList } = useSelector(
-    (state: RootState) => state.navigationFlow
-  );
+  const { businessNavigationFlowsList, businessNavigationFlowsIsFetching } =
+    useSelector((state: RootState) => state.navigationFlow);
   const {
     business,
     getBusinessIsSuccess,
@@ -171,6 +176,17 @@ const BusinessApplicationReview = () => {
     }
   }, [dispatch, businessId]);
 
+  // FETCH BUSINESS NAVIGATION FLOWS
+  useEffect(() => {
+    if (businessId) {
+      dispatch(
+        fetchBusinessNavigationFlowsThunk({
+          businessId,
+        })
+      );
+    }
+  }, [dispatch, businessId]);
+
   // NAVIGATION LINKS
   const navigationLinks = [
     ...navigationPaths,
@@ -202,11 +218,11 @@ const BusinessApplicationReview = () => {
         </h1>
         <CustomBreadcrumb navigationLinks={navigationLinks} />
 
-        {getBusinessIsFetching ? (
+        {getBusinessIsFetching || businessNavigationFlowsIsFetching ? (
           <figure className="flex items-center w-full min-h-[60vh] justify-center">
             <Loader className="text-primary" />
           </figure>
-        ) : getBusinessIsSuccess ? (
+        ) : getBusinessIsSuccess && businessNavigationFlowsList?.length > 0 ? (
           <main className="flex flex-col gap-4 w-full">
             {/* COMPANY DETAILS */}
             <BusinessPreviewCard
@@ -217,8 +233,8 @@ const BusinessApplicationReview = () => {
                   ? 'Enterprise'
                   : 'Company'
               }  Details`}
-              navigationFlowMassId={findNavigationFlowMassIdByStepName(
-                navigationFlowMassList,
+              businessNavigationFlow={findNavigationFlowByStepName(
+                businessNavigationFlowsList,
                 `${
                   business?.enterpriseName || business?.enterpriseBusinessName
                     ? 'Enterprise'
@@ -277,8 +293,8 @@ const BusinessApplicationReview = () => {
                   ? 'Enterprise'
                   : 'Company'
               } Address`}
-              navigationFlowMassId={findNavigationFlowMassIdByStepName(
-                navigationFlowMassList,
+              businessNavigationFlow={findNavigationFlowByStepName(
+                businessNavigationFlowsList,
                 `${
                   business?.enterpriseName || business?.enterpriseBusinessName
                     ? 'Enterprise'
@@ -347,8 +363,8 @@ const BusinessApplicationReview = () => {
                   applicationStatus={business?.applicationStatus}
                   businessId={businessId}
                   header="Business Activities & VAT"
-                  navigationFlowMassId={findNavigationFlowMassIdByStepName(
-                    navigationFlowMassList,
+                  businessNavigationFlow={findNavigationFlowByStepName(
+                    businessNavigationFlowsList,
                     'Business Activity & VAT'
                   )}
                 >
@@ -400,8 +416,8 @@ const BusinessApplicationReview = () => {
                   applicationStatus={business?.applicationStatus}
                   businessId={businessId}
                   header="Board of Directors"
-                  navigationFlowMassId={findNavigationFlowMassIdByStepName(
-                    navigationFlowMassList,
+                  businessNavigationFlow={findNavigationFlowByStepName(
+                    businessNavigationFlowsList,
                     'Board of Directors'
                   )}
                 >
@@ -424,8 +440,8 @@ const BusinessApplicationReview = () => {
                   applicationStatus={business?.applicationStatus}
                   businessId={businessId}
                   header="Executive Management"
-                  navigationFlowMassId={findNavigationFlowMassIdByStepName(
-                    navigationFlowMassList,
+                  businessNavigationFlow={findNavigationFlowByStepName(
+                    businessNavigationFlowsList,
                     'Executive Management'
                   )}
                 >
@@ -448,8 +464,8 @@ const BusinessApplicationReview = () => {
                   applicationStatus={business?.applicationStatus}
                   header="Shareholders"
                   businessId={businessId}
-                  navigationFlowMassId={findNavigationFlowMassIdByStepName(
-                    navigationFlowMassList,
+                  businessNavigationFlow={findNavigationFlowByStepName(
+                    businessNavigationFlowsList,
                     'Shareholders'
                   )}
                 >
@@ -471,8 +487,8 @@ const BusinessApplicationReview = () => {
                   applicationStatus={business?.applicationStatus}
                   businessId={businessId}
                   header="Employment Information"
-                  navigationFlowMassId={findNavigationFlowMassIdByStepName(
-                    navigationFlowMassList,
+                  businessNavigationFlow={findNavigationFlowByStepName(
+                    businessNavigationFlowsList,
                     'Employment Info'
                   )}
                 >
@@ -524,8 +540,8 @@ const BusinessApplicationReview = () => {
               applicationStatus={business?.applicationStatus}
               header="Business Attachments"
               businessId={businessId}
-              navigationFlowMassId={findNavigationFlowMassIdByStepName(
-                navigationFlowMassList,
+              businessNavigationFlow={findNavigationFlowByStepName(
+                businessNavigationFlowsList,
                 'Attachments'
               )}
             >
@@ -546,6 +562,9 @@ const BusinessApplicationReview = () => {
           </figure>
         )}
       </main>
+      <CreateBusinessReviewComment />
+      <ListBusinessReviewComments />
+      <DeleteBusinessReviewComment />
     </StaffLayout>
   );
 };

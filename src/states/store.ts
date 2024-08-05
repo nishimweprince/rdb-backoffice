@@ -11,6 +11,7 @@ import businessPeopleSlice from './features/businessPeopleSlice';
 import executiveManagementSlice from './features/executiveManagementSlice';
 import founderDetailSlice from './features/founderDetailSlice';
 import businessActivitiesSlice from './features/businessActivitiesSlice';
+import businessReviewCommentSlice from './features/businessReviewCommentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +27,7 @@ export const store = configureStore({
     executiveManagement: executiveManagementSlice,
     founderDetail: founderDetailSlice,
     businessActivities: businessActivitiesSlice,
+    businessReviewComment: businessReviewCommentSlice,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(
