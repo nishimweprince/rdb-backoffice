@@ -42,7 +42,7 @@ const initialState: {
   getBusinessIsError: boolean;
   businessEmploymentInfo?: EmploymentInfo;
   businessEmploymentInfoIsFetching: boolean;
-  businessEmploymentInfoIsSuccess: boolean
+  businessEmploymentInfoIsSuccess: boolean;
 } = {
   businessesList: [],
   business: {} as Business,
@@ -201,26 +201,30 @@ export const fetchBusinessAddressThunk = createAsyncThunk<
   }
 });
 
-
 // FETCH BUSINESS EMPLOYMENT INFO
 export const fetchBusinessEmploymentInfoThunk = createAsyncThunk<
   EmploymentInfo,
   { businessId: businessId },
   { dispatch: AppDispatch }
->('business/fetchBusinessEmploymentInfo', async ({ businessId }, { dispatch }) => {
-  try {
-    const response = await dispatch(
-      businessRegQueryApiSlice.endpoints.fetchBusinessEmploymentInfo.initiate({
-        businessId,
-      })
-    ).unwrap();
-    dispatch(setBusinessEmploymentInfo(response?.data));
-    return response.data;
-  } catch (error) {
-    toast.error('An error occurred while fetching business employment info');
-    throw error;
+>(
+  'business/fetchBusinessEmploymentInfo',
+  async ({ businessId }, { dispatch }) => {
+    try {
+      const response = await dispatch(
+        businessRegQueryApiSlice.endpoints.fetchBusinessEmploymentInfo.initiate(
+          {
+            businessId,
+          }
+        )
+      ).unwrap();
+      dispatch(setBusinessEmploymentInfo(response?.data));
+      return response.data;
+    } catch (error) {
+      toast.error('An error occurred while fetching business employment info');
+      throw error;
+    }
   }
-});
+);
 
 // FETCH BUSINESS ATTACHMENTS
 export const fetchBusinessAttachmentsThunk = createAsyncThunk<

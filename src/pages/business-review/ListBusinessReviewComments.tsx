@@ -4,6 +4,7 @@ import {
   setDeleteBusinessReviewCommentModal,
   setListBusinessReviewCommentsModal,
   setSelectedBusinessReviewComment,
+  setUpdateBusinessReviewCommentModal,
 } from '@/states/features/businessReviewCommentSlice';
 import { AppDispatch, RootState } from '@/states/store';
 import { BusinessReviewComment } from '@/types/models/businessReviewComment';
@@ -89,6 +90,12 @@ const ListBusinessReviewComments = () => {
                   <FontAwesomeIcon
                     className="h-4 w-4 bg-primary text-white rounded-full p-2 cursor-pointer transition-all ease-in-out duration-300 hover:scale-[1.03]"
                     icon={faPenToSquare}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(setSelectedBusinessReviewComment(reviewComment));
+                      dispatch(setListBusinessReviewCommentsModal(false));
+                      dispatch(setUpdateBusinessReviewCommentModal(true));
+                    }}
                   />
                 )}
               {reviewComment?.status === 'UNRESOLVED' &&

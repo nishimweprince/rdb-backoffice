@@ -4,7 +4,7 @@ import { findNavigationFlowByStepName } from '@/helpers/business.helper';
 import { AppDispatch, RootState } from '@/states/store';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '@/components/inputs/Loader';
 import {
   fetchBusinessAddressThunk,
@@ -12,6 +12,8 @@ import {
   fetchBusinessDetailsThunk,
   fetchBusinessEmploymentInfoThunk,
   getchBusinessThunk,
+  setUpdateBusinessIsSuccess,
+  updateBusinessThunk,
 } from '@/states/features/businessSlice';
 import { UUID } from 'crypto';
 import { capitalizeString } from '@/helpers/strings.helper';
@@ -33,6 +35,8 @@ import { fetchBusinessActivitiesThunk } from '@/states/features/businessActiviti
 import CreateBusinessReviewComment from './CreateBusinessReviewComment';
 import ListBusinessReviewComments from './ListBusinessReviewComments';
 import DeleteBusinessReviewComment from './DeleteBusinessReviewComment';
+import UpdateBusinessReviewComment from './UpdateBusinessReviewComment';
+import { businessId } from '@/types/models/business';
 
 const BusinessApplicationReview = () => {
   // STATE VARIABLES
@@ -48,6 +52,8 @@ const BusinessApplicationReview = () => {
     businessEmploymentInfo,
     businessAttachmentsList,
     businessEmploymentInfoIsSuccess,
+    updateBusinessIsLoading,
+    updateBusinessIsSuccess,
     businessEmploymentInfoIsFetching,
   } = useSelector((state: RootState) => state.business);
   const {
@@ -70,9 +76,13 @@ const BusinessApplicationReview = () => {
     businessActivitiesIsFetching,
     businessActivitiesIsSuccess,
   } = useSelector((state: RootState) => state.businessActivities);
+  const { businessReviewCommentsList } = useSelector(
+    (state: RootState) => state.businessReviewComment
+  );
 
   // NAVIGATION
   const { id: businessId } = useParams<{ id: UUID }>();
+  const navigate = useNavigate();
 
   // FETCH BUSINESS
   useEffect(() => {
@@ -205,6 +215,14 @@ const BusinessApplicationReview = () => {
       route: `/applications/${businessId}/review`,
     },
   ];
+
+  // HANDLE UPDATE BUSINESS RESPONSE
+  useEffect(() => {
+    if (updateBusinessIsSuccess) {
+      dispatch(setUpdateBusinessIsSuccess(false));
+      navigate(`/applications/business`);
+    }
+  }, [dispatch, navigate, updateBusinessIsSuccess]);
 
   return (
     <StaffLayout>
@@ -551,7 +569,28 @@ const BusinessApplicationReview = () => {
             </BusinessPreviewCard>
             <menu className="w-full flex items-center gap-3 justify-between my-4">
               <Button route="/applications/business">Cancel</Button>
-              <Button primary>Complete</Button>
+              {businessReviewCommentsList?.length <= 0 ? (
+                <Button primary>Complete</Button>
+              ) : (
+                <Button
+                  primary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(
+                      updateBusinessThunk({
+                        businessId: businessId as businessId,
+                        applicationStatus: 'ACTION_REQUIRED',
+                      })
+                    );
+                  }}
+                >
+                  {updateBusinessIsLoading ? (
+                    <Loader />
+                  ) : (
+                    'Return for correction'
+                  )}
+                </Button>
+              )}
             </menu>
           </main>
         ) : (
@@ -565,6 +604,7 @@ const BusinessApplicationReview = () => {
       <CreateBusinessReviewComment />
       <ListBusinessReviewComments />
       <DeleteBusinessReviewComment />
+      <UpdateBusinessReviewComment />
     </StaffLayout>
   );
 };

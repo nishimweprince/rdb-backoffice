@@ -14,6 +14,7 @@ const initialState: {
   businessReviewCommentsIsSuccess: boolean;
   listBusinessReviewCommentsModal: boolean;
   deleteBusinessReviewCommentModal: boolean;
+  updateBusinessReviewCommentModal: boolean;
 } = {
   selectedBusinessReviewComment: undefined,
   businessReviewCommentsList: [],
@@ -22,6 +23,7 @@ const initialState: {
   businessReviewCommentsIsSuccess: false,
   listBusinessReviewCommentsModal: false,
   deleteBusinessReviewCommentModal: false,
+  updateBusinessReviewCommentModal: false,
 };
 
 // FETCH BUSINESS REVIEW COMMENTS THUNK
@@ -61,7 +63,7 @@ const businessReviewCommentSlice = createSlice({
           (businessReviewComment) => businessReviewComment.id !== action.payload
         );
     },
-    updateBusinessReviewComment: (state, action) => {
+    setUpdateBusinessReviewComment: (state, action) => {
       state.businessReviewCommentsList = state.businessReviewCommentsList.map(
         (businessReviewComment) =>
           businessReviewComment.id === action.payload.id
@@ -77,6 +79,9 @@ const businessReviewCommentSlice = createSlice({
     },
     setDeleteBusinessReviewCommentModal: (state, action) => {
       state.deleteBusinessReviewCommentModal = action.payload;
+    },
+    setUpdateBusinessReviewCommentModal: (state, action) => {
+      state.updateBusinessReviewCommentModal = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -107,10 +112,11 @@ export const {
   setBusinessReviewCommentsList,
   addBusinessReviewComment,
   removeBusinessReviewComment,
-  updateBusinessReviewComment,
+  setUpdateBusinessReviewComment,
   setCreateBusinessReviewCommentModal,
   setListBusinessReviewCommentsModal,
   setDeleteBusinessReviewCommentModal,
+  setUpdateBusinessReviewCommentModal
 } = businessReviewCommentSlice.actions;
 
 export default businessReviewCommentSlice.reducer;
