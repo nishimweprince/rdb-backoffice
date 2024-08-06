@@ -5,6 +5,7 @@ import { UUID } from 'crypto';
 import businessRegQueryApiSlice from '../api/businessRegQueryApiSlice';
 import { businessId } from '@/types/models/business';
 import { removeArrayDuplicates } from '@/helpers/strings.helper';
+import businessRegApiSlice from '../api/businessRegApiSlice';
 
 const initialState: {
   selectedBusinessReviewComment?: BusinessReviewComment;
@@ -15,6 +16,8 @@ const initialState: {
   listBusinessReviewCommentsModal: boolean;
   deleteBusinessReviewCommentModal: boolean;
   updateBusinessReviewCommentModal: boolean;
+  updateBusinessReviewCommentIsLoading: boolean;
+  updateBusinessReviewCommentIsSuccess: boolean;
 } = {
   selectedBusinessReviewComment: undefined,
   businessReviewCommentsList: [],
@@ -24,6 +27,8 @@ const initialState: {
   listBusinessReviewCommentsModal: false,
   deleteBusinessReviewCommentModal: false,
   updateBusinessReviewCommentModal: false,
+  updateBusinessReviewCommentIsLoading: false,
+  updateBusinessReviewCommentIsSuccess: false,
 };
 
 // FETCH BUSINESS REVIEW COMMENTS THUNK
@@ -43,6 +48,23 @@ export const fetchBusinessReviewCommentsThunk = createAsyncThunk<
     return response.data;
   }
 );
+
+// UPDATE BUSINESS REVIEW COMMENT STATUS
+export const updateBusinessReviewCommentStatusThunk = createAsyncThunk<
+  BusinessReviewComment,
+  { id: UUID; status: string },
+  { dispatch: AppDispatch }
+>('businessReviewComment/updateBusinessReviewCommentStatus', async ({
+    id, status
+}, { dispatch }) => {
+    const response = await dispatch(
+      businessRegApiSlice.endpoints.updateBusinessReviewCommentStatus.initiate({
+        id,
+        status
+      })
+    ).unwrap();
+    return response.data;
+});
 
 const businessReviewCommentSlice = createSlice({
   name: 'businessReviewComment',
@@ -104,6 +126,30 @@ const businessReviewCommentSlice = createSlice({
       state.businessReviewCommentsIsFetching = false;
       state.businessReviewCommentsIsSuccess = false;
     });
+    builder.addCase(
+      updateBusinessReviewCommentStatusThunk.fulfilled,
+      (state, action) => {
+        state.businessReviewCommentsList = state.businessReviewCommentsList.map(
+          (businessReviewComment) =>
+            businessReviewComment.id === action.payload.id
+              ? action.payload
+              : businessReviewComment
+        );
+        state.updateBusinessReviewCommentIsSuccess = true;
+        state.updateBusinessReviewCommentIsLoading = false;
+      }
+    );
+    builder.addCase(updateBusinessReviewCommentStatusThunk.pending, (state) => {
+      state.updateBusinessReviewCommentIsLoading = true;
+      state.updateBusinessReviewCommentIsSuccess = false;
+    });
+    builder.addCase(
+      updateBusinessReviewCommentStatusThunk.rejected,
+      (state) => {
+        state.updateBusinessReviewCommentIsLoading = false;
+        state.updateBusinessReviewCommentIsSuccess = false;
+      }
+    );
   },
 });
 

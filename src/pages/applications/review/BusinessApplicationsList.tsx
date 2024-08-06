@@ -52,6 +52,8 @@ const ReviewBusinessApplications = () => {
     'APPROVED',
     'IN_REVIEW',
     'ACTION_REQUIRED',
+    'RESUBMITTED',
+    'PENDING_DECISION',
   ]);
 
   // NAVIGATION
@@ -107,7 +109,10 @@ const ReviewBusinessApplications = () => {
                   await dispatch(
                     updateBusinessThunk({
                       businessId: row?.original?.id,
-                      applicationStatus: 'IN_REVIEW',
+                      applicationStatus:
+                        row?.original?.applicationStatus === 'PENDING_DECISION'
+                          ? 'PENDING_DECISION'
+                          : 'IN_REVIEW',
                     })
                   );
                 }}
@@ -117,7 +122,7 @@ const ReviewBusinessApplications = () => {
                   className="text-primary"
                   icon={faMagnifyingGlass}
                 />{' '}
-                Start review
+                Review
               </Link>
               <Link
                 className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"

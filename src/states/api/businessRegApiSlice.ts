@@ -84,6 +84,19 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // UPDATE BUSINESS REVIEW COMMENT STATUS
+      updateBusinessReviewCommentStatus: builder.mutation({
+        query: ({ id, status }) => {
+          return {
+            url: `/review-comments/${id}/status`,
+            method: 'PATCH',
+            body: {
+              status,
+            },
+          };
+        },
+      }),
     };
   },
 });
@@ -95,6 +108,7 @@ export const {
   useCreateBusinessReviewCommentMutation,
   useDeleteBusinessReviewCommentMutation,
   useUpdateBusinessReviewCommentMutation,
+  useUpdateBusinessReviewCommentStatusMutation
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;

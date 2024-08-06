@@ -569,8 +569,34 @@ const BusinessApplicationReview = () => {
             </BusinessPreviewCard>
             <menu className="w-full flex items-center gap-3 justify-between my-4">
               <Button route="/applications/business">Cancel</Button>
-              {businessReviewCommentsList?.length <= 0 ? (
-                <Button primary>Complete</Button>
+              {businessReviewCommentsList?.filter(
+                (reviewComment) => reviewComment?.status !== 'APPROVED'
+              )?.length <= 0 ? (
+                <Button
+                  primary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(
+                      updateBusinessThunk({
+                        businessId: businessId as businessId,
+                        applicationStatus:
+                          business?.applicationStatus === 'PENDING_DECISION'
+                            ? 'APPROVED'
+                            : 'PENDING_DECISION',
+                      })
+                    );
+                  }}
+                >
+                  {updateBusinessIsLoading ? (
+                    <Loader />
+                  ) : business?.applicationStatus === 'IN_REVIEW' ? (
+                    'Submit for decision'
+                  ) : business?.applicationStatus === 'PENDING_DECISION' ? (
+                    'Approve'
+                  ) : (
+                    ''
+                  )}
+                </Button>
               ) : (
                 <Button
                   primary

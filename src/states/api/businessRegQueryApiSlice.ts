@@ -19,7 +19,7 @@ export const businessRegQueryApiSlice = createApi({
       // FETCH BUSINESSES
       fetchBusinesses: builder.query({
         query: ({ page, size, applicationStatus, serviceId }) => {
-          let url = `/back-office?page=${page}&size=${size}`;
+          let url = `/back-office/applications?page=${page}&size=${size}`;
           if (applicationStatus) {
             url += `&applicationStatus=${applicationStatus}`;
           }
