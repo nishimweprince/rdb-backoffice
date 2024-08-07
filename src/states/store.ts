@@ -12,12 +12,16 @@ import executiveManagementSlice from './features/executiveManagementSlice';
 import founderDetailSlice from './features/founderDetailSlice';
 import businessActivitiesSlice from './features/businessActivitiesSlice';
 import businessReviewCommentSlice from './features/businessReviewCommentSlice';
+import serviceSlice from './features/serviceSlice';
+import userManagementQueryApiSlice from './api/userManagementQueryApiSlice';
 
 export const store = configureStore({
   reducer: {
     [authApiSlice.reducerPath]: authApiSlice.reducer,
     [businessRegApiSlice.reducerPath]: businessRegApiSlice.reducer,
     [businessRegQueryApiSlice.reducerPath]: businessRegQueryApiSlice.reducer,
+    [userManagementQueryApiSlice.reducerPath]:
+      userManagementQueryApiSlice.reducer,
     user: userSlice,
     sidebar: sidebarSlice,
     business: businessSlice,
@@ -28,12 +32,14 @@ export const store = configureStore({
     founderDetail: founderDetailSlice,
     businessActivities: businessActivitiesSlice,
     businessReviewComment: businessReviewCommentSlice,
+    service: serviceSlice,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(
       authApiSlice.middleware,
       businessRegApiSlice.middleware,
-      businessRegQueryApiSlice.middleware
+      businessRegQueryApiSlice.middleware,
+      userManagementQueryApiSlice.middleware
     );
   },
 });

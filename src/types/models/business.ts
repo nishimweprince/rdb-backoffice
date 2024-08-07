@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import { User } from "./user";
 
 export type Business = {
   id: UUID;
@@ -30,7 +31,9 @@ export type Business = {
   employmentInfo?: string | object;
   address?: Address;
   dateOfIncorporation?: Date;
-  service: Service
+  service: Service;
+  assignedVerifier?: User;
+  assignedApprover?: User;
 };
 
 export type Details = {

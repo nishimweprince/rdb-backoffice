@@ -12,6 +12,7 @@ import {
   fetchBusinessDetailsThunk,
   fetchBusinessEmploymentInfoThunk,
   getchBusinessThunk,
+  requestBusinessApproverThunk,
   setUpdateBusinessIsSuccess,
   updateBusinessThunk,
 } from '@/states/features/businessSlice';
@@ -571,33 +572,7 @@ const BusinessApplicationReview = () => {
               <Button route="/applications/business">Cancel</Button>
               {businessReviewCommentsList?.filter(
                 (reviewComment) => reviewComment?.status !== 'APPROVED'
-              )?.length <= 0 ? (
-                <Button
-                  primary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    dispatch(
-                      updateBusinessThunk({
-                        businessId: businessId as businessId,
-                        applicationStatus:
-                          business?.applicationStatus === 'PENDING_DECISION'
-                            ? 'APPROVED'
-                            : 'PENDING_DECISION',
-                      })
-                    );
-                  }}
-                >
-                  {updateBusinessIsLoading ? (
-                    <Loader />
-                  ) : business?.applicationStatus === 'IN_REVIEW' ? (
-                    'Submit for decision'
-                  ) : business?.applicationStatus === 'PENDING_DECISION' ? (
-                    'Approve'
-                  ) : (
-                    ''
-                  )}
-                </Button>
-              ) : (
+              )?.length > 0 ? (
                 <Button
                   primary
                   onClick={(e) => {
@@ -616,6 +591,37 @@ const BusinessApplicationReview = () => {
                     'Return for correction'
                   )}
                 </Button>
+              ) : business?.applicationStatus === 'IN_REVIEW' ? (
+                <Button
+                  primary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(
+                      requestBusinessApproverThunk({
+                        businessId: businessId as businessId,
+                      })
+                    );
+                  }}
+                >
+                  {updateBusinessIsLoading ? <Loader /> : 'Submit for decision'}
+                </Button>
+              ) : (
+                business?.applicationStatus === 'PENDING_DECISION' && (
+                  <Button
+                    primary
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(
+                        updateBusinessThunk({
+                          businessId: businessId as businessId,
+                          applicationStatus: 'APPROVED',
+                        })
+                      );
+                    }}
+                  >
+                    {updateBusinessIsLoading ? <Loader /> : 'Approve'}
+                  </Button>
+                )
               )}
             </menu>
           </main>

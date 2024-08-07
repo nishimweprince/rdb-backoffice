@@ -11,6 +11,7 @@ import BusinessApplicationRoutes from './BusinessApplicationRoutes';
 import BusinessApplicationReview from '@/pages/business-review/BusinessApplicationReview';
 import AuthenticationRoutes from './AuthenticationRoutes';
 import StaffAuthenticatedRoutes from '@/outlets/StaffAuthenticatedRoutes';
+import LandingRoute from './LandingRoute';
 
 const Router = () => {
   return (
@@ -47,6 +48,9 @@ const Router = () => {
             <Route path=":id/review" element={<BusinessApplicationReview />} />
           </Route>
         </Route>
+
+        {/* DEFAULT ROUTE */}
+        <Route path="*" element={<LandingRoute />} />
       </Routes>
     </>
   );

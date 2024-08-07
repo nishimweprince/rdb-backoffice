@@ -15,6 +15,7 @@ type TableToolbarProps = {
   exportHandler?: MouseEventHandler<HTMLButtonElement> | undefined;
   filterHandler?: MouseEventHandler<HTMLButtonElement> | undefined;
   showFilter?: boolean;
+  showSearch?: boolean;
 };
 
 const TableToolbar = ({
@@ -25,6 +26,7 @@ const TableToolbar = ({
   exportHandler,
   filterHandler,
   showFilter = true,
+  showSearch = true,
 }: TableToolbarProps) => {
   // REACT HOOK FORM
   const { control, watch } = useForm();
@@ -32,7 +34,7 @@ const TableToolbar = ({
   return (
     <header className="w-full flex items-center gap-3 justify-between px-1">
       <label className="w-[45%] flex items-center">
-        <menu className="flex items-center w-full gap-0">
+       {showSearch && <menu className="flex items-center w-full gap-0">
           <Controller
             name="searchType"
             control={control}
@@ -74,7 +76,7 @@ const TableToolbar = ({
               );
             }}
           />
-        </menu>
+        </menu>}
       </label>
       <menu className="w-full flex items-center gap-2 justify-end">
         {showFilter && (

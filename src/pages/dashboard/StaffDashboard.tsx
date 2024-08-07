@@ -13,6 +13,9 @@ const StaffDashboard = () => {
   // STATE VARIABLES
   const [monthsDataArray, setMonthsDataArray] = useState(monthsData());
 
+  // SET DOCUMENT TITLE
+  document.title = 'Staff Dashboard';
+
   // REACT HOOK FORM
   const { control } = useForm();
 

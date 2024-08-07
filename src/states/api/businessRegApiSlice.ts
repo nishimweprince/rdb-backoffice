@@ -97,6 +97,16 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // REQUEST BUSINESS APPROVER
+      requestBusinessApprover: builder.mutation({
+        query: ({ businessId }) => {
+          return {
+            url: `/back-office/request-approval?businessId=${businessId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
     };
   },
 });
@@ -108,7 +118,8 @@ export const {
   useCreateBusinessReviewCommentMutation,
   useDeleteBusinessReviewCommentMutation,
   useUpdateBusinessReviewCommentMutation,
-  useUpdateBusinessReviewCommentStatusMutation
+  useUpdateBusinessReviewCommentStatusMutation,
+  useRequestBusinessApproverMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;

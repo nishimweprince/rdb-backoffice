@@ -42,6 +42,10 @@ const BusinessAttachmentsTable = ({
                 rel="noopener noreferrer"
                 className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
                 to={row?.original?.attachmentUrl}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open(row?.original?.attachmentUrl, '_blank');
+                }}
                 target="_blank"
               >
                 Open

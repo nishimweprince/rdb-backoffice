@@ -18,13 +18,16 @@ export const businessRegQueryApiSlice = createApi({
 
       // FETCH BUSINESSES
       fetchBusinesses: builder.query({
-        query: ({ page, size, applicationStatus, serviceId }) => {
+        query: ({ page, size, applicationStatus, serviceId, userId }) => {
           let url = `/back-office/applications?page=${page}&size=${size}`;
           if (applicationStatus) {
             url += `&applicationStatus=${applicationStatus}`;
           }
           if (serviceId) {
             url += `&serviceId=${serviceId}`;
+          }
+          if (userId) {
+            url += `&userId=${userId}`;
           }
           return {
             url,
@@ -46,6 +49,15 @@ export const businessRegQueryApiSlice = createApi({
         query: ({ businessId }) => {
           return {
             url: `/navigation-flow?businessId=${businessId}`,
+          };
+        },
+      }),
+
+      // FETCH SERVICES
+      fetchServices: builder.query({
+        query: ({ category }) => {
+          return {
+            url: `/services?${category ? `category=${category}` : ""}`,
           };
         },
       }),
@@ -170,6 +182,7 @@ export const {
   useLazyFetchShareholdersQuery,
   useLazyFetchBusinessAttachmentsQuery,
   useLazyFetchBusinessReviewCommentsQuery,
+  useLazyFetchServicesQuery,
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

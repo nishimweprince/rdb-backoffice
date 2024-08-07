@@ -80,6 +80,7 @@ export const fetchBusinessesThunk = createAsyncThunk<
     size: number;
     applicationStatus?: string;
     serviceId?: string;
+    userId?: UUID;
   },
   { dispatch: AppDispatch }
 >(
@@ -90,11 +91,13 @@ export const fetchBusinessesThunk = createAsyncThunk<
       size,
       serviceId,
       applicationStatus,
+      userId,
     }: {
       page: number;
       size: number;
       serviceId?: string;
       applicationStatus?: string;
+      userId?: UUID;
     },
     {
       dispatch,
@@ -109,6 +112,7 @@ export const fetchBusinessesThunk = createAsyncThunk<
           size,
           serviceId,
           applicationStatus,
+          userId
         })
       ).unwrap();
       return response.data;
@@ -246,6 +250,24 @@ export const fetchBusinessAttachmentsThunk = createAsyncThunk<
   }
 });
 
+// REQUEST BUSINESS APPROVER THUNK
+export const requestBusinessApproverThunk = createAsyncThunk<
+  void,
+  { businessId: businessId },
+  { dispatch: AppDispatch }
+>('business/requestBusinessApprover', async ({ businessId }, { dispatch }) => {
+  try {
+    await dispatch(
+      businessRegApiSlice.endpoints.requestBusinessApprover.initiate({
+        businessId,
+      })
+    ).unwrap();
+  } catch (error) {
+    toast.error('An error occurred while requesting business approver');
+    throw error;
+  }
+});
+
 export const businessSlice = createSlice({
   name: 'business',
   initialState,
@@ -372,6 +394,12 @@ export const businessSlice = createSlice({
     });
     builder.addCase(getchBusinessThunk.fulfilled, (state, action) => {
       state.business = action.payload;
+      state.businessesList = state.businessesList.map((business) => {
+        if (business.id === action.payload.id) {
+          return action.payload;
+        }
+        return business;
+      });
       state.getBusinessIsFetching = false;
       state.getBusinessIsSuccess = true;
       state.getBusinessIsError = false;
@@ -401,6 +429,25 @@ export const businessSlice = createSlice({
     builder.addCase(fetchBusinessEmploymentInfoThunk.rejected, (state) => {
       state.businessEmploymentInfoIsFetching = false;
       state.businessEmploymentInfoIsSuccess = false;
+    });
+    builder.addCase(requestBusinessApproverThunk.pending, (state) => {
+      state.updateBusinessIsLoading = true;
+      state.updateBusinessIsSuccess = false;
+    });
+    builder.addCase(requestBusinessApproverThunk.fulfilled, (state) => {
+      state.updateBusinessIsLoading = false;
+      state.updateBusinessIsSuccess = true;
+      state.businessesList = state.businessesList.map((business) => {
+        if (business.id === state.business.id) {
+          return state.business;
+        }
+        return business;
+      }
+      );
+    });
+    builder.addCase(requestBusinessApproverThunk.rejected, (state) => {
+      state.updateBusinessIsLoading = false;
+      state.updateBusinessIsSuccess = false;
     });
   },
 });

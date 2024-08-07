@@ -50,9 +50,25 @@ export const businessColumns = [
     },
   },
   {
-    id: 'assignee',
-    header: 'Assigned To',
-    accessorKey: 'assignee',
+    id: 'assignedVerifier',
+    header: 'Assigned Verifier',
+    accessorKey: 'assignedVerifier',
+    cell: ({ row }: { row: Row<Business> }) =>
+      `${
+        row?.original?.assignedVerifier?.firstName ||
+        row?.original?.assignedVerifier?.username
+      } ${row?.original?.assignedVerifier?.lastName || ''}`,
+  },
+  {
+    id: 'assignedApprover',
+    header: 'Assigned Approver',
+    accessorKey: 'assignedApprover',
+    cell: ({ row }: { row: Row<Business> }) =>
+      `${
+        row?.original?.assignedApprover?.firstName ||
+        row?.original?.assignedApprover?.username ||
+        ''
+      } ${row?.original?.assignedApprover?.lastName || ''}`,
   },
 ];
 
@@ -128,4 +144,16 @@ export const founderDetailColumns = [
     header: 'Total value',
     accessorKey: 'totalQuantity',
   },
+];
+
+export const applicationReviewStatuses = [
+  'SUBMITTED',
+  'VERIFIED',
+  'APPROVED',
+  'REJECTED',
+  'RESUBMITTED',
+  'ACTION_REQUIRED',
+  'AMENDMENT_SUBMITTED',
+  'IN_REVIEW',
+  'PENDING_DECISION',
 ];
