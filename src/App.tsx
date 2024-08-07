@@ -1,8 +1,11 @@
+import Router from '@/routes/Router';
 
-const App = () => {
+function App() {
   return (
-    <main>App</main>
-  )
+    <>
+      <Router />
+    </>
+  );
 }
 
 export default App;
