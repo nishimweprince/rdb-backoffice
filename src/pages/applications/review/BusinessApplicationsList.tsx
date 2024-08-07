@@ -32,6 +32,7 @@ import { navigationPaths } from '@/constants/dashboard.constants';
 import CustomBreadcrumb from '@/components/navigation/CustomBreadcrumb';
 import { UUID } from 'crypto';
 import BusinessApplicationsFilter from './BusinessApplicationsFilter';
+import { getBusinessStatusColor } from '@/helpers/business.helper';
 
 const ReviewBusinessApplications = () => {
   // STATE VARIABLES
@@ -84,6 +85,23 @@ const ReviewBusinessApplications = () => {
   // TABLE COLUMNS
   const businessExtendedColumns = [
     ...businessColumns,
+    {
+      id: 'applicationStatus',
+      header: 'Application status',
+      accessorKey: 'service.name',
+      cell: ({ row }: { row: Row<Business> }) => (
+        <p
+          className={`${getBusinessStatusColor(
+            row?.original?.applicationStatus
+          )} text-white p-1 px-2 rounded-md text-center text-[14px]`}
+        >
+          {capitalizeString(row?.original?.applicationStatus)}
+        </p>
+      ),
+      filterFn: (row: Row<unknown>, id: string, value: string) => {
+        return value.includes(row.getValue(id));
+      },
+    },
     {
       id: 'action',
       header: 'Action',
@@ -213,7 +231,7 @@ const ReviewBusinessApplications = () => {
         ) : (
           <menu className="w-full flex flex-col gap-4">
             <TableToolbar
-              showSearch={false}
+              showSearch={true}
               filterHandler={(e) => {
                 e.preventDefault();
                 setShowFilter(!showFilter);

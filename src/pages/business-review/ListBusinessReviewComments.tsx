@@ -15,6 +15,7 @@ import { AppDispatch, RootState } from '@/states/store';
 import { BusinessReviewComment } from '@/types/models/businessReviewComment';
 import {
   faPenToSquare,
+  faThumbsDown,
   faThumbsUp,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
@@ -87,6 +88,9 @@ const ListBusinessReviewComments = () => {
                       ? '(Marked as approved)'
                       : ''}
                   </span>
+                  <span className='text-[14px] font-medium text-red-700'>
+                  {reviewComment?.status === 'REJECTED' ? '(Marked as rejected)' : ''}
+                  </span>
                 </p>
                 <ul className="flex flex-col gap-2">
                   <p className="text-secondary text-[13px]">
@@ -99,25 +103,48 @@ const ListBusinessReviewComments = () => {
               </article>
               <figure className="flex flex-col gap-2">
                 {reviewComment?.status === 'RESOLVED' && (
-                  <CustomTooltip label="Approve">
-                    {updateBusinessReviewCommentIsLoading ? (
-                      <Loader className="text-green-700" />
-                    ) : (
-                      <FontAwesomeIcon
-                        onClick={(e) => {
-                          e.preventDefault();
-                          dispatch(
-                            updateBusinessReviewCommentStatusThunk({
-                              id: reviewComment?.id,
-                              status: 'APPROVED',
-                            })
-                          );
-                        }}
-                        className="h-4 w-4 bg-green-700 text-white rounded-full p-2 cursor-pointer transition-all ease-in-out duration-300 hover:scale-[1.03]"
-                        icon={faThumbsUp}
-                      />
-                    )}
-                  </CustomTooltip>
+                  <menu className="flex items-center gap-3">
+                    <CustomTooltip label="Approve">
+                      {updateBusinessReviewCommentIsLoading ? (
+                        <Loader className="text-green-700" />
+                      ) : (
+                        <FontAwesomeIcon
+                          onClick={(e) => {
+                            e.preventDefault();
+                            dispatch(
+                              updateBusinessReviewCommentStatusThunk({
+                                id: reviewComment?.id,
+                                status: 'APPROVED',
+                              })
+                            );
+                          }}
+                          className="h-4 w-4 bg-green-700 text-white rounded-full p-2 cursor-pointer transition-all ease-in-out duration-300 hover:scale-[1.03]"
+                          icon={faThumbsUp}
+                        />
+                      )}
+                    </CustomTooltip>
+                    <CustomTooltip label="Reject and add new comment">
+                      {updateBusinessReviewCommentIsLoading ? (
+                        <Loader className="text-red-600" />
+                      ) : (
+                        <FontAwesomeIcon
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            await dispatch(
+                              updateBusinessReviewCommentStatusThunk({
+                                id: reviewComment?.id,
+                                status: 'REJECTED',
+                              })
+                            );
+                            dispatch(setListBusinessReviewCommentsModal(false));
+                            dispatch(setCreateBusinessReviewCommentModal(true));
+                          }}
+                          className="h-4 w-4 bg-red-600 text-white rounded-full p-2 cursor-pointer transition-all ease-in-out duration-300 hover:scale-[1.03]"
+                          icon={faThumbsDown}
+                        />
+                      )}
+                    </CustomTooltip>
+                  </menu>
                 )}
                 {reviewComment?.status === 'UNRESOLVED' &&
                   ['IN_REVIEW'].includes(business?.applicationStatus) && (

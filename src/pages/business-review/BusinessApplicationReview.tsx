@@ -570,8 +570,8 @@ const BusinessApplicationReview = () => {
             </BusinessPreviewCard>
             <menu className="w-full flex items-center gap-3 justify-between my-4">
               <Button route="/applications/business">Cancel</Button>
-              {businessReviewCommentsList?.filter(
-                (reviewComment) => reviewComment?.status !== 'APPROVED'
+              {businessReviewCommentsList?.filter((reviewComment) =>
+                !['REJECTED', 'APPROVED'].includes(reviewComment?.status)
               )?.length > 0 ? (
                 <Button
                   primary
@@ -591,7 +591,11 @@ const BusinessApplicationReview = () => {
                     'Return for correction'
                   )}
                 </Button>
-              ) : business?.applicationStatus === 'IN_REVIEW' ? (
+              ) : business?.applicationStatus === 'IN_REVIEW' &&
+                businessReviewCommentsList?.filter(
+                  (reviewComment) =>
+                    !['REJECTED', 'APPROVED'].includes(reviewComment?.status)
+                )?.length <= 0 ? (
                 <Button
                   primary
                   onClick={(e) => {

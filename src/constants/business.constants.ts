@@ -23,28 +23,16 @@ export const businessColumns = [
   },
   {
     id: 'dateOfIncorporation',
-    header: 'Date of Incorporation',
+    header: 'Date of submission',
     accessorKey: 'dateOfIncorporation',
     cell: ({ row }: { row: Row<Business> }) =>
       formatDate(row?.original?.dateOfIncorporation) ||
       formatDate(row?.original?.createdAt),
   },
   {
-    id: 'applicationStatus',
-    header: 'Application status',
-    accessorKey: 'applicationStatus',
-    cell: ({ row }: { row: Row<Business> }) =>
-      capitalizeString(row?.original?.applicationStatus),
-    filterFn: (row: Row<unknown>, id: string, value: string) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
     id: 'applicationType',
     header: 'Application type',
     accessorKey: 'service.name',
-    cell: ({ row }: { row: Row<Business> }) =>
-      capitalizeString(row?.original?.service?.name),
     filterFn: (row: Row<unknown>, id: string, value: string) => {
       return value.includes(row.getValue(id));
     },
@@ -124,13 +112,14 @@ export const businessPeopleColumns = [
 ];
 
 export const founderDetailColumns = [
-  {
-    header: 'Document Number',
-    accessorKey: 'personDocNo',
-  },
+  
   {
     header: 'Name',
     accessorKey: 'name',
+  },
+  {
+    header: 'Document Number',
+    accessorKey: 'personDocNo',
   },
   {
     header: 'Type',
