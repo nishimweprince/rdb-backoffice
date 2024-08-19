@@ -1,0 +1,90 @@
+import { capitalizeString, formatDate } from '@/helpers/strings.helper';
+import { BusinessAmendment } from '@/types/models/business';
+import { Row } from '@tanstack/react-table';
+
+export const businessAmendmentColumns = [
+  {
+    header: 'Application Reference',
+    accessorKey: 'applicationReferenceId',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      `${row?.original?.business?.applicationReferenceId}`,
+  },
+  {
+    header: 'Business Name',
+    accessorKey: 'companyName',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      `${
+        row?.original?.business?.companyName ||
+        row?.original?.business?.enterpriseBusinessName ||
+        row?.original?.business?.enterpriseName ||
+        row?.original?.business?.branchName ||
+        ''
+      }`,
+  },
+  {
+    header: 'Amendment Type',
+    accessorKey: 'amendmentType',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      capitalizeString(row?.original?.amendmentType),
+  },
+  {
+    header: 'Status',
+    accessorKey: 'status',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      `${capitalizeString(row?.original?.status)}`,
+  },
+  {
+    header: 'Company Category',
+    accessorKey: 'companyCategory',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      `${capitalizeString(row?.original?.business?.companyCategory)}`,
+  },
+  {
+    header: 'Assigned Verifier',
+    accessorKey: 'assignedVerifier',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      `${row?.original?.oldValue?.assignedVerifier?.firstName || '-'} ${
+        row?.original?.oldValue?.assignedVerifier?.lastName || ''
+      }`,
+  },
+  {
+    header: 'Assigned Approver',
+    accessorKey: 'assignedApprover',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      `${row?.original?.oldValue?.assignedApprover?.firstName || '-'} ${
+        row?.original?.oldValue?.assignedApprover?.lastName || ''
+      }`,
+  },
+  {
+    header: 'Date created',
+    accessorKey: 'createdAt',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      formatDate(row?.original?.createdAt),
+  },
+];
+
+export const amendmentType: string[] = [
+    'AMEND_COMPANY_DETAILS',
+    'AMEND_COMPANY_ADDRESS',
+    'AMEND_BUSINESS_ACTIVITIES',
+    'AMEND_SHARE_DETAILS',
+    'AMEND_ADD_BUSINESS_FOUNDER',
+    'AMEND_DELETE_BUSINESS_FOUNDER',
+    'AMEND_ADD_BUSINESS_EXECUTIVE_MEMBER',
+    'AMEND_ADD_BUSINESS_BOARD_MEMBER',
+    'AMEND_DELETE_BUSINESS_MEMBER',
+    'AMEND_BUSINESS_FOUNDER_SHARES',
+    'AMEND_BUSINESS_EMPLOYMENT_INFO',
+    'AMEND_BUSINESS_ATTACHMENT',
+    'AMEND_BUSINESS_PERSON_ATTACHMENT',
+    'DELETE_BUSINESS_PERSON_ATTACHMENT',
+    'DELETE_BUSINESS_ATTACHMENT',
+    'AMEND_BUSINESS_DORMANCY_DECLARATION',
+    'AMEND_BUSINESS_DISSOLUTION',
+    'AMEND_BUSINESS_RESTORATION',
+    'AMEND_BUSINESS_NEW_BRANCH',
+    'AMEND_BUSINESS_AMALGAMATION',
+    'AMEND_BUSINESS_TRANSFER_OF_REGISTRATION',
+    'AMEND_BUSINESS_BENEFICIAL_OWNERSHIP',
+    'AMEND_CESSATION_TO_BE_DORMANT',
+];

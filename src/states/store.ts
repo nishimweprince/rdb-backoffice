@@ -14,6 +14,7 @@ import businessActivitiesSlice from './features/businessActivitiesSlice';
 import businessReviewCommentSlice from './features/businessReviewCommentSlice';
 import serviceSlice from './features/serviceSlice';
 import userManagementQueryApiSlice from './api/userManagementQueryApiSlice';
+import businessAmendmentSlice from './features/businessAmendmentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -33,6 +34,7 @@ export const store = configureStore({
     businessActivities: businessActivitiesSlice,
     businessReviewComment: businessReviewCommentSlice,
     service: serviceSlice,
+    businessAmendment: businessAmendmentSlice,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(

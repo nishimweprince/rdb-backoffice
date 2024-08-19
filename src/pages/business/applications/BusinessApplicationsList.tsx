@@ -77,7 +77,7 @@ const ReviewBusinessApplications = () => {
   useEffect(() => {
     if (updateBusinessIsSuccess && selectedBusiness) {
       dispatch(setUpdateBusinessIsSuccess(false));
-      navigate(`/applications/${selectedBusiness?.id}/review`);
+      navigate(`/applications/business/${selectedBusiness?.id}/review`);
       dispatch(setSelectedBusiness(undefined));
     }
   }, [updateBusinessIsSuccess, selectedBusiness, navigate, dispatch]);

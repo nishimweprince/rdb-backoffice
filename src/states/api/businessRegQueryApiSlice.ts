@@ -57,7 +57,7 @@ export const businessRegQueryApiSlice = createApi({
       fetchServices: builder.query({
         query: ({ category }) => {
           return {
-            url: `/services?${category ? `category=${category}` : ""}`,
+            url: `/services?${category ? `category=${category}` : ''}`,
           };
         },
       }),
@@ -158,7 +158,23 @@ export const businessRegQueryApiSlice = createApi({
             url += `&navigationFlowId=${navigationFlowId}`;
           }
           return {
-            url
+            url,
+          };
+        },
+      }),
+
+      // FETCH AMENDMENTS
+      fetchBusinessAmendments: builder.query({
+        query: ({ businessId, userId, searchKey }) => {
+          let url = `/back-office/amendments?businessId=${businessId}`;
+          if (userId) {
+            url += `&userId=${userId}`;
+          }
+          if (searchKey) {
+            url += `&searchKey=${searchKey}`;
+          }
+          return {
+            url,
           };
         },
       }),
@@ -183,6 +199,7 @@ export const {
   useLazyFetchBusinessAttachmentsQuery,
   useLazyFetchBusinessReviewCommentsQuery,
   useLazyFetchServicesQuery,
+  useLazyFetchBusinessAmendmentsQuery
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

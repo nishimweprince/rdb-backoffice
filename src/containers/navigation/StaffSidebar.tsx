@@ -44,6 +44,11 @@ const StaffSidebar = () => {
           icon: faUserTie,
         },
         {
+          title: 'Business Amendments',
+          path: '/applications/amendments',
+          icon: faUserTie,
+        },
+        {
           title: 'Collateral Applications',
           path: '/collaterals/review',
           icon: faHouseChimney,

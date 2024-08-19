@@ -1,10 +1,8 @@
-import { UUID } from "crypto";
-import { User } from "./user";
+import { UUID } from 'crypto';
+import { User } from './user';
+import { AbstractDomain } from '.';
 
-export type Business = {
-  id: UUID;
-  version: number;
-  state?: string | number;
+export interface Business extends AbstractDomain {
   createdAt: Date;
   updatedAt: Date;
   applicationReferenceId: string;
@@ -34,7 +32,7 @@ export type Business = {
   service: Service;
   assignedVerifier?: User;
   assignedApprover?: User;
-};
+}
 
 export type Details = {
   id: UUID;
@@ -90,5 +88,16 @@ export type BusinessActivity = {
 export type Service = {
   id: UUID;
   name: string;
-  path?: string
+  path?: string;
+};
+
+export interface BusinessAmendment extends AbstractDomain {
+  amendmentType: string;
+  oldValue: Business;
+  newValue: Business;
+  entityId: UUID;
+  entityType?: string;
+  businessId: UUID;
+  status: string;
+  business: Business;
 }
