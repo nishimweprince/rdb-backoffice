@@ -7,6 +7,7 @@ import {
   faChevronDown,
   faChevronUp,
   faUserTie,
+  faPenToSquare,
 } from '@fortawesome/free-solid-svg-icons';
 import { motion, useAnimation } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
@@ -46,7 +47,7 @@ const StaffSidebar = () => {
         {
           title: 'Business Amendments',
           path: '/applications/amendments',
-          icon: faUserTie,
+          icon: faPenToSquare,
         },
         {
           title: 'Collateral Applications',
@@ -110,7 +111,7 @@ const StaffSidebar = () => {
   return (
     <nav
       className={`flex flex-col h-screen ${
-        sidebarOpen ? 'w-[20vw]' : 'w-[5vw]'
+        sidebarOpen ? 'w-[22vw]' : 'w-[6vw]'
       } transition-all duration-300 fixed top-[10vh]`}
     >
       <motion.div

@@ -30,7 +30,11 @@ const initialState: {
 // FETCH BUSINESS AMENDMENTS THUNK
 export const fetchBusinessAmendmentsThunk = createAsyncThunk<
   BusinessAmendment[],
-  { businessId?: businessId; userId?: UUID; searchKey?: string },
+  {
+    businessId?: businessId;
+    userId?: UUID;
+    searchKey?: string | number | (string | number | null)[] | null;
+  },
   { dispatch: AppDispatch }
 >(
   'businessAmendment/fetchBusinessAmendments',

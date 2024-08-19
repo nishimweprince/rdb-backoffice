@@ -54,7 +54,7 @@ const Router = () => {
             </Route>
             <Route path="amendments" element={<BusinessAmendmentRoutes />}>
               <Route path="" element={<BusinessAmendmentsList />} />
-              <Route path=":id/review" element={<BusinessAmendmentsReview />} />
+              <Route path="review" element={<BusinessAmendmentsReview />} />
             </Route>
           </Route>
         </Route>

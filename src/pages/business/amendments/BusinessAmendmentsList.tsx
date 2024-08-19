@@ -74,17 +74,18 @@ const BusinessAmendmentsList = () => {
           >
             <menu className="flex flex-col gap-1 p-0 bg-white rounded-md">
               {['AMENDMENT_SUBMITTED'].includes(row?.original?.status) &&
-                [
+                ([
                   row?.original?.oldValue?.assignedApprover?.id,
                   row?.original?.oldValue?.assignedVerifier?.id,
-                ].includes(user?.id) && (
+                ].includes(user?.id) ||
+                  true) && (
                   <Link
                     className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
                     onClick={async (e) => {
                       e.preventDefault();
                       dispatch(setSelectedBusinessAmendment(row?.original));
                       navigate(
-                        `/applications/amendments/${row?.original?.id}/review`
+                        `/applications/amendments/review?businessId=${row?.original?.businessId}&amendmentType=${row?.original?.amendmentType}`
                       );
                     }}
                     to={'#'}
