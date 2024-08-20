@@ -3,10 +3,16 @@ import { useEffect, useState } from 'react';
 import queryString, { ParsedQuery } from 'query-string';
 import { AppDispatch, RootState } from '@/states/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { ErrorResponse, useLocation, useNavigate } from 'react-router-dom';
 import {
+  addToBusinessAmendmentReviewComments,
+  fetchAmendmentReviewCommentsThunk,
   fetchBusinessAmendmentsThunk,
+  recommendAmendmentForApprovalThunk,
+  setDeleteAmendmentReviewCommentModal,
+  setSelectedAmendmentReviewComment,
   setSelectedBusinessAmendment,
+  updateBusinessAmendmentStatusThunk,
 } from '@/states/features/businessAmendmentSlice';
 import Loader from '@/components/inputs/Loader';
 import CompanyDetailsAmendmentReview from './CompanyDetailsAmendmentReview';
@@ -14,6 +20,19 @@ import CompanyAddressAmendmentReview from './CompanyAddressAmendmentReview';
 import { BusinessAmendment } from '@/types/models/business';
 import { capitalizeString, formatDateTime } from '@/helpers/strings.helper';
 import BusinessActivitiesAmendmentReview from './BusinessActivitiesAmendmentReview';
+import { Controller, FieldValues, useForm } from 'react-hook-form';
+import TextArea from '@/components/inputs/TextArea';
+import Button from '@/components/inputs/Button';
+import { InputErrorMessage } from '@/components/feedback/ErrorLabels';
+import { useCreateAmendmentReviewCommentMutation } from '@/states/api/businessRegApiSlice';
+import { toast } from 'react-toastify';
+import { BusinessAmendmentReviewComment } from '@/types/models/businessAmendmentReviewComment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import CustomTooltip from '@/components/inputs/CustomTooltip';
+import DeleteAmendmentReviewComment from './DeleteAmendmentReviewComment';
+import BusinessFounderAmendmentReview from './BusinessFounderAmendmentReview';
+import BusinessBoardMemberAmendmentReview from './BusinessBoardMemberAmendmentReview';
 
 const BusinessAmendmentsReview = () => {
   // STATE VARIABLES
@@ -25,10 +44,49 @@ const BusinessAmendmentsReview = () => {
     fetchBusinessAmendmentsIsFetching,
     fetchBusinessAmendmentsIsSuccess,
     businessAmendmentsList,
+    selectedBusinessAmendment,
+    businessAmendmentReviewComments,
+    businessAmendmentReviewCommentsIsFetching,
+    updateBusinessAmendmentStatusIsLoading,
+    updateBusinessAmendmentStatusIsSuccess,
+    recommendAmendmentForApprovalIsLoading,
+    recommendAmendmentForApprovalIsSuccess,
   } = useSelector((state: RootState) => state.businessAmendment);
 
   // NAVIGATION
   const { search } = useLocation();
+  const navigate = useNavigate();
+
+  // REACT HOOK FORM
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm();
+
+  // INITIALIZE CREATE AMENDMENT REVEW COMMENT MUTATION
+  const [
+    createAmendmentReviewComment,
+    {
+      isSuccess: createAmendmentReviewCommentIsSuccess,
+      isLoading: createAmendmentReviewCommentIsLoading,
+      isError: createAmendmentReviewCommentIsError,
+      error: createAmendmentReviewError,
+      reset: resetCreateAmendmentReviewComment,
+      data: createAmendmentReviewCommentData,
+    },
+  ] = useCreateAmendmentReviewCommentMutation();
+
+  // HANDLE FORM SUBMISSION
+  const onSubmit = (data: FieldValues) => {
+    createAmendmentReviewComment({
+      comment: data?.amendmentReviewComment,
+      amendmentDetailId: selectedBusinessAmendment?.id,
+      status: 'UNRESOLVED',
+    });
+  };
 
   // GET PARAM FROM PATH
   useEffect(() => {
@@ -37,12 +95,12 @@ const BusinessAmendmentsReview = () => {
 
   // FETCH BUSINESS AMENDMENT
   useEffect(() => {
-      dispatch(
-        fetchBusinessAmendmentsThunk({
-          businessId: queryParams?.businessId,
-          searchKey: queryParams?.amendmentType,
-        })
-      );
+    dispatch(
+      fetchBusinessAmendmentsThunk({
+        businessId: queryParams?.businessId,
+        searchKey: queryParams?.amendmentType,
+      })
+    );
   }, [dispatch, queryParams]);
 
   // HANDLE FETCH BUSINESS AMENDMENT RESPONSE
@@ -50,7 +108,59 @@ const BusinessAmendmentsReview = () => {
     if (fetchBusinessAmendmentsIsSuccess) {
       dispatch(setSelectedBusinessAmendment(businessAmendmentsList?.[0]));
     }
-  }, [businessAmendmentsList, dispatch, fetchBusinessAmendmentsIsSuccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, fetchBusinessAmendmentsIsSuccess]);
+
+  // HANDLE CREATE AMENDMENT REVIEW COMMENT RESPONSE
+  useEffect(() => {
+    if (createAmendmentReviewCommentIsSuccess) {
+      resetCreateAmendmentReviewComment();
+      setValue('amendmentReviewComment', '');
+      dispatch(
+        addToBusinessAmendmentReviewComments(
+          createAmendmentReviewCommentData?.data
+        )
+      );
+    } else if (createAmendmentReviewCommentIsError) {
+      const errorResponse =
+        (createAmendmentReviewError as ErrorResponse)?.data?.message ||
+        'Failed to create amendment review comment';
+      toast.error(errorResponse);
+    }
+  }, [
+    createAmendmentReviewCommentData?.data,
+    createAmendmentReviewCommentIsError,
+    createAmendmentReviewCommentIsSuccess,
+    createAmendmentReviewError,
+    dispatch,
+    resetCreateAmendmentReviewComment,
+    setValue,
+  ]);
+
+  // FETCH AMENDMENT REVIEW COMMENTS
+  useEffect(() => {
+    if (selectedBusinessAmendment?.id) {
+      dispatch(
+        fetchAmendmentReviewCommentsThunk({
+          amendmentDetailId: selectedBusinessAmendment?.id,
+        })
+      );
+    }
+  }, [dispatch, selectedBusinessAmendment]);
+
+  // HANDLE UPDATE BUSINESS AMENDMENT STATUS RESPONSE
+  useEffect(() => {
+    if (updateBusinessAmendmentStatusIsSuccess) {
+      navigate(`/applications/amendments`);
+    }
+  }, [navigate, updateBusinessAmendmentStatusIsSuccess]);
+
+  // HANDLE RECOMMEND AMENDMENT FOR APPROVAL RESPONSE
+  useEffect(() => {
+    if (recommendAmendmentForApprovalIsSuccess) {
+      navigate(`/applications/amendments`);
+    }
+  }, [navigate, recommendAmendmentForApprovalIsSuccess]);
 
   return (
     <StaffLayout>
@@ -70,14 +180,162 @@ const BusinessAmendmentsReview = () => {
             {queryParams?.amendmentType === 'AMEND_BUSINESS_ACTIVITIES' && (
               <BusinessActivitiesAmendmentReview />
             )}
+            {queryParams?.amendmentType === 'AMEND_ADD_BUSINESS_FOUNDER' && (
+              <BusinessFounderAmendmentReview />
+            )}
+            {queryParams?.amendmentType ===
+              'AMEND_ADD_BUSINESS_BOARD_MEMBER' && (
+              <BusinessBoardMemberAmendmentReview />
+            )}
           </menu>
         )}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-[50%] flex flex-col gap-2 p-5"
+        >
+          <fieldset className="w-full flex flex-col gap-3">
+            <Controller
+              name="amendmentReviewComment"
+              control={control}
+              rules={{ required: 'Review comment is required to proceed' }}
+              render={({ field }) => {
+                return (
+                  <label className="w-full flex flex-col gap-2">
+                    <p className="px-1">
+                      Amendment review comment{' '}
+                      <span className="text-red-600">*</span>{' '}
+                    </p>
+                    <TextArea
+                      resize
+                      placeholder="Start typing here..."
+                      required
+                      {...field}
+                    />
+                    {errors?.amendmentReviewComment && (
+                      <InputErrorMessage
+                        message={errors?.amendmentReviewComment?.message}
+                      />
+                    )}
+                  </label>
+                );
+              }}
+            />
+          </fieldset>
+          <menu className="w-full flex items-center gap-3 justify-end">
+            {watch('amendmentReviewComment') && (
+              <Button submit primary className="flex self-end">
+                {createAmendmentReviewCommentIsLoading ? <Loader /> : 'Save'}
+              </Button>
+            )}
+          </menu>
+        </form>
+        {businessAmendmentReviewComments?.length > 0 && (
+          <article className="w-full flex flex-col gap-5 px-5">
+            {businessAmendmentReviewCommentsIsFetching ? (
+              <figure className="w-full flex items-center justify-center min-h-[30vh]">
+                <Loader className="text-primary" />
+              </figure>
+            ) : (
+              <menu className="w-full flex flex-col gap-4">
+                <h3 className="uppercase text-primary font-medium">
+                  Comment(s)
+                </h3>
+                {businessAmendmentReviewComments?.map((comment, index) => {
+                  return (
+                    <AmendmentReviewComment
+                      amendmentReviewComment={comment}
+                      key={index}
+                    />
+                  );
+                })}
+              </menu>
+            )}
+          </article>
+        )}
+        <menu className="w-full flex items-center justify-between p-5">
+          <Button route="/applications/amendments">Back</Button>
+          <Button danger>Recommend for rejection</Button>
+          <Button
+            primary
+            className="!bg-green-700 hover:!bg-green-700 border-none"
+            onClick={(e) => {
+              e.preventDefault();
+              if (selectedBusinessAmendment) {
+                dispatch(
+                  recommendAmendmentForApprovalThunk({
+                    amendmentId: selectedBusinessAmendment?.id,
+                  })
+                );
+              }
+            }}
+          >
+            {recommendAmendmentForApprovalIsLoading ? (
+              <Loader />
+            ) : (
+              'Recommend for approval'
+            )}
+          </Button>
+          <Button
+            primary={businessAmendmentReviewComments?.length > 0}
+            disabled={businessAmendmentReviewComments?.length <= 0}
+            onClick={(e) => {
+              e.preventDefault();
+              if (selectedBusinessAmendment) {
+                dispatch(
+                  updateBusinessAmendmentStatusThunk({
+                    id: selectedBusinessAmendment?.id,
+                    amendmentStatus: 'ACTION_REQUIRED',
+                  })
+                );
+              }
+            }}
+          >
+            {updateBusinessAmendmentStatusIsLoading ? (
+              <Loader />
+            ) : (
+              'Return for correction'
+            )}
+          </Button>
+        </menu>
       </main>
+      <DeleteAmendmentReviewComment />
     </StaffLayout>
   );
 };
 
-export const BusinessAmendmentRequestSummary = ({ businessAmendment }: {
+export const AmendmentReviewComment = ({
+  amendmentReviewComment,
+}: {
+  amendmentReviewComment: BusinessAmendmentReviewComment;
+}) => {
+  // STATE VARIABLES
+  const dispatch: AppDispatch = useDispatch();
+
+  return (
+    <article className="w-full flex items-center gap-4 p-3 rounded-md shadow-md justify-between">
+      <p>{amendmentReviewComment?.comment}</p>
+      <menu className="flex items-center gap-2">
+        <CustomTooltip label="Click to delete" labelClassName="bg-red-600">
+          <FontAwesomeIcon
+            onClick={(e) => {
+              e.preventDefault();
+              dispatch(
+                setSelectedAmendmentReviewComment(amendmentReviewComment)
+              );
+              dispatch(setDeleteAmendmentReviewCommentModal(true));
+            }}
+            className="p-2 px-[8.1px] rounded-full transition-all ease-in-out duration-300 hover:scale-[1.01] shadow-md bg-red-600 text-white cursor-pointer"
+            icon={faTrash}
+          />
+        </CustomTooltip>
+      </menu>
+    </article>
+  );
+};
+
+export const BusinessAmendmentRequestSummary = ({
+  businessAmendment,
+}: {
   businessAmendment?: BusinessAmendment;
 }) => {
   return (
@@ -104,9 +362,7 @@ export const BusinessAmendmentRequestSummary = ({ businessAmendment }: {
         <ul className="flex items-center gap-5">
           <p> Application status</p>
           <p className="font-medium">
-            {capitalizeString(
-              businessAmendment?.business?.applicationStatus
-            )}
+            {capitalizeString(businessAmendment?.business?.applicationStatus)}
           </p>
         </ul>
         <ul className="flex items-center gap-5">

@@ -178,6 +178,15 @@ export const businessRegQueryApiSlice = createApi({
           };
         },
       }),
+
+      // FETCH AMENDMENT REVIEW COMMENTS
+      fetchAmendmentReviewComments: builder.query({
+        query: ({ amendmentDetailId }) => {
+          return {
+            url: `/review-comments/amendment?amendmentDetailId=${amendmentDetailId}`,
+          };
+        },
+      }),
     };
   },
 });
@@ -199,7 +208,8 @@ export const {
   useLazyFetchBusinessAttachmentsQuery,
   useLazyFetchBusinessReviewCommentsQuery,
   useLazyFetchServicesQuery,
-  useLazyFetchBusinessAmendmentsQuery
+  useLazyFetchBusinessAmendmentsQuery,
+  useLazyFetchAmendmentReviewCommentsQuery,
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

@@ -10,6 +10,12 @@ export const businessAmendmentColumns = [
       `${row?.original?.business?.applicationReferenceId}`,
   },
   {
+    header: 'Application Status',
+    accessorKey: 'applicationStatus',
+    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
+      `${capitalizeString(row?.original?.business?.applicationStatus)}`,
+  },
+  {
     header: 'Business Name',
     accessorKey: 'companyName',
     cell: ({ row }: { row: Row<BusinessAmendment> }) =>
@@ -28,10 +34,10 @@ export const businessAmendmentColumns = [
       capitalizeString(row?.original?.amendmentType),
   },
   {
-    header: 'Status',
-    accessorKey: 'status',
+    header: 'Amendment Status',
+    accessorKey: 'amendmentStatus',
     cell: ({ row }: { row: Row<BusinessAmendment> }) =>
-      `${capitalizeString(row?.original?.status)}`,
+      capitalizeString(row?.original?.status),
   },
   {
     header: 'Company Category',

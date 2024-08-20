@@ -11,6 +11,7 @@ const initialState: {
   deleteFounderModal: boolean;
   founderDetailsIsFetching: boolean;
   founderDetailsIsSuccess: boolean;
+  founderDetailsModal: boolean;
 } = {
   founderDetailsList: [],
   selectedFounderDetail: {} as FounderDetail,
@@ -18,6 +19,7 @@ const initialState: {
   deleteFounderModal: false,
   founderDetailsIsFetching: false,
   founderDetailsIsSuccess: false,
+  founderDetailsModal: false
 };
 
 // FETCH FOUNDER DETAILS LIST THUNK
@@ -62,6 +64,9 @@ const founderDetailSlice = createSlice({
     setDeleteFounderModal: (state, action) => {
       state.deleteFounderModal = action.payload;
     },
+    setFounderDetailsModal: (state, action) => {
+      state.founderDetailsModal = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchFounderDetailsListThunk.fulfilled, (state, action) => {
@@ -89,6 +94,7 @@ export const {
   removeFounderDetail,
   setAssignSharesModal,
   setDeleteFounderModal,
+  setFounderDetailsModal
 } = founderDetailSlice.actions;
 
 export default founderDetailSlice.reducer;

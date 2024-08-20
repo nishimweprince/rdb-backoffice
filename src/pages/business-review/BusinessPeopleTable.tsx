@@ -1,8 +1,7 @@
 import Table from '@/components/table/Table';
-import { countriesList } from '@/constants/location.constants';
-import { genderOptions } from '@/constants/inputs.constants';
+import { getCountryName } from '@/constants/location.constants';
+import { getGenderLabel } from '@/constants/inputs.constants';
 import { capitalizeString } from '@/helpers/strings.helper';
-import { businessId } from '@/types/models/business';
 import { PersonDetail } from '@/types/models/personDetail';
 import { businessPeopleColumns } from '@/constants/business.constants';
 import { ColumnDef, Row } from '@tanstack/react-table';
@@ -17,17 +16,18 @@ import { Link } from 'react-router-dom';
 import BusinessPersonDetails from './BusinessPersonDetails';
 import { AppDispatch } from '@/states/store';
 import { useDispatch } from 'react-redux';
-import { setBusinessPersonDetailsModal, setSelectedBusinessPerson } from '@/states/features/businessPeopleSlice';
+import {
+  setBusinessPersonDetailsModal,
+  setSelectedBusinessPerson,
+} from '@/states/features/businessPeopleSlice';
 
 type BusinessPeopleTableProps = {
-  businessId?: businessId;
   businessPeopleList: PersonDetail[];
 };
 
 const BusinessPeopleTable = ({
   businessPeopleList,
 }: BusinessPeopleTableProps) => {
-
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
 
@@ -84,16 +84,12 @@ const BusinessPeopleTable = ({
           data={businessPeopleList?.map((person: PersonDetail) => {
             return {
               ...person,
-              position: capitalizeString(person?.roleDescription),
+              position: capitalizeString(person?.personRole?.roleDescription),
               name: `${person.firstName} ${person.middleName || ''} ${
                 person.lastName || ''
               }`,
-              nationality: countriesList?.find(
-                (country) => country?.code === person?.nationality
-              )?.name,
-              gender: genderOptions?.find(
-                (gender) => gender?.value === person?.gender
-              )?.label,
+              nationality: getCountryName(person?.nationality),
+              gender: getGenderLabel(person?.gender),
             };
           })}
           columns={businessPeopleExtendedColumns as ColumnDef<PersonDetail>[]}
