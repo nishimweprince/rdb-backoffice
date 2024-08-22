@@ -77,7 +77,7 @@ const ReviewBusinessApplications = () => {
   useEffect(() => {
     if (updateBusinessIsSuccess && selectedBusiness) {
       dispatch(setUpdateBusinessIsSuccess(false));
-      navigate(`/applications/${selectedBusiness?.id}/review`);
+      navigate(`/applications/business/${selectedBusiness?.id}/review`);
       dispatch(setSelectedBusiness(undefined));
     }
   }, [updateBusinessIsSuccess, selectedBusiness, navigate, dispatch]);
@@ -127,11 +127,7 @@ const ReviewBusinessApplications = () => {
                 'ACTION_REQUIRED',
                 'PENDING_DECISION',
                 'IN_REVIEW',
-              ].includes(row?.original?.applicationStatus) &&
-                [
-                  row?.original?.assignedApprover?.id,
-                  row?.original?.assignedVerifier?.id,
-                ].includes(user?.id) && (
+              ].includes(row?.original?.applicationStatus) && (
                   <Link
                     className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
                     onClick={async (e) => {

@@ -57,7 +57,7 @@ export const businessRegQueryApiSlice = createApi({
       fetchServices: builder.query({
         query: ({ category }) => {
           return {
-            url: `/services?${category ? `category=${category}` : ""}`,
+            url: `/services?${category ? `category=${category}` : ''}`,
           };
         },
       }),
@@ -158,7 +158,35 @@ export const businessRegQueryApiSlice = createApi({
             url += `&navigationFlowId=${navigationFlowId}`;
           }
           return {
-            url
+            url,
+          };
+        },
+      }),
+
+      // FETCH AMENDMENTS
+      fetchBusinessAmendments: builder.query({
+        query: ({ businessId, userId, searchKey }) => {
+          let url = `/back-office/amendments?page=1&size=100`;
+          if (businessId) {
+            url += `&businessId=${businessId}`;
+          }
+          if (userId) {
+            url += `&userId=${userId}`;
+          }
+          if (searchKey) {
+            url += `&searchKey=${searchKey}`;
+          }
+          return {
+            url,
+          };
+        },
+      }),
+
+      // FETCH AMENDMENT REVIEW COMMENTS
+      fetchAmendmentReviewComments: builder.query({
+        query: ({ amendmentDetailId }) => {
+          return {
+            url: `/review-comments/amendment?amendmentDetailId=${amendmentDetailId}`,
           };
         },
       }),
@@ -183,6 +211,8 @@ export const {
   useLazyFetchBusinessAttachmentsQuery,
   useLazyFetchBusinessReviewCommentsQuery,
   useLazyFetchServicesQuery,
+  useLazyFetchBusinessAmendmentsQuery,
+  useLazyFetchAmendmentReviewCommentsQuery,
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

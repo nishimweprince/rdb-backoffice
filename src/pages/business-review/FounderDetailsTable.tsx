@@ -8,6 +8,10 @@ import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Link } from 'react-router-dom';
+import FounderDetails from './BusinessFounderDetails';
+import { AppDispatch } from '@/states/store';
+import { useDispatch } from 'react-redux';
+import { setFounderDetailsModal, setSelectedFounderDetail } from '@/states/features/founderDetailSlice';
 
 type FounderDetailsTableProps = {
   founderDetailsList: FounderDetail[];
@@ -16,6 +20,10 @@ type FounderDetailsTableProps = {
 const FounderDetailsTable = ({
   founderDetailsList,
 }: FounderDetailsTableProps) => {
+
+  // STATE VARIABLES
+  const dispatch: AppDispatch = useDispatch();
+
   // FOUNDER DETAILS COLUMNS
   const founderDetailsExtendedColumns = [
     {
@@ -41,7 +49,8 @@ const FounderDetailsTable = ({
                 className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log(row?.original);
+                  dispatch(setSelectedFounderDetail(row?.original));
+                  dispatch(setFounderDetailsModal(true));
                 }}
                 to={'#'}
               >
@@ -84,6 +93,7 @@ const FounderDetailsTable = ({
           columns={founderDetailsExtendedColumns as ColumnDef<FounderDetail>[]}
         />
       )}
+      <FounderDetails />
     </section>
   );
 };

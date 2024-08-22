@@ -618,7 +618,7 @@ const BusinessApplicationReview = () => {
                       dispatch(
                         updateBusinessThunk({
                           businessId: businessId as businessId,
-                          applicationStatus: 'APPROVED',
+                          applicationStatus: 'ACTIVE',
                         })
                       );
                     }}

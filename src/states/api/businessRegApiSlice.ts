@@ -107,6 +107,110 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // CREATE AMENDMENT REVIEW COMMENT
+      createAmendmentReviewComment: builder.mutation({
+        query: ({ amendmentDetailId, comment, status = 'UNRESOLVED' }) => {
+          return {
+            url: `/review-comments/amendment`,
+            method: 'POST',
+            body: {
+              amendmentDetailId,
+              comment,
+              status,
+            },
+          };
+        },
+      }),
+
+      // UPDATE AMENDMENT REVIEW COMMENT
+      updateAmendmentReviewComment: builder.mutation({
+        query: ({ id, comment }) => {
+          return {
+            url: `/review-comments/amendment/${id}`,
+            method: 'PATCH',
+            body: {
+              comment,
+            },
+          };
+        },
+      }),
+
+      // UPDATE AMENDMENT REVIEW COMMENT STATUS
+      updateAmendmentReviewCommentStatus: builder.mutation({
+        query: ({ id, status }) => {
+          return {
+            url: `/review-comments/amendment/${id}/status`,
+            method: 'PATCH',
+            body: {
+              status,
+            },
+          };
+        },
+      }),
+
+      // DELETE AMENDMENT REVIEW COMMENT
+      deleteAmendmentReviewComment: builder.mutation({
+        query: ({ id }) => {
+          return {
+            url: `/review-comments/amendment/${id}`,
+            method: 'DELETE',
+          };
+        },
+      }),
+
+      // UPDATE BUSINESS AMENDMENT
+      updateBusinessAmendmentStatus: builder.mutation({
+        query: ({ id, amendmentStatus }) => {
+          return {
+            url: `/amendment/${id}`,
+            method: 'PATCH',
+            body: {
+              amendmentStatus,
+            },
+          };
+        },
+      }),
+
+      // RECOMMEND AMENDMENT FOR APPROVAL
+      recommendAmendmentForApproval: builder.mutation({
+        query: ({ amendmentId }) => {
+          return {
+            url: `/back-office/request-amendment-approval?amendmentId=${amendmentId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
+
+      // APPROVE AMENDMENT
+      approveAmendment: builder.mutation({
+        query: ({ amendmentId }) => {
+          return {
+            url: `/back-office/approve-amendment?amendmentId=${amendmentId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
+
+      // REJECT AMENDMENT
+      rejectAmendment: builder.mutation({
+        query: ({ amendmentId, entityId }) => {
+          return {
+            url: `/back-office/reject-amendment?amendmentId=${amendmentId}&entityId=${entityId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
+
+      // RECOMMEND AMENDMENT REJECTION
+      recommendAmendmentRejection: builder.mutation({
+        query: ({ amendmentId }) => {
+          return {
+            url: `/back-office/recommend-amendment-rejection?amendmentId=${amendmentId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
     };
   },
 });
@@ -120,6 +224,15 @@ export const {
   useUpdateBusinessReviewCommentMutation,
   useUpdateBusinessReviewCommentStatusMutation,
   useRequestBusinessApproverMutation,
+  useCreateAmendmentReviewCommentMutation,
+  useUpdateAmendmentReviewCommentMutation,
+  useUpdateAmendmentReviewCommentStatusMutation,
+  useUpdateBusinessAmendmentStatusMutation,
+  useDeleteAmendmentReviewCommentMutation,
+  useRecommendAmendmentForApprovalMutation,
+  useApproveAmendmentMutation,
+  useRejectAmendmentMutation,
+  useRecommendAmendmentRejectionMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;

@@ -7,7 +7,6 @@ import {
 import store from 'store';
 import { businessRegApi, userManagementApi } from '../../constants/environments.constants';
 import { setToken, setUser } from '../features/userSlice';
-import { toast } from 'react-toastify';
 
 const prepareHeaders = (headers: Headers) => {
   const user = store.get('user');
@@ -36,7 +35,7 @@ export const businessBaseQueryWithReauth: BaseQueryFn<
       api.dispatch(setUser(undefined));
       window.location.href = '/auth/login';
     } else if (Number(result?.error?.status) === 500) {
-      toast.error('An error occurred. Please try again later.');
+      throw Error
     }
   }
 

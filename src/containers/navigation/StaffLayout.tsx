@@ -21,7 +21,7 @@ const StaffLayout = ({ children }: StaffLayoutProps) => {
         <Navbar />
         <section
           className={`${
-            sidebarOpen ? 'w-[80vw] left-[20vw]' : 'w-[95vw] left-[5vw]'
+            sidebarOpen ? 'w-[78vw] left-[22vw]' : 'w-[94vw] left-[6vw]'
           } top-[10vh] absolute mx-auto flex items-center justify-center p-6`}
         >
           <section className="h-full mx-auto w-full max-w-[1500px]">

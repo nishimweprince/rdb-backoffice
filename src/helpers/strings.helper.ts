@@ -12,6 +12,12 @@ export const formatDate = (date: string | Date | undefined) => {
   return moment(date).format('YYYY-MM-DD');
 };
 
+// FORMAT DATE AND TIME
+export const formatDateTime = (date: string | Date | undefined) => {
+  if (!date) return '';
+  return moment(date).format('YYYY-MM-DD HH:mm:ss');
+};
+
 // CAPITALIZE STRING
 export const capitalizeString = (string: string | undefined | null) => {
   if (!string) return '';
@@ -34,7 +40,7 @@ export function capitalizeCamelCase(string: string) {
 }
 
 // FORMAT NUMBERS
-export const formatNumbers = (number: number | string) => {
+export const formatNumbers = (number?: number | string) => {
   if (!number) return '';
   return new Intl.NumberFormat().format(Number(number));
 };
@@ -42,4 +48,16 @@ export const formatNumbers = (number: number | string) => {
 // REMOVE DUPLICATES FROM ARRAY
 export const removeArrayDuplicates = (array: object[]) => {
   return [...new Set(array)];
+};
+
+// FORMAT CURRENCY
+export const formatCurrency = (
+  amount: number | string | undefined,
+  currency: string = 'USD'
+) => {
+  if (!amount) return '';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+  }).format(Number(amount));
 };
