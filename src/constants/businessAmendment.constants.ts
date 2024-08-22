@@ -1,6 +1,7 @@
-import { capitalizeString, formatDate } from '@/helpers/strings.helper';
+import { capitalizeString } from '@/helpers/strings.helper';
 import { BusinessAmendment } from '@/types/models/business';
 import { Row } from '@tanstack/react-table';
+import moment from 'moment';
 
 export const businessAmendmentColumns = [
   {
@@ -49,23 +50,23 @@ export const businessAmendmentColumns = [
     header: 'Assigned Verifier',
     accessorKey: 'assignedVerifier',
     cell: ({ row }: { row: Row<BusinessAmendment> }) =>
-      `${row?.original?.oldValue?.assignedVerifier?.firstName || '-'} ${
-        row?.original?.oldValue?.assignedVerifier?.lastName || ''
+      `${row?.original?.assignedVerifier?.firstName || '-'} ${
+        row?.original?.assignedVerifier?.lastName || ''
       }`,
   },
   {
     header: 'Assigned Approver',
     accessorKey: 'assignedApprover',
     cell: ({ row }: { row: Row<BusinessAmendment> }) =>
-      `${row?.original?.oldValue?.assignedApprover?.firstName || '-'} ${
-        row?.original?.oldValue?.assignedApprover?.lastName || ''
+      `${row?.original?.assignedApprover?.firstName || '-'} ${
+        row?.original?.assignedApprover?.lastName || ''
       }`,
   },
   {
     header: 'Date created',
     accessorKey: 'createdAt',
     cell: ({ row }: { row: Row<BusinessAmendment> }) =>
-      formatDate(row?.original?.createdAt),
+      moment(row?.original?.createdAt).format('YYYY-MM-DD HH:mm'),
   },
 ];
 

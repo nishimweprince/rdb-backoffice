@@ -166,7 +166,10 @@ export const businessRegQueryApiSlice = createApi({
       // FETCH AMENDMENTS
       fetchBusinessAmendments: builder.query({
         query: ({ businessId, userId, searchKey }) => {
-          let url = `/back-office/amendments?businessId=${businessId}`;
+          let url = `/back-office/amendments?page=1&size=100`;
+          if (businessId) {
+            url += `&businessId=${businessId}`;
+          }
           if (userId) {
             url += `&userId=${userId}`;
           }

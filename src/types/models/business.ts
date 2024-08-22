@@ -100,4 +100,6 @@ export interface BusinessAmendment extends AbstractDomain {
   businessId: UUID;
   status: string;
   business: Business;
+  assignedVerifier?: User;
+  assignedApprover?: User;
 }

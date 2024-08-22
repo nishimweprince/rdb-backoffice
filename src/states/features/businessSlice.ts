@@ -43,6 +43,8 @@ const initialState: {
   businessEmploymentInfo?: EmploymentInfo;
   businessEmploymentInfoIsFetching: boolean;
   businessEmploymentInfoIsSuccess: boolean;
+  approveAmendmentIsLoading: boolean;
+  approveAmendmentIsSuccess: boolean;
 } = {
   businessesList: [],
   business: {} as Business,
@@ -70,6 +72,8 @@ const initialState: {
   businessEmploymentInfo: undefined,
   businessEmploymentInfoIsFetching: false,
   businessEmploymentInfoIsSuccess: false,
+  approveAmendmentIsLoading: false,
+  approveAmendmentIsSuccess: false,
 };
 
 // FETCH BUSINESSES
@@ -213,7 +217,6 @@ export const fetchBusinessEmploymentInfoThunk = createAsyncThunk<
 >(
   'business/fetchBusinessEmploymentInfo',
   async ({ businessId }, { dispatch }) => {
-    try {
       const response = await dispatch(
         businessRegQueryApiSlice.endpoints.fetchBusinessEmploymentInfo.initiate(
           {
@@ -223,10 +226,6 @@ export const fetchBusinessEmploymentInfoThunk = createAsyncThunk<
       ).unwrap();
       dispatch(setBusinessEmploymentInfo(response?.data));
       return response.data;
-    } catch (error) {
-      toast.error('An error occurred while fetching business employment info');
-      throw error;
-    }
   }
 );
 

@@ -27,6 +27,12 @@ const initialState: {
   updateBusinessAmendmentStatusIsSuccess: boolean;
   recommendAmendmentForApprovalIsLoading: boolean;
   recommendAmendmentForApprovalIsSuccess: boolean;
+  rejectAmendmentIsLoading: boolean;
+  rejectAmendmentIsSuccess: boolean;
+  approveAmendmentIsLoading: boolean;
+  approveAmendmentIsSuccess: boolean;
+  recommendAmendmentRejectionIsLoading: boolean;
+  recommendAmendmentRejectionIsSuccess: boolean;
 } = {
   businessAmendmentsList: [],
   selectedBusinessAmendment: undefined,
@@ -47,6 +53,12 @@ const initialState: {
   updateBusinessAmendmentStatusIsSuccess: false,
   recommendAmendmentForApprovalIsLoading: false,
   recommendAmendmentForApprovalIsSuccess: false,
+  rejectAmendmentIsLoading: false,
+  rejectAmendmentIsSuccess: false,
+  approveAmendmentIsLoading: false,
+  approveAmendmentIsSuccess: false,
+  recommendAmendmentRejectionIsLoading: false,
+  recommendAmendmentRejectionIsSuccess: false,
 };
 
 // FETCH BUSINESS AMENDMENTS THUNK
@@ -144,6 +156,62 @@ export const recommendAmendmentForApprovalThunk = createAsyncThunk<
     }
   }
 );
+
+// APPROVE AMENDMENT THUNK
+export const approveAmendmentThunk = createAsyncThunk<
+  void,
+  { amendmentId: UUID },
+  { dispatch: AppDispatch }
+>('business/approveAmendment', async ({ amendmentId }, { dispatch }) => {
+  try {
+    await dispatch(
+      businessRegApiSlice.endpoints.approveAmendment.initiate({
+        amendmentId,
+      })
+    ).unwrap();
+  } catch (error) {
+    toast.error('An error occurred while approving amendment');
+    throw error;
+  }
+});
+
+// REJECT AMENDMENT THUNK
+export const rejectAmendmentThunk = createAsyncThunk<
+  void,
+  { amendmentId: UUID, entityId: UUID },
+  { dispatch: AppDispatch }
+>('business/rejectAmendment', async ({ amendmentId, entityId }, { dispatch }) => {
+  try {
+    await dispatch(
+      businessRegApiSlice.endpoints.rejectAmendment.initiate({
+        amendmentId,
+        entityId,
+      })
+    ).unwrap();
+  } catch (error) {
+    toast.error('An error occurred while rejecting amendment');
+    throw error;
+  }
+});
+
+// RECOMMEND AMENDMENT REJECTION THUNK
+export const recommendAmendmentRejectionThunk = createAsyncThunk<
+  void,
+  { amendmentId: UUID },
+  { dispatch: AppDispatch }
+>(`business/recommendAmendmentRejection`, async ({ amendmentId }, { dispatch }) => {
+  try {
+    const response = await dispatch(
+      businessRegApiSlice.endpoints.recommendAmendmentRejection.initiate({
+        amendmentId,
+      })
+    );
+    return response.data.data
+  } catch (error) {
+    toast.error('An error occurred while recommending amendment rejection');
+    throw error;
+  }
+});
 
 const businessAmendmentSlice = createSlice({
   name: 'businessAmendment',
@@ -261,6 +329,42 @@ const businessAmendmentSlice = createSlice({
     builder.addCase(recommendAmendmentForApprovalThunk.rejected, (state) => {
       state.recommendAmendmentForApprovalIsLoading = false;
       state.recommendAmendmentForApprovalIsSuccess = false;
+    });
+    builder.addCase(approveAmendmentThunk.pending, (state) => {
+      state.approveAmendmentIsLoading = true;
+      state.approveAmendmentIsSuccess = false;
+    });
+    builder.addCase(approveAmendmentThunk.fulfilled, (state) => {
+      state.approveAmendmentIsLoading = false;
+      state.approveAmendmentIsSuccess = true;
+    });
+    builder.addCase(approveAmendmentThunk.rejected, (state) => {
+      state.approveAmendmentIsLoading = false;
+      state.approveAmendmentIsSuccess = false;
+    });
+    builder.addCase(rejectAmendmentThunk.pending, (state) => {
+      state.rejectAmendmentIsLoading = true;
+      state.rejectAmendmentIsSuccess = false;
+    });
+    builder.addCase(rejectAmendmentThunk.fulfilled, (state) => {
+      state.rejectAmendmentIsLoading = false;
+      state.rejectAmendmentIsSuccess = true;
+    });
+    builder.addCase(rejectAmendmentThunk.rejected, (state) => {
+      state.rejectAmendmentIsLoading = false;
+      state.rejectAmendmentIsSuccess = false;
+    });
+    builder.addCase(recommendAmendmentRejectionThunk.pending, (state) => {
+      state.recommendAmendmentRejectionIsLoading = true;
+      state.recommendAmendmentRejectionIsSuccess = false;
+    });
+    builder.addCase(recommendAmendmentRejectionThunk.fulfilled, (state) => {
+      state.recommendAmendmentRejectionIsLoading = false;
+      state.recommendAmendmentRejectionIsSuccess = true;
+    });
+    builder.addCase(recommendAmendmentRejectionThunk.rejected, (state) => {
+      state.recommendAmendmentRejectionIsLoading = false;
+      state.recommendAmendmentRejectionIsSuccess = false;
     });
   },
 });

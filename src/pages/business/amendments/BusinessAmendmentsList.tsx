@@ -33,7 +33,7 @@ const BusinessAmendmentsList = () => {
     fetchBusinessAmendmentsIsSuccess,
   } = useSelector((state: RootState) => state.businessAmendment);
   const { user } = useSelector((state: RootState) => state.user);
-  const [userId, setUserId] = useState<UUID | undefined>(undefined);
+  const [userId, setUserId] = useState<UUID | undefined>(user?.id);
 
   // NAVIGATION
   const navigate = useNavigate();
@@ -73,10 +73,12 @@ const BusinessAmendmentsList = () => {
             }
           >
             <menu className="flex flex-col gap-1 p-0 bg-white rounded-md">
-              {['AMENDMENT_SUBMITTED'].includes(row?.original?.status) &&
+              {['AMENDMENT_SUBMITTED', 'PENDING_APPROVAL', 'RESUBMITTED', 'PENDING_REJECTION'].includes(
+                row?.original?.status
+              ) &&
                 ([
-                  row?.original?.oldValue?.assignedApprover?.id,
-                  row?.original?.oldValue?.assignedVerifier?.id,
+                  row?.original?.assignedApprover?.id,
+                  row?.original?.assignedVerifier?.id,
                 ].includes(user?.id) ||
                   true) && (
                   <Link
@@ -153,7 +155,9 @@ const BusinessAmendmentsList = () => {
         ) : (
           fetchBusinessAmendmentsIsSuccess && (
             <Table
-              data={businessAmendmentsList}
+              data={businessAmendmentsList
+                ?.slice()
+                ?.sort((a, b) => Number(b?.updatedAt) - Number(a?.updatedAt))}
               columns={
                 businessAmendmentExtendedColumns as ColumnDef<BusinessAmendment>[]
               }

@@ -31,6 +31,21 @@ const CompanyAddressAmendmentReview = () => {
             {Object.entries(selectedBusinessAmendment?.oldValue ?? {})?.map(
               ([key, value], index) => {
                 if (key === 'id' || value === null) return null;
+                if (key === 'location') {
+                  return (
+                    <ul key={index} className="grid grid-cols-2 items-center gap-4">
+                      {Object.entries(value)?.map(([locationKey, locationValue], index) => {
+                        if (locationKey === 'id' || locationValue === null) return null;
+                        return (
+                          <ul key={index} className="flex items-center gap-5">
+                            <p>{capitalizeString(locationKey)}:</p>
+                            <p className="font-medium">{String(locationValue)}</p>
+                          </ul>
+                        );
+                      })}
+                    </ul>
+                  )
+                }
                 if (key === 'countryOfIncorporation') {
                   return (
                     <ul key={index} className="flex items-center gap-5">
@@ -62,6 +77,21 @@ const CompanyAddressAmendmentReview = () => {
             {Object.entries(selectedBusinessAmendment?.newValue ?? {})?.map(
               ([key, value], index) => {
                 if (key === 'id' || value === null) return null;
+                if (key === 'location') {
+                  return (
+                    <ul key={index} className="grid grid-cols-2 items-center gap-4">
+                      {Object.entries(value)?.map(([locationKey, locationValue], index) => {
+                        if (locationKey === 'id' || locationValue === null) return null;
+                        return (
+                          <ul key={index} className="flex items-center gap-5">
+                            <p>{capitalizeString(locationKey)}:</p>
+                            <p className="font-medium">{String(locationValue)}</p>
+                          </ul>
+                        );
+                      })}
+                    </ul>
+                  )
+                }
                 if (key === 'countryOfIncorporation') {
                   return (
                     <ul key={index} className="flex items-center gap-5">

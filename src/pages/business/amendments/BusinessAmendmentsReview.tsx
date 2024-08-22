@@ -6,9 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ErrorResponse, useLocation, useNavigate } from 'react-router-dom';
 import {
   addToBusinessAmendmentReviewComments,
+  approveAmendmentThunk,
   fetchAmendmentReviewCommentsThunk,
   fetchBusinessAmendmentsThunk,
   recommendAmendmentForApprovalThunk,
+  recommendAmendmentRejectionThunk,
+  rejectAmendmentThunk,
   setDeleteAmendmentReviewCommentModal,
   setSelectedAmendmentReviewComment,
   setSelectedBusinessAmendment,
@@ -33,6 +36,8 @@ import CustomTooltip from '@/components/inputs/CustomTooltip';
 import DeleteAmendmentReviewComment from './DeleteAmendmentReviewComment';
 import BusinessFounderAmendmentReview from './BusinessFounderAmendmentReview';
 import BusinessBoardMemberAmendmentReview from './BusinessBoardMemberAmendmentReview';
+import ExecutiveMemberAmendmentReview from './ExecutiveMemberAmendmentReview';
+import EmploymentInfoAmendmentReview from './EmploymentInfoAmendmentReview';
 
 const BusinessAmendmentsReview = () => {
   // STATE VARIABLES
@@ -51,6 +56,12 @@ const BusinessAmendmentsReview = () => {
     updateBusinessAmendmentStatusIsSuccess,
     recommendAmendmentForApprovalIsLoading,
     recommendAmendmentForApprovalIsSuccess,
+    rejectAmendmentIsLoading,
+    rejectAmendmentIsSuccess,
+    approveAmendmentIsLoading,
+    approveAmendmentIsSuccess,
+    recommendAmendmentRejectionIsLoading,
+    recommendAmendmentRejectionIsSuccess,
   } = useSelector((state: RootState) => state.businessAmendment);
 
   // NAVIGATION
@@ -152,6 +163,7 @@ const BusinessAmendmentsReview = () => {
   useEffect(() => {
     if (updateBusinessAmendmentStatusIsSuccess) {
       navigate(`/applications/amendments`);
+    window.location.reload();
     }
   }, [navigate, updateBusinessAmendmentStatusIsSuccess]);
 
@@ -159,8 +171,33 @@ const BusinessAmendmentsReview = () => {
   useEffect(() => {
     if (recommendAmendmentForApprovalIsSuccess) {
       navigate(`/applications/amendments`);
+    window.location.reload();
     }
   }, [navigate, recommendAmendmentForApprovalIsSuccess]);
+
+  // HANDLE APPROVE AMENDMENT RESPONSE
+  useEffect(() => {
+    if (approveAmendmentIsSuccess) {
+      navigate(`/applications/amendments`);
+    window.location.reload();
+    }
+  }, [approveAmendmentIsSuccess, navigate]);
+
+  // HANDLE REJECT AMENDMENT RESPONSE
+  useEffect(() => {
+    if (rejectAmendmentIsSuccess) {
+      navigate(`/applications/amendments`);
+    window.location.reload();
+    }
+  }, [navigate, rejectAmendmentIsSuccess]);
+
+  // HANDLE RECOMMEND AMENDMENT REJECTION RESPONSE
+  useEffect(() => {
+    if (recommendAmendmentRejectionIsSuccess) {
+      navigate(`/applications/amendments`);
+    window.location.reload();
+    }
+  }, [navigate, recommendAmendmentRejectionIsSuccess]);
 
   return (
     <StaffLayout>
@@ -186,6 +223,14 @@ const BusinessAmendmentsReview = () => {
             {queryParams?.amendmentType ===
               'AMEND_ADD_BUSINESS_BOARD_MEMBER' && (
               <BusinessBoardMemberAmendmentReview />
+            )}
+            {queryParams?.amendmentType ===
+              'AMEND_ADD_BUSINESS_EXECUTIVE_MEMBER' && (
+              <ExecutiveMemberAmendmentReview />
+            )}
+            {queryParams?.amendmentType ===
+              'AMEND_BUSINESS_EMPLOYMENT_INFO' && (
+              <EmploymentInfoAmendmentReview />
             )}
           </menu>
         )}
@@ -252,51 +297,135 @@ const BusinessAmendmentsReview = () => {
             )}
           </article>
         )}
-        <menu className="w-full flex items-center justify-between p-5">
-          <Button route="/applications/amendments">Back</Button>
-          <Button danger>Recommend for rejection</Button>
-          <Button
-            primary
-            className="!bg-green-700 hover:!bg-green-700 border-none"
-            onClick={(e) => {
-              e.preventDefault();
+        {['AMENDMENT_SUBMITTED', 'RESUBMITTED'].includes(
+          String(selectedBusinessAmendment?.status)
+        ) && (
+          <menu className="w-full flex items-center justify-between p-5">
+            <Button route="/applications/amendments">Back</Button>
+            <Button danger onClick={(e) => {
+             e.preventDefault();
               if (selectedBusinessAmendment) {
                 dispatch(
-                  recommendAmendmentForApprovalThunk({
+                  recommendAmendmentRejectionThunk({
                     amendmentId: selectedBusinessAmendment?.id,
                   })
                 );
+              } 
+            }}>
+              {recommendAmendmentRejectionIsLoading ? <Loader /> : 'Recommend for rejection'}
+            </Button>
+            <Button
+              primary
+              className="!bg-green-700 hover:!bg-green-700 border-none"
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedBusinessAmendment) {
+                  dispatch(
+                    recommendAmendmentForApprovalThunk({
+                      amendmentId: selectedBusinessAmendment?.id,
+                    })
+                  );
+                }
+              }}
+            >
+              {recommendAmendmentForApprovalIsLoading ? (
+                <Loader />
+              ) : (
+                'Recommend for approval'
+              )}
+            </Button>
+            <Button
+              primary={businessAmendmentReviewComments?.length > 0}
+              disabled={businessAmendmentReviewComments?.length <= 0}
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedBusinessAmendment) {
+                  dispatch(
+                    updateBusinessAmendmentStatusThunk({
+                      id: selectedBusinessAmendment?.id,
+                      amendmentStatus: 'ACTION_REQUIRED',
+                    })
+                  );
+                }
+              }}
+            >
+              {updateBusinessAmendmentStatusIsLoading ? (
+                <Loader />
+              ) : (
+                'Return for correction'
+              )}
+            </Button>
+          </menu>
+        )}
+        {['PENDING_APPROVAL', 'PENDING_REJECTION'].includes(
+          String(selectedBusinessAmendment?.status)
+        ) && (
+          <menu className="w-full flex items-center justify-between p-5">
+            <Button route="/applications/amendments">Back</Button>
+            <Button
+              danger
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedBusinessAmendment) {
+                  dispatch(
+                    rejectAmendmentThunk({
+                      amendmentId: selectedBusinessAmendment?.id,
+                      entityId: selectedBusinessAmendment?.entityId,
+                    })
+                  );
+                }
+              }}
+            >
+              {rejectAmendmentIsLoading ? <Loader /> : 'Reject'}
+            </Button>
+            <Button
+              className="!bg-green-700 hover:!bg-green-700 border-none text-white"
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedBusinessAmendment) {
+                  dispatch(
+                    approveAmendmentThunk({
+                      amendmentId: selectedBusinessAmendment?.id,
+                    })
+                  );
+                }
+              }}
+            >
+              {approveAmendmentIsLoading ? <Loader /> : 'Approve'}
+            </Button>
+            <Button
+              primary={
+                businessAmendmentReviewComments?.filter(
+                  (amendmentReviewComment) =>
+                    amendmentReviewComment?.status === 'UNRESOLVED'
+                )?.length > 0
               }
-            }}
-          >
-            {recommendAmendmentForApprovalIsLoading ? (
-              <Loader />
-            ) : (
-              'Recommend for approval'
-            )}
-          </Button>
-          <Button
-            primary={businessAmendmentReviewComments?.length > 0}
-            disabled={businessAmendmentReviewComments?.length <= 0}
-            onClick={(e) => {
-              e.preventDefault();
-              if (selectedBusinessAmendment) {
-                dispatch(
-                  updateBusinessAmendmentStatusThunk({
-                    id: selectedBusinessAmendment?.id,
-                    amendmentStatus: 'ACTION_REQUIRED',
-                  })
-                );
+              disabled={
+                businessAmendmentReviewComments?.filter(
+                  (amendmentReviewComment) =>
+                    amendmentReviewComment?.status === 'UNRESOLVED'
+                )?.length <= 0
               }
-            }}
-          >
-            {updateBusinessAmendmentStatusIsLoading ? (
-              <Loader />
-            ) : (
-              'Return for correction'
-            )}
-          </Button>
-        </menu>
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedBusinessAmendment) {
+                  dispatch(
+                    updateBusinessAmendmentStatusThunk({
+                      id: selectedBusinessAmendment?.id,
+                      amendmentStatus: 'ACTION_REQUIRED',
+                    })
+                  );
+                }
+              }}
+            >
+              {updateBusinessAmendmentStatusIsLoading ? (
+                <Loader />
+              ) : (
+                'Return for correction'
+              )}
+            </Button>
+          </menu>
+        )}
       </main>
       <DeleteAmendmentReviewComment />
     </StaffLayout>
@@ -313,22 +442,27 @@ export const AmendmentReviewComment = ({
 
   return (
     <article className="w-full flex items-center gap-4 p-3 rounded-md shadow-md justify-between">
-      <p>{amendmentReviewComment?.comment}</p>
-      <menu className="flex items-center gap-2">
-        <CustomTooltip label="Click to delete" labelClassName="bg-red-600">
-          <FontAwesomeIcon
-            onClick={(e) => {
-              e.preventDefault();
-              dispatch(
-                setSelectedAmendmentReviewComment(amendmentReviewComment)
-              );
-              dispatch(setDeleteAmendmentReviewCommentModal(true));
-            }}
-            className="p-2 px-[8.1px] rounded-full transition-all ease-in-out duration-300 hover:scale-[1.01] shadow-md bg-red-600 text-white cursor-pointer"
-            icon={faTrash}
-          />
-        </CustomTooltip>
-      </menu>
+      <ul className="flex flex-col gap-2">
+        <p>{amendmentReviewComment?.comment}</p>
+        <p className="text-[13px]">{amendmentReviewComment?.status}</p>
+      </ul>
+      {['UNRESOLVED'].includes(amendmentReviewComment?.status) && (
+        <menu className="flex items-center gap-2">
+          <CustomTooltip label="Click to delete" labelClassName="bg-red-600">
+            <FontAwesomeIcon
+              onClick={(e) => {
+                e.preventDefault();
+                dispatch(
+                  setSelectedAmendmentReviewComment(amendmentReviewComment)
+                );
+                dispatch(setDeleteAmendmentReviewCommentModal(true));
+              }}
+              className="p-2 px-[8.1px] rounded-full transition-all ease-in-out duration-300 hover:scale-[1.01] shadow-md bg-red-600 text-white cursor-pointer"
+              icon={faTrash}
+            />
+          </CustomTooltip>
+        </menu>
+      )}
     </article>
   );
 };
@@ -344,13 +478,13 @@ export const BusinessAmendmentRequestSummary = ({
         Company details
       </h2>
       <menu className="grid grid-cols-2 gap-5 w-full">
-        <ul className="flex items-center gap-5">
-          <p>Application Reference ID: </p>
+        <ul className="flex items-center gap-2">
+          <p>Application Reference ID:</p>
           <p className="font-medium">
             {businessAmendment?.business?.applicationReferenceId}
           </p>
         </ul>
-        <ul className="flex items-center gap-5">
+        <ul className="flex items-center gap-2">
           <p> Company name:</p>
           <p className="font-medium">
             {businessAmendment?.business?.companyName ||
@@ -359,25 +493,25 @@ export const BusinessAmendmentRequestSummary = ({
               businessAmendment?.business?.enterpriseBusinessName}
           </p>
         </ul>
-        <ul className="flex items-center gap-5">
-          <p> Application status</p>
+        <ul className="flex items-center gap-2">
+          <p> Application status:</p>
           <p className="font-medium">
             {capitalizeString(businessAmendment?.business?.applicationStatus)}
           </p>
         </ul>
-        <ul className="flex items-center gap-5">
-          <p>Amendment type</p>
+        <ul className="flex items-center gap-2">
+          <p>Amendment type:</p>
           <p className="font-medium">
             {capitalizeString(businessAmendment?.amendmentType)}
           </p>
         </ul>
-        <ul className="flex items-center gap-5">
+        <ul className="flex items-center gap-2">
           <p>Company code: </p>
           <p className="font-medium">
             {businessAmendment?.business?.tin || 'N/A'}
           </p>
         </ul>
-        <ul className="flex items-center gap-5">
+        <ul className="flex items-center gap-2">
           <p>Request date:</p>
           <p className="font-medium">
             {formatDateTime(businessAmendment?.createdAt)}

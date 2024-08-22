@@ -181,6 +181,36 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // APPROVE AMENDMENT
+      approveAmendment: builder.mutation({
+        query: ({ amendmentId }) => {
+          return {
+            url: `/back-office/approve-amendment?amendmentId=${amendmentId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
+
+      // REJECT AMENDMENT
+      rejectAmendment: builder.mutation({
+        query: ({ amendmentId, entityId }) => {
+          return {
+            url: `/back-office/reject-amendment?amendmentId=${amendmentId}&entityId=${entityId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
+
+      // RECOMMEND AMENDMENT REJECTION
+      recommendAmendmentRejection: builder.mutation({
+        query: ({ amendmentId }) => {
+          return {
+            url: `/back-office/recommend-amendment-rejection?amendmentId=${amendmentId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
     };
   },
 });
@@ -200,6 +230,9 @@ export const {
   useUpdateBusinessAmendmentStatusMutation,
   useDeleteAmendmentReviewCommentMutation,
   useRecommendAmendmentForApprovalMutation,
+  useApproveAmendmentMutation,
+  useRejectAmendmentMutation,
+  useRecommendAmendmentRejectionMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;
