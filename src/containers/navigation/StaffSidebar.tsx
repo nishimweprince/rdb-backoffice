@@ -249,7 +249,7 @@ const StaffSidebar = () => {
         },
         {
           title: 'Business Amendments',
-          path: '/applications/amendments',
+          path: '/applications/business/amendments',
           icon: faPenToSquare,
         },
         {

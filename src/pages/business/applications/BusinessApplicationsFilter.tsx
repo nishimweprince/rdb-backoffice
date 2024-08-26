@@ -39,6 +39,7 @@ const BusinessApplicationsFilter = ({
       'SUBMITTED',
       'AMENDMENT_SUBMITTED',
       'APPROVED',
+      'ACTIVE',
       'IN_REVIEW',
       'ACTION_REQUIRED',
       'RESUBMITTED',

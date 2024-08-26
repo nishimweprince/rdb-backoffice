@@ -33,6 +33,7 @@ const initialState: {
   deleteBusiessAttachmentModal: boolean;
   selectedBusinessAttachment?: BusinessAttachment;
   businessesIsFetching: boolean;
+  businessesIsSuccess: boolean;
   uploadAmendmentAttachmentIsLoading: boolean;
   uploadAmendmentAttachmentIsSuccess: boolean;
   updateBusinessIsSuccess: boolean;
@@ -74,6 +75,7 @@ const initialState: {
   businessEmploymentInfoIsSuccess: false,
   approveAmendmentIsLoading: false,
   approveAmendmentIsSuccess: false,
+  businessesIsSuccess: false,
 };
 
 // FETCH BUSINESSES
@@ -351,9 +353,11 @@ export const businessSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchBusinessesThunk.pending, (state) => {
       state.businessesIsFetching = true;
+      state.businessesIsSuccess = false;
     });
     builder.addCase(fetchBusinessesThunk.fulfilled, (state, action) => {
       state.businessesIsFetching = false;
+      state.businessesIsSuccess = true;
       state.businessesList = (
         action.payload as unknown as {
           data: Business[];
@@ -372,6 +376,7 @@ export const businessSlice = createSlice({
     });
     builder.addCase(fetchBusinessesThunk.rejected, (state) => {
       state.businessesIsFetching = false;
+      state.businessesIsSuccess = false;
     });
     builder.addCase(updateBusinessThunk.fulfilled, (state, action) => {
       state.updateBusinessIsSuccess = true;

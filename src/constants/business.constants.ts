@@ -1,4 +1,4 @@
-import { capitalizeString, formatDate } from '@/helpers/strings.helper';
+import { capitalizeString, formatDateTime } from '@/helpers/strings.helper';
 import { Business } from '@/types/models/business';
 import { Row } from '@tanstack/react-table';
 
@@ -22,20 +22,26 @@ export const businessColumns = [
       capitalizeString(row.original.companyType),
   },
   {
-    id: 'dateOfIncorporation',
-    header: 'Date of submission',
-    accessorKey: 'dateOfIncorporation',
-    cell: ({ row }: { row: Row<Business> }) =>
-      formatDate(row?.original?.dateOfIncorporation) ||
-      formatDate(row?.original?.createdAt),
-  },
-  {
     id: 'applicationType',
     header: 'Application type',
     accessorKey: 'service.name',
     filterFn: (row: Row<unknown>, id: string, value: string) => {
       return value.includes(row.getValue(id));
     },
+    cell: ({ row }: { row: Row<Business> }) =>
+      capitalizeString(row?.original?.service?.name),
+  },
+  {
+    id: 'applicationStatus',
+    header: 'Status',
+    cell: ({ row }: { row: Row<Business> }) =>
+      capitalizeString(row?.original?.applicationStatus),
+  },
+  {
+    header: 'Last updated',
+    accessorKey: 'updatedAt',
+    cell: ({ row }: { row: Row<Business> }) =>
+      formatDateTime(row?.original?.updatedAt),
   },
   {
     id: 'assignedVerifier',
@@ -44,7 +50,7 @@ export const businessColumns = [
     cell: ({ row }: { row: Row<Business> }) =>
       `${
         row?.original?.assignedVerifier?.firstName ||
-        row?.original?.assignedVerifier?.username
+        row?.original?.assignedVerifier?.username || '-'
       } ${row?.original?.assignedVerifier?.lastName || ''}`,
   },
   {
@@ -55,7 +61,7 @@ export const businessColumns = [
       `${
         row?.original?.assignedApprover?.firstName ||
         row?.original?.assignedApprover?.username ||
-        ''
+        '-'
       } ${row?.original?.assignedApprover?.lastName || ''}`,
   },
 ];
@@ -140,6 +146,7 @@ export const applicationReviewStatuses = [
   'VERIFIED',
   'APPROVED',
   'REJECTED',
+  'ACTIVE',
   'RESUBMITTED',
   'ACTION_REQUIRED',
   'AMENDMENT_SUBMITTED',
