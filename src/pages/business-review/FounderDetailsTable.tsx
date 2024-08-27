@@ -20,7 +20,6 @@ type FounderDetailsTableProps = {
 const FounderDetailsTable = ({
   founderDetailsList,
 }: FounderDetailsTableProps) => {
-
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
 
@@ -66,33 +65,28 @@ const FounderDetailsTable = ({
 
   return (
     <section className="w-full flex flex-col gap-4">
-      {founderDetailsList?.length <= 0 ? (
-        <section className="w-full flex items-center justify-center gap-2">
-          <p className="text-primary">No founder details available</p>
-        </section>
-      ) : (
-        <Table
-          data={founderDetailsList?.map((founder: FounderDetail) => {
-            return {
-              ...founder,
-              name: `${
-                founder?.personDetail?.firstName ||
-                founder?.personDetail?.organization?.organizationName ||
-                ''
-              } ${founder?.personDetail?.middleName || ''} ${
-                founder?.personDetail?.lastName || ''
-              }`,
-              shareHolderType: capitalizeString(founder?.shareHolderType),
-              personDocNo: founder?.personDetail?.personDocNo || '-',
-              phoneNumber:
-                founder?.personDetail?.phoneNumber ||
-                founder?.personDetail?.organization?.phone ||
-                '-',
-            };
-          })}
-          columns={founderDetailsExtendedColumns as ColumnDef<FounderDetail>[]}
-        />
-      )}
+      <Table
+        data={founderDetailsList?.map((founder: FounderDetail) => {
+          return {
+            ...founder,
+            name: `${
+              founder?.personDetail?.firstName ||
+              founder?.personDetail?.organization?.organizationName ||
+              ''
+            } ${founder?.personDetail?.middleName || ''} ${
+              founder?.personDetail?.lastName || ''
+            }`,
+            shareHolderType: capitalizeString(founder?.shareHolderType),
+            personDocNo: founder?.personDetail?.personDocNo || '-',
+            phoneNumber:
+              founder?.personDetail?.phoneNumber ||
+              founder?.personDetail?.organization?.phone ||
+              '-',
+          };
+        })}
+        columns={founderDetailsExtendedColumns as ColumnDef<FounderDetail>[]}
+        showPagination={false}
+      />
       <FounderDetails />
     </section>
   );

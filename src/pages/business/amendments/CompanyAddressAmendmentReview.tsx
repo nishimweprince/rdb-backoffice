@@ -46,7 +46,7 @@ const CompanyAddressAmendmentReview = () => {
                 if (key === 'location') {
                   return (
                     <ul
-                      className="flex flex-col items-center gap-4"
+                      className="w-full flex flex-col gap-3"
                       key={index}
                     >
                       {Object.entries(oldValue).map(
@@ -59,18 +59,18 @@ const CompanyAddressAmendmentReview = () => {
                           return (
                             <menu
                               key={locationIndex}
-                              className="w-full flex items-center gap-2 justify-between"
+                              className="grid grid-cols-2 gap-5"
                             >
                               <li className="flex items-center gap-2">
                                 <p
-                                  className={`font-medium p-1 rounded-md px-2 text-[15px] ${
-                                    locationValueChanged &&
-                                    'bg-red-700 text-white'
-                                  }`}
+                                  className={`font-medium`}
                                 >
                                   {capitalizeString(locationKey)}:
                                 </p>
-                                <p className="font-medium">
+                                <p className={`font-medium ${
+                                    locationValueChanged &&
+                                    'bg-red-700 text-white'
+                                  } p-1 rounded-md px-2 text-[15px]`}>
                                   {String(locationOldValue)}
                                 </p>
                               </li>

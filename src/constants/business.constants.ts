@@ -1,4 +1,5 @@
 import { capitalizeString, formatDateTime } from '@/helpers/strings.helper';
+import { BusinessAttachment } from '@/types/models/attachment';
 import { Business } from '@/types/models/business';
 import { Row } from '@tanstack/react-table';
 
@@ -68,6 +69,7 @@ export const attachmentColumns = [
   {
     header: 'Attachment Type',
     accessorKey: 'attachmentType',
+    cell: ({ row }: { row: Row<BusinessAttachment> }) => `${row?.original?.attachmentType || 'N/A'}`,
   },
   {
     header: 'Attachment Size',
@@ -146,4 +148,15 @@ export const applicationReviewStatuses = [
   'AMENDMENT_SUBMITTED',
   'IN_REVIEW',
   'PENDING_DECISION',
+];
+
+export const businessLineColumns = [
+  {
+    header: 'Code',
+    accessorKey: 'code',
+  },
+  {
+    header: 'Description',
+    accessorKey: 'description',
+  },
 ];

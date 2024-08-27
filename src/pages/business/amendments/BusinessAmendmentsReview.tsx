@@ -38,6 +38,9 @@ import BusinessFounderAmendmentReview from './BusinessFounderAmendmentReview';
 import BusinessBoardMemberAmendmentReview from './BusinessBoardMemberAmendmentReview';
 import ExecutiveMemberAmendmentReview from './ExecutiveMemberAmendmentReview';
 import EmploymentInfoAmendmentReview from './EmploymentInfoAmendmentReview';
+import { navigationPaths } from '@/constants/dashboard.constants';
+import CustomBreadcrumb from '@/components/navigation/CustomBreadcrumb';
+import BusinessAttachmentsTable from '@/pages/business-review/BusinessAttachmentsTable';
 
 const BusinessAmendmentsReview = () => {
   // STATE VARIABLES
@@ -162,42 +165,93 @@ const BusinessAmendmentsReview = () => {
   // HANDLE UPDATE BUSINESS AMENDMENT STATUS RESPONSE
   useEffect(() => {
     if (updateBusinessAmendmentStatusIsSuccess) {
-      navigate(`/applications/amendments`);
-    window.location.reload();
+      navigate(
+        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+      );
+      window.location.reload();
     }
-  }, [navigate, updateBusinessAmendmentStatusIsSuccess]);
+  }, [
+    navigate,
+    selectedBusinessAmendment?.businessId,
+    updateBusinessAmendmentStatusIsSuccess,
+  ]);
 
   // HANDLE RECOMMEND AMENDMENT FOR APPROVAL RESPONSE
   useEffect(() => {
     if (recommendAmendmentForApprovalIsSuccess) {
-      navigate(`/applications/amendments`);
-    window.location.reload();
+      navigate(
+        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+      );
+      window.location.reload();
     }
-  }, [navigate, recommendAmendmentForApprovalIsSuccess]);
+  }, [
+    navigate,
+    recommendAmendmentForApprovalIsSuccess,
+    selectedBusinessAmendment?.businessId,
+  ]);
 
   // HANDLE APPROVE AMENDMENT RESPONSE
   useEffect(() => {
     if (approveAmendmentIsSuccess) {
-      navigate(`/applications/amendments`);
-    window.location.reload();
+      navigate(
+        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+      );
+      window.location.reload();
     }
-  }, [approveAmendmentIsSuccess, navigate]);
+  }, [
+    approveAmendmentIsSuccess,
+    navigate,
+    selectedBusinessAmendment?.businessId,
+  ]);
 
   // HANDLE REJECT AMENDMENT RESPONSE
   useEffect(() => {
     if (rejectAmendmentIsSuccess) {
-      navigate(`/applications/amendments`);
-    window.location.reload();
+      navigate(
+        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+      );
+      window.location.reload();
     }
-  }, [navigate, rejectAmendmentIsSuccess]);
+  }, [
+    navigate,
+    rejectAmendmentIsSuccess,
+    selectedBusinessAmendment?.businessId,
+  ]);
 
   // HANDLE RECOMMEND AMENDMENT REJECTION RESPONSE
   useEffect(() => {
     if (recommendAmendmentRejectionIsSuccess) {
-      navigate(`/applications/amendments`);
-    window.location.reload();
+      navigate(
+        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+      );
+      window.location.reload();
     }
-  }, [navigate, recommendAmendmentRejectionIsSuccess]);
+  }, [
+    navigate,
+    recommendAmendmentRejectionIsSuccess,
+    selectedBusinessAmendment?.businessId,
+  ]);
+
+  // NAVIGATION LINKS
+  const navigationExtendedPaths = [
+    ...navigationPaths,
+    {
+      label: 'Business Amendments',
+      route: '/applications/business/amendments',
+    },
+    {
+      label: `${
+        fetchBusinessAmendmentsIsFetching
+          ? '...'
+          : selectedBusinessAmendment?.business?.applicationReferenceId
+      }`,
+      route: `/applications/amendments?businessId=${selectedBusinessAmendment?.business?.id}`,
+    },
+    {
+      label: `${capitalizeString(String(queryParams?.amendmentType))}`,
+      route: `/applications/amendments/review?businessId=${queryParams?.businessId}&amendmentType=${queryParams?.amendmentType}`,
+    },
+  ];
 
   return (
     <StaffLayout>
@@ -208,6 +262,7 @@ const BusinessAmendmentsReview = () => {
           </figure>
         ) : (
           <menu className="w-full flex flex-col gap-4 p-5">
+            <CustomBreadcrumb navigationLinks={navigationExtendedPaths} />
             {queryParams?.amendmentType === 'AMEND_COMPANY_DETAILS' && (
               <CompanyDetailsAmendmentReview />
             )}
@@ -233,6 +288,17 @@ const BusinessAmendmentsReview = () => {
               <EmploymentInfoAmendmentReview />
             )}
           </menu>
+        )}
+        {(selectedBusinessAmendment?.amendmentAttachmentDetails || [])?.length >
+          0 && (
+          <section className="w-full flex flex-col gap-3">
+            <h3>Attachments</h3>
+            <BusinessAttachmentsTable
+              businessAttachmentsList={
+                selectedBusinessAmendment?.amendmentAttachmentDetails
+              }
+            />
+          </section>
         )}
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -301,18 +367,29 @@ const BusinessAmendmentsReview = () => {
           String(selectedBusinessAmendment?.status)
         ) && (
           <menu className="w-full flex items-center justify-between p-5">
-            <Button route="/applications/amendments">Back</Button>
-            <Button danger onClick={(e) => {
-             e.preventDefault();
-              if (selectedBusinessAmendment) {
-                dispatch(
-                  recommendAmendmentRejectionThunk({
-                    amendmentId: selectedBusinessAmendment?.id,
-                  })
-                );
-              } 
-            }}>
-              {recommendAmendmentRejectionIsLoading ? <Loader /> : 'Recommend for rejection'}
+            <Button
+              route={`/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`}
+            >
+              Back
+            </Button>
+            <Button
+              danger
+              onClick={(e) => {
+                e.preventDefault();
+                if (selectedBusinessAmendment) {
+                  dispatch(
+                    recommendAmendmentRejectionThunk({
+                      amendmentId: selectedBusinessAmendment?.id,
+                    })
+                  );
+                }
+              }}
+            >
+              {recommendAmendmentRejectionIsLoading ? (
+                <Loader />
+              ) : (
+                'Recommend for rejection'
+              )}
             </Button>
             <Button
               primary
@@ -336,9 +413,12 @@ const BusinessAmendmentsReview = () => {
             </Button>
             <Button
               primary={businessAmendmentReviewComments?.length > 0}
-              disabled={businessAmendmentReviewComments?.filter((amendmentReviewComment) => {
-                amendmentReviewComment?.status === 'UNRESOLVED'
-              })?.length <= 0}
+              disabled={
+                businessAmendmentReviewComments?.filter(
+                  (amendmentReviewComment) =>
+                    amendmentReviewComment?.status === 'UNRESOLVED'
+                )?.length <= 0
+              }
               onClick={(e) => {
                 e.preventDefault();
                 if (selectedBusinessAmendment) {
@@ -363,7 +443,11 @@ const BusinessAmendmentsReview = () => {
           String(selectedBusinessAmendment?.status)
         ) && (
           <menu className="w-full flex items-center justify-between p-5">
-            <Button route="/applications/amendments">Back</Button>
+            <Button
+              route={`/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`}
+            >
+              Back
+            </Button>
             <Button
               danger
               onClick={(e) => {

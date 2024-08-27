@@ -25,19 +25,31 @@ const BusinessBoardMemberAmendmentReview = () => {
           businessAmendment={selectedBusinessAmendment}
         />
       )}
-      {selectedTab === 'current-details' && (
-        <BusinessPeopleTable
-          businessPeopleList={
-            selectedBusinessAmendment?.oldValue as unknown as PersonDetail[]
-          }
-        />
-      )}
-      {selectedTab === 'proposed-changes' && (
-        <BusinessPeopleTable
-          businessPeopleList={
-            [selectedBusinessAmendment?.newValue] as unknown as PersonDetail[]
-          }
-        />
+      {selectedTab === 'changes-requested' && (
+        <menu className="w-full flex flex-col gap-4">
+          <ul className="w-full flex flex-col gap-4">
+            <h3 className="uppercase text-lg text-primary">
+              Existing Board Members
+            </h3>
+            <BusinessPeopleTable
+              businessPeopleList={
+                selectedBusinessAmendment?.oldValue as unknown as PersonDetail[]
+              }
+            />
+          </ul>
+          <ul className="w-full flex flex-col gap-4">
+            <h3 className="uppercase text-lg text-primary">
+              New board members
+            </h3>
+            <BusinessPeopleTable
+              businessPeopleList={
+                [
+                  selectedBusinessAmendment?.newValue,
+                ] as unknown as PersonDetail[]
+              }
+            />
+          </ul>
+        </menu>
       )}
     </main>
   );
