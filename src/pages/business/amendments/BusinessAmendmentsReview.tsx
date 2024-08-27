@@ -336,7 +336,9 @@ const BusinessAmendmentsReview = () => {
             </Button>
             <Button
               primary={businessAmendmentReviewComments?.length > 0}
-              disabled={businessAmendmentReviewComments?.length <= 0}
+              disabled={businessAmendmentReviewComments?.filter((amendmentReviewComment) => {
+                amendmentReviewComment?.status === 'UNRESOLVED'
+              })?.length <= 0}
               onClick={(e) => {
                 e.preventDefault();
                 if (selectedBusinessAmendment) {

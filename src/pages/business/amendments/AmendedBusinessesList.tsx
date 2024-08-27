@@ -1,19 +1,22 @@
+import CustomPopover from '@/components/inputs/CustomPopover';
 import Loader from '@/components/inputs/Loader';
 import CustomBreadcrumb from '@/components/navigation/CustomBreadcrumb';
 import Table from '@/components/table/Table';
 import { businessColumns } from '@/constants/business.constants';
 import { navigationPaths } from '@/constants/dashboard.constants';
 import StaffLayout from '@/containers/navigation/StaffLayout';
+import { getBusinessStatusColor } from '@/helpers/business.helper';
+import { capitalizeString } from '@/helpers/strings.helper';
 import { fetchBusinessesThunk } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
 import { Business } from '@/types/models/business';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisH, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { UUID } from 'crypto';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const AmendedBusinessesList = () => {
   // STATE VARIABLES
@@ -22,7 +25,11 @@ const AmendedBusinessesList = () => {
     useSelector((state: RootState) => state.business);
   const { user } = useSelector((state: RootState) => state.user);
   const [userId, setUserId] = useState<UUID | undefined>(user?.id);
-  const [businessesData, setBusinessesData] = useState<Business[]>(businessesList);
+  const [businessesData, setBusinessesData] =
+    useState<Business[]>(businessesList);
+
+  // NAVIGATION
+  const navigate = useNavigate();
 
   // FETCH BUSINESS AMENDMENT SUBMISSIONS
   useEffect(() => {
@@ -33,7 +40,7 @@ const AmendedBusinessesList = () => {
         size: 100,
       })
     );
-  }, [userId, dispatch]);
+  }, [dispatch]);
 
   // NAVIGATION LINKS
   const navigationExtendedPaths = [
@@ -47,15 +54,46 @@ const AmendedBusinessesList = () => {
   const businessExtendedColumns = [
     ...businessColumns,
     {
+      id: 'applicationStatus',
+      header: 'Status',
+      cell: ({ row }: { row: Row<Business> }) => (
+        <p
+          className={`${getBusinessStatusColor(
+            row?.original?.applicationStatus
+          )} text-white text-[13px] font-medium p-1 rounded-md text-center`}
+        >
+          {capitalizeString(row?.original?.applicationStatus)}
+        </p>
+      ),
+    },
+    {
       header: 'Action',
       accessorKey: 'id',
       cell: ({ row }: { row: Row<Business> }) => (
-        <Link to={`/applications/amendments?businessId=${row.original?.id}`}>
-          <menu className="w-full flex items-center gap-2 font-semibold text-[13px] text-primary hover:gap-3 transition-all ease-in-out duration-300">
-            Select
-            <FontAwesomeIcon className="text-[13px]" icon={faArrowRight} />
+        <CustomPopover
+          trigger={
+            <FontAwesomeIcon
+              className="text-[13px] bg-slate-200 hover:bg-slate-300 p-1 px-4 rounded-md text-primary cursor-pointer"
+              icon={faEllipsisH}
+            />
+          }
+        >
+          <menu className="flex flex-col gap-2">
+            <Link
+              className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(
+                  `/applications/amendments?businessId=${row.original?.id}`
+                );
+              }}
+              to={'#'}
+            >
+              <FontAwesomeIcon className="text-primary" icon={faPenToSquare} />
+              View amendments
+            </Link>
           </menu>
-        </Link>
+        </CustomPopover>
       ),
     },
   ];

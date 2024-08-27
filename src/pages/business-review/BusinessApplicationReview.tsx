@@ -571,6 +571,7 @@ const BusinessApplicationReview = () => {
             {[
               'SUBMITTED',
               'RESUBMITTED',
+              'IN_REVIEW',
               'PENDING_DECISION',
               'PENDING_REJECTION',
             ].includes(business?.applicationStatus) && (

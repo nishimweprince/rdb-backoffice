@@ -32,12 +32,6 @@ export const businessColumns = [
       capitalizeString(row?.original?.service?.name),
   },
   {
-    id: 'applicationStatus',
-    header: 'Status',
-    cell: ({ row }: { row: Row<Business> }) =>
-      capitalizeString(row?.original?.applicationStatus),
-  },
-  {
     header: 'Last updated',
     accessorKey: 'updatedAt',
     cell: ({ row }: { row: Row<Business> }) =>

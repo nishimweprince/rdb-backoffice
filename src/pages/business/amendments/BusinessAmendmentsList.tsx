@@ -15,7 +15,7 @@ import { AppDispatch, RootState } from '@/states/store';
 import { BusinessAmendment } from '@/types/models/business';
 import {
   faCircleInfo,
-  faEllipsisVertical,
+  faEllipsisH,
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -66,7 +66,7 @@ const BusinessAmendmentsList = () => {
   useEffect(() => {
     dispatch(
       fetchBusinessAmendmentsThunk({
-        userId: userId,
+        userId,
         businessId: queryParams?.businessId,
       })
     );
@@ -100,8 +100,8 @@ const BusinessAmendmentsList = () => {
               <menu className="flex items-center justify-center w-full gap-2 text-[12px] cursor-pointer">
                 <CustomTooltip label="Click to view options">
                   <FontAwesomeIcon
-                    className="text-primary text-md p-0 transition-all duration-300 hover:scale-[.98]"
-                    icon={faEllipsisVertical}
+                    className="text-primary text-md p-1 transition-all duration-300 hover:scale-[.98] px-4 bg-slate-200 hover:bg-slate-300 rounded-md"
+                    icon={faEllipsisH}
                   />
                 </CustomTooltip>
               </menu>
