@@ -82,41 +82,50 @@ const BusinessFounderAmendmentReview = () => {
           businessAmendment={selectedBusinessAmendment}
         />
       )}
-      {selectedTab === 'current-details' && (
+      {selectedTab === 'changes-requested' && (
         <menu className="w-full flex flex-col gap-4">
-          <h3 className="uppercase text-primary font-semibold text-lg">
-            Existing founder
-          </h3>
-          <FounderDetailsTable
-            founderDetailsList={
-              selectedBusinessAmendment?.oldValue as unknown as FounderDetail[]
-            }
-          />
+          <menu className="w-full flex flex-col gap-4">
+            <h3 className="uppercase text-primary font-semibold text-lg">
+              Existing founders
+            </h3>
+            <FounderDetailsTable
+              founderDetailsList={
+                selectedBusinessAmendment?.oldValue as unknown as FounderDetail[]
+              }
+            />
+          </menu>
+          <menu className="w-full flex flex-col gap-3">
+            <h3 className="uppercase text-primary font-semibold text-lg">
+              New founders
+            </h3>
+            <Table
+              columns={
+                founderDetailExtendedColumns as ColumnDef<PersonDetail>[]
+              }
+              data={[
+                (
+                  selectedBusinessAmendment?.newValue as unknown as {
+                    founderDetail: PersonDetail;
+                  }
+                )?.founderDetail,
+              ]?.map((founder) => {
+                return {
+                  ...founder,
+                  name: `${founder?.firstName || ''} ${
+                    founder?.lastName || ''
+                  }`,
+                  personDocNo: founder?.personDocNo,
+                  shareHolderType: capitalizeString(
+                    founder?.personRole?.roleName
+                  ),
+                };
+              })}
+              showPagination={false}
+            />
+          </menu>
         </menu>
       )}
-      {selectedTab === 'proposed-changes' && (
-        <menu className="w-full flex flex-col gap-3">
-          <Table
-            columns={founderDetailExtendedColumns as ColumnDef<PersonDetail>[]}
-            data={[
-              (
-                selectedBusinessAmendment?.newValue as unknown as {
-                  founderDetail: PersonDetail;
-                }
-              )?.founderDetail,
-            ]?.map((founder) => {
-              return {
-                ...founder,
-                name: `${founder?.firstName || ''} ${founder?.lastName || ''}`,
-                personDocNo: founder?.personDocNo,
-                shareHolderType: capitalizeString(
-                  founder?.personRole?.roleName
-                ),
-              };
-            })}
-          />
-        </menu>
-      )}
+
       <FounderDetails />
     </main>
   );

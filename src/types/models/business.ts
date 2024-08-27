@@ -1,6 +1,7 @@
 import { UUID } from 'crypto';
 import { User } from './user';
 import { AbstractDomain } from '.';
+import { BusinessAttachment } from './attachment';
 
 export interface Business extends AbstractDomain {
   createdAt: Date;
@@ -102,4 +103,5 @@ export interface BusinessAmendment extends AbstractDomain {
   business: Business;
   assignedVerifier?: User;
   assignedApprover?: User;
+  amendmentAttachmentDetails?: BusinessAttachment[];
 }
