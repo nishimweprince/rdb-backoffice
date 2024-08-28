@@ -53,4 +53,5 @@ export const getBusinessStatusColor = (status: string): string => {
     default:
       return '';
   }
+
 }

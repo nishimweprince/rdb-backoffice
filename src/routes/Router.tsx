@@ -16,6 +16,7 @@ import BusinessAmendmentsList from '@/pages/business/amendments/BusinessAmendmen
 import BusinessAmendmentsReview from '@/pages/business/amendments/BusinessAmendmentsReview';
 import ApplicationsRoutes from './ApplicationsRoutes';
 import BusinessAmendmentRoutes from './BusinessAmendmentRoutes';
+import RegistrarGeneral from '@/pages/settings/registrar-general';
 
 const Router = () => {
   return (
@@ -57,6 +58,11 @@ const Router = () => {
               <Route path="review" element={<BusinessAmendmentsReview />} />
             </Route>
           </Route>
+        </Route>
+
+        {/* SETTINGS ROUTES */}
+        <Route path="/settings" element={<StaffAuthenticatedRoutes />}>
+          <Route path="registrar-general" element={<RegistrarGeneral />} />
         </Route>
 
         {/* BUSINESS AMENDMENT ROUTE */}
