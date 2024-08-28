@@ -6,10 +6,7 @@ import { PersonDetail } from '@/types/models/personDetail';
 import { businessPeopleColumns } from '@/constants/business.constants';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import CustomTooltip from '@/components/inputs/CustomTooltip';
-import {
-  faCircleInfo,
-  faEllipsisVertical,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CustomPopover from '@/components/inputs/CustomPopover';
 import { Link } from 'react-router-dom';
@@ -31,8 +28,6 @@ const BusinessPeopleTable = ({
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
 
-  if (businessPeopleList?.length <= 0) return null;
-
   // BUSINESS PEOPLE EXTENDED COLUMNS
   const businessPeopleExtendedColumns = [
     {
@@ -46,8 +41,8 @@ const BusinessPeopleTable = ({
               <menu className="w-full flex items-center justify-center cursor-pointer">
                 <CustomTooltip label="Click to view actions">
                   <FontAwesomeIcon
-                    className="text-primary cursor-pointer"
-                    icon={faEllipsisVertical}
+                    className="text-primary cursor-pointer p-1 px-4 bg-slate-200 hover:bg-slate-300 rounded-md"
+                    icon={faEllipsisH}
                   />
                 </CustomTooltip>
               </menu>
@@ -76,26 +71,22 @@ const BusinessPeopleTable = ({
 
   return (
     <section className="flex flex-col items-center w-full gap-2">
-      {businessPeopleList?.length <= 0 && (
-        <p className="text-sm text-center text-gray-500">No people found</p>
-      )}
-      {businessPeopleList?.length > 0 && (
-        <Table
-          data={businessPeopleList?.map((person: PersonDetail) => {
-            return {
-              ...person,
-              position: capitalizeString(person?.personRole?.roleDescription),
-              name: `${person.firstName} ${person.middleName || ''} ${
-                person.lastName || ''
-              }`,
-              nationality: getCountryName(person?.nationality),
-              gender: getGenderLabel(person?.gender),
-            };
-          })}
-          columns={businessPeopleExtendedColumns as ColumnDef<PersonDetail>[]}
-          showFilter={false}
-        />
-      )}
+      <Table
+        data={businessPeopleList?.map((person: PersonDetail) => {
+          return {
+            ...person,
+            position: capitalizeString(person?.personRole?.roleDescription),
+            name: `${person?.firstName} ${person?.middleName || ''} ${
+              person?.lastName || ''
+            }`,
+            nationality: getCountryName(person?.nationality),
+            gender: getGenderLabel(person?.gender),
+          };
+        })}
+        columns={businessPeopleExtendedColumns as ColumnDef<PersonDetail>[]}
+        showFilter={false}
+        showPagination={false}
+      />
       <BusinessPersonDetails />
     </section>
   );

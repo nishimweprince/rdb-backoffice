@@ -568,49 +568,19 @@ const BusinessApplicationReview = () => {
                 businessAttachmentsList={businessAttachmentsList}
               />
             </BusinessPreviewCard>
-            <menu className="w-full flex items-center gap-3 justify-between my-4">
-              <Button route="/applications/business">Cancel</Button>
-              {businessReviewCommentsList?.filter((reviewComment) =>
-                !['REJECTED', 'APPROVED'].includes(reviewComment?.status)
-              )?.length > 0 ? (
-                <Button
-                  primary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    dispatch(
-                      updateBusinessThunk({
-                        businessId: businessId as businessId,
-                        applicationStatus: 'ACTION_REQUIRED',
-                      })
-                    );
-                  }}
-                >
-                  {updateBusinessIsLoading ? (
-                    <Loader />
-                  ) : (
-                    'Return for correction'
-                  )}
-                </Button>
-              ) : business?.applicationStatus === 'IN_REVIEW' &&
-                businessReviewCommentsList?.filter(
+            {[
+              'SUBMITTED',
+              'RESUBMITTED',
+              'IN_REVIEW',
+              'PENDING_DECISION',
+              'PENDING_REJECTION',
+            ].includes(business?.applicationStatus) && (
+              <menu className="w-full flex items-center gap-3 justify-between my-4">
+                <Button route="/applications/business">Cancel</Button>
+                {businessReviewCommentsList?.filter(
                   (reviewComment) =>
                     !['REJECTED', 'APPROVED'].includes(reviewComment?.status)
-                )?.length <= 0 ? (
-                <Button
-                  primary
-                  onClick={(e) => {
-                    e.preventDefault();
-                    dispatch(
-                      requestBusinessApproverThunk({
-                        businessId: businessId as businessId,
-                      })
-                    );
-                  }}
-                >
-                  {updateBusinessIsLoading ? <Loader /> : 'Submit for decision'}
-                </Button>
-              ) : (
-                business?.applicationStatus === 'PENDING_DECISION' && (
+                )?.length > 0 ? (
                   <Button
                     primary
                     onClick={(e) => {
@@ -618,16 +588,59 @@ const BusinessApplicationReview = () => {
                       dispatch(
                         updateBusinessThunk({
                           businessId: businessId as businessId,
-                          applicationStatus: 'ACTIVE',
+                          applicationStatus: 'ACTION_REQUIRED',
                         })
                       );
                     }}
                   >
-                    {updateBusinessIsLoading ? <Loader /> : 'Approve'}
+                    {updateBusinessIsLoading ? (
+                      <Loader />
+                    ) : (
+                      'Return for correction'
+                    )}
                   </Button>
-                )
-              )}
-            </menu>
+                ) : business?.applicationStatus === 'IN_REVIEW' &&
+                  businessReviewCommentsList?.filter(
+                    (reviewComment) =>
+                      !['REJECTED', 'APPROVED'].includes(reviewComment?.status)
+                  )?.length <= 0 ? (
+                  <Button
+                    primary
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(
+                        requestBusinessApproverThunk({
+                          businessId: businessId as businessId,
+                        })
+                      );
+                    }}
+                  >
+                    {updateBusinessIsLoading ? (
+                      <Loader />
+                    ) : (
+                      'Submit for decision'
+                    )}
+                  </Button>
+                ) : (
+                  business?.applicationStatus === 'PENDING_DECISION' && (
+                    <Button
+                      primary
+                      onClick={(e) => {
+                        e.preventDefault();
+                        dispatch(
+                          updateBusinessThunk({
+                            businessId: businessId as businessId,
+                            applicationStatus: 'ACTIVE',
+                          })
+                        );
+                      }}
+                    >
+                      {updateBusinessIsLoading ? <Loader /> : 'Approve'}
+                    </Button>
+                  )
+                )}
+              </menu>
+            )}
           </main>
         ) : (
           <figure className="flex items-center w-full min-h-[60vh] justify-center">

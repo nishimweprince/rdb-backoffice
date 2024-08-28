@@ -4,6 +4,8 @@ import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
 import { RootState } from '@/states/store';
 import { useSelector } from 'react-redux';
 import { BusinessActivity } from '@/types/models/business';
+import Table from '@/components/table/Table';
+import { businessLineColumns } from '@/constants/business.constants';
 
 const BusinessActivitiesAmendmentReview = () => {
   // STATE VARIABLES
@@ -24,53 +26,67 @@ const BusinessActivitiesAmendmentReview = () => {
           businessAmendment={selectedBusinessAmendment}
         />
       )}
-      {selectedTab === 'current-details' && (
-        <section className="w-full flex flex-col gap-4">
-          <h3 className="uppercase text-primary text-lg font-medium">
-            Exsiting business activities
-          </h3>
-          {(
-            selectedBusinessAmendment?.oldValue as unknown as {
-              businessLine: BusinessActivity[];
-            }
-          )?.businessLine?.map(
-            (businessLine: BusinessActivity, index: number) => {
-              return (
-                <article className="flex items-center gap-3" key={index}>
-                  <p>{index + 1}.</p>
-                  <ul className="flex items-center gap-2">
-                    <p>{businessLine?.code}</p>-
-                    <p>{businessLine?.description}</p>
-                  </ul>
-                </article>
-              );
-            }
-          )}
-        </section>
-      )}
-      {selectedTab === 'proposed-changes' && (
-        <section className="w-full flex flex-col gap-4">
-          <h3 className="uppercase text-primary text-lg font-medium">
-            Proposed business activities
-          </h3>
-          {(
-            selectedBusinessAmendment?.newValue as unknown as {
-              businessLine: BusinessActivity[];
-            }
-          )?.businessLine?.map(
-            (businessLine: BusinessActivity, index: number) => {
-              return (
-                <article className="flex items-center gap-3" key={index}>
-                  <p>{index + 1}.</p>
-                  <ul className="flex items-center gap-2">
-                    <p>{businessLine?.code}</p>-
-                    <p>{businessLine?.description}</p>
-                  </ul>
-                </article>
-              );
-            }
-          )}
-        </section>
+      {selectedTab === 'changes-requested' && (
+        <menu className="w-full flex flex-col gap-4">
+          <section className="w-full flex flex-col gap-4">
+            <h3 className="uppercase text-primary text-lg font-medium">
+              Existing business activities
+            </h3>
+            <p>
+              <span className="underline font-semibold">
+                Main business activity
+              </span>
+              :{' '}
+              {
+                (
+                  selectedBusinessAmendment?.oldValue as unknown as {
+                    mainBusinessActivity: string;
+                  }
+                )?.mainBusinessActivity
+              }
+            </p>
+            <Table
+              data={
+                (
+                  selectedBusinessAmendment?.oldValue as unknown as {
+                    businessLine: BusinessActivity[];
+                  }
+                )?.businessLine
+              }
+              showPagination={false}
+              columns={businessLineColumns}
+            />
+          </section>
+          <section className="w-full flex flex-col gap-4">
+            <h3 className="uppercase text-primary text-lg font-medium">
+              New business activities
+            </h3>
+            <p>
+              <span className="underline font-semibold">
+                Main business activity
+              </span>
+              :{' '}
+              {
+                (
+                  selectedBusinessAmendment?.oldValue as unknown as {
+                    mainBusinessActivity: string;
+                  }
+                )?.mainBusinessActivity
+              }
+            </p>
+            <Table
+              data={
+                (
+                  selectedBusinessAmendment?.newValue as unknown as {
+                    businessLine: BusinessActivity[];
+                  }
+                )?.businessLine
+              }
+              showPagination={false}
+              columns={businessLineColumns}
+            />
+          </section>
+        </menu>
       )}
     </main>
   );

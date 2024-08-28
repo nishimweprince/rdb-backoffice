@@ -12,11 +12,12 @@ import BusinessApplicationReview from '@/pages/business-review/BusinessApplicati
 import AuthenticationRoutes from './AuthenticationRoutes';
 import StaffAuthenticatedRoutes from '@/outlets/StaffAuthenticatedRoutes';
 import LandingRoute from './LandingRoute';
-import BusinessAmendmentsList from '@/pages/business/amendments/BusinessAmendmentsList';
 import BusinessAmendmentsReview from '@/pages/business/amendments/BusinessAmendmentsReview';
 import ApplicationsRoutes from './ApplicationsRoutes';
 import BusinessAmendmentRoutes from './BusinessAmendmentRoutes';
 import RegistrarGeneral from '@/pages/settings/registrar-general';
+import AmendedBusinessesList from '@/pages/business/amendments/AmendedBusinessesList';
+import BusinessAmendmentsList from '@/pages/business/amendments/BusinessAmendmentsList';
 
 const Router = () => {
   return (
@@ -52,10 +53,14 @@ const Router = () => {
                 path=":id/review"
                 element={<BusinessApplicationReview />}
               />
+              <Route
+                path="amendments"
+                element={<AmendedBusinessesList />}
+              />
             </Route>
-            <Route path="amendments" element={<BusinessAmendmentRoutes />}>
-              <Route path="" element={<BusinessAmendmentsList />} />
-              <Route path="review" element={<BusinessAmendmentsReview />} />
+            <Route path='amendments' element={<BusinessAmendmentRoutes />}>
+            <Route path="" element={<BusinessAmendmentsList />} />
+            <Route path="review" element={<BusinessAmendmentsReview />} />
             </Route>
           </Route>
         </Route>

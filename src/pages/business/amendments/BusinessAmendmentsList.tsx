@@ -10,19 +10,21 @@ import {
   fetchBusinessAmendmentsThunk,
   setSelectedBusinessAmendment,
 } from '@/states/features/businessAmendmentSlice';
+import { getchBusinessThunk } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
 import { BusinessAmendment } from '@/types/models/business';
 import {
   faCircleInfo,
-  faEllipsisVertical,
+  faEllipsisH,
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { UUID } from 'crypto';
+import queryString, { ParsedQuery } from 'query-string';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const BusinessAmendmentsList = () => {
   // STATE VARIABLES
@@ -32,23 +34,56 @@ const BusinessAmendmentsList = () => {
     fetchBusinessAmendmentsIsFetching,
     fetchBusinessAmendmentsIsSuccess,
   } = useSelector((state: RootState) => state.businessAmendment);
+  const {
+    business,
+    getBusinessIsError,
+    getBusinessIsFetching,
+    getBusinessIsSuccess,
+  } = useSelector((state: RootState) => state.business);
   const { user } = useSelector((state: RootState) => state.user);
   const [userId, setUserId] = useState<UUID | undefined>(user?.id);
+  const [queryParams, setQueryParams] = useState<ParsedQuery<string | number>>(
+    {}
+  );
 
   // NAVIGATION
+  const { search } = useLocation();
   const navigate = useNavigate();
+
+  // GET PARAM FROM PATH
+  useEffect(() => {
+    setQueryParams(queryString.parse(search));
+  }, [search]);
+
+  // GET BUSINESS THUNK
+  useEffect(() => {
+    if (queryParams?.businessId) {
+      dispatch(getchBusinessThunk(queryParams?.businessId as UUID));
+    }
+  }, [userId, dispatch, queryParams?.businessId]);
 
   // FETCH BUSINESS AMENDMENTS
   useEffect(() => {
-    dispatch(fetchBusinessAmendmentsThunk({ userId: userId }));
-  }, [userId, dispatch]);
+    dispatch(
+      fetchBusinessAmendmentsThunk({
+        userId,
+        businessId: queryParams?.businessId,
+      })
+    );
+  }, [userId, dispatch, queryParams?.businessId]);
 
   // NAVIGATION LINKS
   const navigationExtendedPaths = [
     ...navigationPaths,
     {
       label: 'Business Amendments',
-      route: '/applications/amendments',
+      route: '/applications/business/amendments',
+    },
+    {
+      label: `${
+        getBusinessIsFetching ? '...' : business?.applicationReferenceId
+      }`,
+      route: `/applications/amendments?businessId=${business?.id}`,
     },
   ];
 
@@ -65,56 +100,77 @@ const BusinessAmendmentsList = () => {
               <menu className="flex items-center justify-center w-full gap-2 text-[12px] cursor-pointer">
                 <CustomTooltip label="Click to view options">
                   <FontAwesomeIcon
-                    className="text-primary text-md p-0 transition-all duration-300 hover:scale-[.98]"
-                    icon={faEllipsisVertical}
+                    className="text-primary text-md p-1 transition-all duration-300 hover:scale-[.98] px-4 bg-slate-200 hover:bg-slate-300 rounded-md"
+                    icon={faEllipsisH}
                   />
                 </CustomTooltip>
               </menu>
             }
           >
-            <menu className="flex flex-col gap-1 p-0 bg-white rounded-md">
-              {['AMENDMENT_SUBMITTED', 'PENDING_APPROVAL', 'RESUBMITTED', 'PENDING_REJECTION'].includes(
-                row?.original?.status
-              ) &&
-                ([
-                  row?.original?.assignedApprover?.id,
-                  row?.original?.assignedVerifier?.id,
-                ].includes(user?.id) ||
-                  true) && (
+            {getBusinessIsFetching || fetchBusinessAmendmentsIsFetching ? (
+              <figure className="w-full flex items-center gap-4 min-h-[40vh]">
+                <Loader className="text-primary" />
+              </figure>
+            ) : (
+              fetchBusinessAmendmentsIsSuccess &&
+              getBusinessIsSuccess && (
+                <menu className="flex flex-col gap-1 p-0 bg-white rounded-md">
+                  {[
+                    'AMENDMENT_SUBMITTED',
+                    'PENDING_APPROVAL',
+                    'RESUBMITTED',
+                    'PENDING_REJECTION',
+                  ].includes(row?.original?.status) &&
+                    ([
+                      row?.original?.assignedApprover?.id,
+                      row?.original?.assignedVerifier?.id,
+                    ].includes(user?.id) ||
+                      true) && (
+                      <Link
+                        className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          dispatch(setSelectedBusinessAmendment(row?.original));
+                          navigate(
+                            `/applications/amendments/review?businessId=${row?.original?.businessId}&amendmentType=${row?.original?.amendmentType}`
+                          );
+                        }}
+                        to={'#'}
+                      >
+                        <FontAwesomeIcon
+                          className="text-primary"
+                          icon={faMagnifyingGlass}
+                        />{' '}
+                        Review
+                      </Link>
+                    )}
                   <Link
                     className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
-                    onClick={async (e) => {
+                    onClick={(e) => {
                       e.preventDefault();
-                      dispatch(setSelectedBusinessAmendment(row?.original));
-                      navigate(
-                        `/applications/amendments/review?businessId=${row?.original?.businessId}&amendmentType=${row?.original?.amendmentType}`
-                      );
                     }}
                     to={'#'}
                   >
                     <FontAwesomeIcon
                       className="text-primary"
-                      icon={faMagnifyingGlass}
-                    />{' '}
-                    Review
+                      icon={faCircleInfo}
+                    />
+                    View details
                   </Link>
-                )}
-              <Link
-                className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-                to={'#'}
-              >
-                <FontAwesomeIcon className="text-primary" icon={faCircleInfo} />
-                View details
-              </Link>
-            </menu>
+                </menu>
+              )
+            )}
           </CustomPopover>
         );
       },
     },
   ];
+
+  useEffect(() => {
+    if (getBusinessIsError) {
+      navigate('/applications/business/amendments');
+    }
+  }, [getBusinessIsError, navigate]);
 
   return (
     <StaffLayout>

@@ -4,6 +4,7 @@ import { RootState } from '@/states/store';
 import { useSelector } from 'react-redux';
 import { capitalizeString } from '@/helpers/strings.helper';
 import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
+import { Business } from '@/types/models/business';
 
 const CompanyDetailsAmendmentReview = () => {
   // STATE VARIABLES
@@ -25,122 +26,96 @@ const CompanyDetailsAmendmentReview = () => {
         />
       )}
 
-      {selectedTab === 'current-details' && (
+      {selectedTab === 'changes-requested' && (
         <section className="w-full flex flex-col gap-4">
-          <h2 className="uppercase text-primary font-semibold text-lg">
-            Current company details
-          </h2>
-          <menu className="grid grid-cols-2 gap-5 w-full">
-            <ul className="flex items-center gap-5">
-              <p>Company name:</p>
-              <p className="font-medium">
-                {selectedBusinessAmendment?.business?.companyName ||
-                  selectedBusinessAmendment?.business?.branchName ||
-                  selectedBusinessAmendment?.business?.enterpriseName ||
-                  selectedBusinessAmendment?.business?.enterpriseBusinessName}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Company code:</p>
-              <p className="font-medium">
-                {selectedBusinessAmendment?.business?.tin || 'N/A'}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Company type:</p>
-              <p className="font-medium">
-                {capitalizeString(
-                  selectedBusinessAmendment?.oldValue?.companyType
-                )}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Company status:</p>
-              <p className="font-medium">
-                {capitalizeString(
-                  selectedBusinessAmendment?.oldValue?.applicationStatus
-                )}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Has articles of association:</p>
-              <p className="font-medium">
-                {selectedBusinessAmendment?.oldValue?.hasArticlesOfAssociation
-                  ? 'Yes'
-                  : 'No'}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Company category:</p>
-              <p className="font-medium">
-                {capitalizeString(
-                  selectedBusinessAmendment?.oldValue?.companyCategory
-                )}
-              </p>
-            </ul>
-          </menu>
-        </section>
-      )}
-
-      {selectedTab === 'proposed-changes' && (
-        <section className="w-full flex flex-col gap-4">
-          <h2 className="uppercase text-primary font-semibold text-lg">
-            Proposed changes
-          </h2>
-          <menu className="grid grid-cols-2 gap-5 w-full">
-            <ul className="flex items-center gap-5">
-              <p>Company name:</p>
-              <p className="font-medium">
-                {selectedBusinessAmendment?.newValue?.companyName ||
-                  selectedBusinessAmendment?.newValue?.branchName ||
-                  selectedBusinessAmendment?.newValue?.enterpriseName ||
-                  selectedBusinessAmendment?.newValue?.enterpriseBusinessName}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Company code:</p>
-              <p className="font-medium">
-                {selectedBusinessAmendment?.newValue?.tin || 'N/A'}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Company type:</p>
-              <p className="font-medium">
-                {capitalizeString(
-                  selectedBusinessAmendment?.newValue?.companyType
-                )}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Company status:</p>
-              <p className="font-medium">
-                {capitalizeString(
-                  selectedBusinessAmendment?.newValue?.applicationStatus ||
-                    selectedBusinessAmendment?.oldValue?.applicationStatus
-                )}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Has articles of association:</p>
-              <p className="font-medium">
-                {selectedBusinessAmendment?.newValue?.hasArticlesOfAssociation
-                  ? 'Yes'
-                  : 'No'}
-              </p>
-            </ul>
-            <ul className="flex items-center gap-5">
-              <p>Company category:</p>
-              <p className="font-medium">
-                {capitalizeString(
-                  selectedBusinessAmendment?.newValue?.companyCategory
-                )}
-              </p>
-            </ul>
+          <menu className="grid grid-cols-2 gap-5 w-full p-2">
+            <article className="flex flex-col gap-4">
+              <h3 className="uppercase text-primary text-lg font-medium">
+                Current details
+              </h3>
+              {renderCompanyDetails(
+                selectedBusinessAmendment?.oldValue as Business
+              )}
+            </article>
+            <article className="flex flex-col gap-4">
+              <h3 className="uppercase text-primary text-lg font-medium">
+                Proposed changes
+              </h3>
+              {renderCompanyDetails(
+                selectedBusinessAmendment?.newValue as Business,
+                selectedBusinessAmendment?.oldValue as Business
+              )}
+            </article>
           </menu>
         </section>
       )}
     </main>
   );
 };
+
+function renderCompanyDetails(
+  displayValue: Business,
+  comparisonValue?: Business
+) {
+  return (
+    <menu>
+      <ul className="flex flex-col gap-3">
+        {Object.entries(displayValue)?.map(([key, value]) => {
+          const comparisonValueForKey = comparisonValue?.[key];
+          if (
+            [
+              'assignedVerifier',
+              'assignedApprover',
+              'serviceId',
+              'state',
+              'version',
+              'createdAt',
+              'lastModifiedDate',
+              'entityId',
+              'id',
+              'applicationReferenceId',
+              'updatedAt',
+              'createdDate',
+              'isForeign',
+              'applicationStatus',
+            ].includes(key) ||
+            value === null
+          )
+            return null;
+          if (typeof value === 'boolean') {
+            return (
+              <li key={key} className="flex items-center gap-2">
+                <p>{capitalizeString(key)}:</p>
+                <p
+                  className={`font-medium ${
+                    comparisonValue &&
+                    comparisonValueForKey !== value &&
+                    'bg-green-700 text-white p-1 px-2 rounded-md'
+                  }`}
+                >
+                  {value ? 'Yes' : 'No'}
+                </p>
+              </li>
+            );
+          }
+          return (
+            <li key={key} className="flex items-center gap-2">
+              <p>{capitalizeString(key)}:</p>
+              <p
+                className={`font-medium ${
+                  comparisonValue &&
+                  comparisonValueForKey !== value &&
+                  'bg-green-700 text-white p-1 px-2 rounded-md'
+                }`}
+              >
+                {capitalizeString(value)}
+              </p>
+            </li>
+          );
+        })}
+      </ul>
+    </menu>
+  );
+}
 
 export default CompanyDetailsAmendmentReview;
