@@ -33,6 +33,7 @@ const initialState: {
   approveAmendmentIsSuccess: boolean;
   recommendAmendmentRejectionIsLoading: boolean;
   recommendAmendmentRejectionIsSuccess: boolean;
+
 } = {
   businessAmendmentsList: [],
   selectedBusinessAmendment: undefined,

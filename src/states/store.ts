@@ -15,6 +15,7 @@ import businessReviewCommentSlice from './features/businessReviewCommentSlice';
 import serviceSlice from './features/serviceSlice';
 import userManagementQueryApiSlice from './api/userManagementQueryApiSlice';
 import businessAmendmentSlice from './features/businessAmendmentSlice';
+import settingsApiSlices from './api/settingsApiSlice';
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     [businessRegQueryApiSlice.reducerPath]: businessRegQueryApiSlice.reducer,
     [userManagementQueryApiSlice.reducerPath]:
       userManagementQueryApiSlice.reducer,
+    [settingsApiSlices.reducerPath]: settingsApiSlices.reducer,
     user: userSlice,
     sidebar: sidebarSlice,
     business: businessSlice,
@@ -41,7 +43,8 @@ export const store = configureStore({
       authApiSlice.middleware,
       businessRegApiSlice.middleware,
       businessRegQueryApiSlice.middleware,
-      userManagementQueryApiSlice.middleware
+      userManagementQueryApiSlice.middleware,
+      settingsApiSlices.middleware
     );
   },
 });
