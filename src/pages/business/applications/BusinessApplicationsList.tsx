@@ -21,8 +21,7 @@ import { businessColumns } from '@/constants/business.constants';
 import CustomPopover from '@/components/inputs/CustomPopover';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faCircleInfo,
-  faEllipsisVertical,
+  faEllipsisH,
   faMagnifyingGlass,
 } from '@fortawesome/free-solid-svg-icons';
 import CustomTooltip from '@/components/inputs/CustomTooltip';
@@ -107,67 +106,59 @@ const ReviewBusinessApplications = () => {
       header: 'Action',
       accessorKey: 'action',
       cell: ({ row }: { row: Row<Business> }) => {
-        return (
-          <CustomPopover
-            trigger={
-              <menu className="flex items-center justify-center w-full gap-2 text-[12px] cursor-pointer">
-                <CustomTooltip label="Click to view options">
-                  <FontAwesomeIcon
-                    className="text-primary text-md p-0 transition-all duration-300 hover:scale-[.98]"
-                    icon={faEllipsisVertical}
-                  />
-                </CustomTooltip>
-              </menu>
-            }
-          >
-            <menu className="flex flex-col gap-1 p-0 bg-white rounded-md">
-              {[
-                'SUBMITTED',
-                'RESUBMITTED',
-                'ACTION_REQUIRED',
-                'PENDING_DECISION',
-                'IN_REVIEW',
-                'ACTIVE',
-                'AMENDMENT_SUBMITTED'
-              ].includes(row?.original?.applicationStatus) && (
-                  <Link
-                    className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      dispatch(setSelectedBusiness(row?.original));
-                      await dispatch(
-                        updateBusinessThunk({
-                          businessId: row?.original?.id,
-                          applicationStatus:
-                            row?.original?.applicationStatus ===
-                            'PENDING_DECISION'
-                              ? 'PENDING_DECISION'
-                              : 'IN_REVIEW',
-                        })
-                      );
-                    }}
-                    to={'#'}
-                  >
+        if (
+          [
+            'SUBMITTED',
+            'RESUBMITTED',
+            'ACTION_REQUIRED',
+            'PENDING_DECISION',
+            'IN_REVIEW',
+            'ACTIVE',
+            'AMENDMENT_SUBMITTED',
+          ].includes(row?.original?.applicationStatus)
+        ) {
+          return (
+            <CustomPopover
+              trigger={
+                <menu className="flex items-center justify-center w-full gap-2 text-[12px] cursor-pointer">
+                  <CustomTooltip label="Click to view options">
                     <FontAwesomeIcon
-                      className="text-primary"
-                      icon={faMagnifyingGlass}
-                    />{' '}
-                    Review
-                  </Link>
-                )}
-              <Link
-                className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-                to={'#'}
-              >
-                <FontAwesomeIcon className="text-primary" icon={faCircleInfo} />
-                View details
-              </Link>
-            </menu>
-          </CustomPopover>
-        );
+                      className="text-primary text-md transition-all duration-300 hover:scale-[.98] p-1 px-2 rounded-md bg-gray-200 hover:bg-gray-300"
+                      icon={faEllipsisH}
+                    />
+                  </CustomTooltip>
+                </menu>
+              }
+            >
+              <menu className="flex flex-col gap-1 p-0 bg-white rounded-md">
+                <Link
+                  className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    dispatch(setSelectedBusiness(row?.original));
+                    await dispatch(
+                      updateBusinessThunk({
+                        businessId: row?.original?.id,
+                        applicationStatus:
+                          row?.original?.applicationStatus ===
+                          'PENDING_DECISION'
+                            ? 'PENDING_DECISION'
+                            : 'IN_REVIEW',
+                      })
+                    );
+                  }}
+                  to={'#'}
+                >
+                  <FontAwesomeIcon
+                    className="text-primary"
+                    icon={faMagnifyingGlass}
+                  />{' '}
+                  Review
+                </Link>
+              </menu>
+            </CustomPopover>
+          );
+        }
       },
     },
   ];
