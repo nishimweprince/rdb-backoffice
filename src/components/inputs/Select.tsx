@@ -61,7 +61,7 @@ const Select = ({
                 <SelectItem
                   key={index}
                   value={option.value}
-                  className="cursor-pointer text-[13px] py-1"
+                  className="cursor-pointer text-[13px] py-1 hover:bg-background"
                 >
                   <p className="text-[13px] py-[3px]">{option.label}</p>
                 </SelectItem>

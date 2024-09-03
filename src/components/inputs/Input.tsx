@@ -14,7 +14,7 @@ import DatePicker from './DatePicker';
 import { Checkbox } from '../ui/checkbox';
 import { CheckedState } from '@radix-ui/react-checkbox';
 
-type InputProps = {
+interface InputProps {
   label?: string;
   placeholder?: string;
   className?: string;
@@ -43,7 +43,7 @@ type InputProps = {
   toDate?: Date;
   checked?: boolean;
   selectionType?: 'date' | 'month' | 'year' | 'recurringDate';
-};
+}
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -157,7 +157,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             toDate={toDate}
             selectionType={selectionType}
             onChange={
-              onChange as | ((e: Date | ChangeEvent<HTMLInputElement>) => void)
+              onChange as
+                | ((e: Date | ChangeEvent<HTMLInputElement>) => void)
                 | undefined
             }
             value={(value || defaultValue) as Date | undefined}

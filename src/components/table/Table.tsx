@@ -118,7 +118,9 @@ export default function Table<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
-                    className={`p-2 ${rowClickHandler ? 'cursor-pointer' : ''}`}
+                    className={`p-2 ${
+                      rowClickHandler ? 'cursor-pointer' : ''
+                    } hover:bg-background`}
                     onClick={(e) => {
                       e.preventDefault();
                       rowClickHandler &&
