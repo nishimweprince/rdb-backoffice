@@ -211,6 +211,20 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // UPDATE BUSINESS LINE
+      updateBusinessLine: builder.mutation({
+        query: ({ disclaimer, status, businessLineId }) => {
+          return{
+            url: `/back-office/business-line?businessLineId=${businessLineId}`,
+            method: 'PATCH',
+            body: {
+              disclaimer,
+              status
+            }
+          }
+        }
+      })
     };
   },
 });
@@ -233,6 +247,7 @@ export const {
   useApproveAmendmentMutation,
   useRejectAmendmentMutation,
   useRecommendAmendmentRejectionMutation,
+  useUpdateBusinessLineMutation
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;

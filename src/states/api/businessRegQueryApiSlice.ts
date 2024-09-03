@@ -190,6 +190,24 @@ export const businessRegQueryApiSlice = createApi({
           };
         },
       }),
+
+      // FETCH BUSINESS ACTIVITY SECTORS
+      fetchBusinessActivitiesSectors: builder.query({
+        query: () => {
+          return {
+            url: `/business-activity/sectors`,
+          };
+        },
+      }),
+
+       // FETCH BUSINESS LINES
+       fetchBusinessLines: builder.query({
+        query: ({ sectorCode }) => {
+          return {
+            url: `/business-activity/business-lines?sectorCode=${sectorCode}`,
+          };
+        },
+      }),
     };
   },
 });
@@ -213,6 +231,8 @@ export const {
   useLazyFetchServicesQuery,
   useLazyFetchBusinessAmendmentsQuery,
   useLazyFetchAmendmentReviewCommentsQuery,
+  useLazyFetchBusinessActivitiesSectorsQuery,
+  useLazyFetchBusinessLinesQuery,
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

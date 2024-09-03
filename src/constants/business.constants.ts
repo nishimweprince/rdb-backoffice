@@ -160,3 +160,9 @@ export const businessLineColumns = [
     accessorKey: 'description',
   },
 ];
+
+export const businessActivityStatus = [
+  'ACTIVE',
+  'INACTIVE',
+  'LICENSE_REQUIRED',
+];
