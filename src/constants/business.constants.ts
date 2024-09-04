@@ -68,8 +68,8 @@ export const attachmentColumns = [
   },
   {
     header: 'Attachment Type',
-    accessorKey: 'attachmentType',
-    cell: ({ row }: { row: Row<BusinessAttachment> }) => `${row?.original?.attachmentType || 'N/A'}`,
+    accessorKey: 'attachmentTypeId',
+    cell: ({ row }: { row: Row<BusinessAttachment> }) => `${row?.original?.attachmentTypeId || 'N/A'}`,
   },
   {
     header: 'Attachment Size',
@@ -139,13 +139,11 @@ export const founderDetailColumns = [
 
 export const applicationReviewStatuses = [
   'SUBMITTED',
-  'VERIFIED',
   'APPROVED',
   'REJECTED',
   'ACTIVE',
   'RESUBMITTED',
   'ACTION_REQUIRED',
-  'AMENDMENT_SUBMITTED',
   'IN_REVIEW',
   'PENDING_DECISION',
 ];

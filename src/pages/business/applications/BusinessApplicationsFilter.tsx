@@ -1,3 +1,4 @@
+import Combobox from '@/components/inputs/Combobox';
 import CustomPopover from '@/components/inputs/CustomPopover';
 import Input from '@/components/inputs/Input';
 import Loader from '@/components/inputs/Loader';
@@ -37,7 +38,6 @@ const BusinessApplicationsFilter = ({
   const [selectedApplicationStatuses, setSelectedApplicationStatuses] =
     useState<string[]>([
       'SUBMITTED',
-      'AMENDMENT_SUBMITTED',
       'APPROVED',
       'ACTIVE',
       'IN_REVIEW',
@@ -80,7 +80,7 @@ const BusinessApplicationsFilter = ({
                 <label className="w-full flex flex-col gap-1">
                   <Select
                     {...field}
-                    placeholder="Select application stype"
+                    placeholder="Select applications type"
                     options={servicesList?.map((service) => {
                       return {
                         label: service?.name,
@@ -111,6 +111,7 @@ const BusinessApplicationsFilter = ({
       )}
       <label className="w-full flex flex-col gap-1">
         <CustomPopover
+          className="w-full"
           trigger={
             <Button
               className="w-full flex items-center gap-2 h-[38px] text-primary"
@@ -121,7 +122,7 @@ const BusinessApplicationsFilter = ({
             </Button>
           }
         >
-          <menu className="flex flex-col gap-2">
+          <menu className="flex flex-col gap-2 w-full bg-white">
             {applicationReviewStatuses?.map((status, index) => {
               return (
                 <Input
@@ -146,16 +147,36 @@ const BusinessApplicationsFilter = ({
                 />
               );
             })}
-            <Button
-              variant={'default'}
-              className="self-end py-[3px] px-[9px] w-fit text-white mt-2"
-              onClick={(e) => {
-                e.preventDefault();
-                onSelectApplicationStatus(selectedApplicationStatuses);
-              }}
-            >
-              Select
-            </Button>
+            <menu className="flex items-center gap-2 justify-between mt-2">
+              <Link
+                to={'#'}
+                className="bg-white border border-background text-primary hover:bg-background p-1 px-3 rounded-md w-fit self-end text-[13px]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSelectedApplicationStatuses([
+                    'SUBMITTED',
+                    'APPROVED',
+                    'ACTIVE',
+                    'IN_REVIEW',
+                    'ACTION_REQUIRED',
+                    'RESUBMITTED',
+                    'PENDING_DECISION',
+                  ]);
+                }}
+              >
+                Clear
+              </Link>
+              <Link
+                to={'#'}
+                className="bg-primary text-white p-1 px-3 rounded-md w-fit self-end text-[13px]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSelectApplicationStatus(selectedApplicationStatuses);
+                }}
+              >
+                Select
+              </Link>
+            </menu>
           </menu>
         </CustomPopover>
         <Link
@@ -180,7 +201,7 @@ const BusinessApplicationsFilter = ({
             render={({ field }) => {
               return (
                 <label className="w-full flex flex-col gap-1">
-                  <Select
+                  <Combobox
                     {...field}
                     placeholder="Filter by user"
                     options={usersList?.map((user) => {
@@ -201,7 +222,7 @@ const BusinessApplicationsFilter = ({
                     className="text-[13px] underline text-primary px-1"
                     onClick={(e) => {
                       e.preventDefault();
-                      field.onChange(null);
+                      field.onChange(undefined);
                       onSelectUser(undefined);
                     }}
                   >

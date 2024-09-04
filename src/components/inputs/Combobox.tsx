@@ -82,7 +82,7 @@ const Combobox = ({
                     key={option.label}
                     disabled={option?.disabled}
                     className="flex items-center gap-2 hover:bg-background cursor-pointer w-full"
-                    value={option.label}
+                    value={option?.label}
                     onSelect={(currentValue) => {
                       const selectedOption = options.find(
                         (option) => option.label === currentValue

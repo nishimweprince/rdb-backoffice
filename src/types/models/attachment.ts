@@ -4,6 +4,7 @@ export type BaseAttachment = {
   id: UUID;
   fileName: string;
   attachmentType?: string;
+  attachmentTypeId?: string;
   attachmentUrl: string;
   fileSize: string;
   name?: string;

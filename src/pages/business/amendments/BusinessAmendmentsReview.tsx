@@ -41,6 +41,12 @@ import EmploymentInfoAmendmentReview from './EmploymentInfoAmendmentReview';
 import { navigationPaths } from '@/constants/dashboard.constants';
 import CustomBreadcrumb from '@/components/navigation/CustomBreadcrumb';
 import BusinessAttachmentsTable from '@/pages/business-review/BusinessAttachmentsTable';
+import BusinessDormancyDeclarationReview from './BusinessDormancyDeclarationReview';
+import BusinessCessationToDormancyReview from './BusinessCessationToDormancyReview';
+import BusinessNewBranchReview from './BusinessNewBranchReview';
+import TransferOfRegistrationReview from './TransferOfRegistrationReview';
+import CloseBusinessAmendmentReview from './CloseBusinessAmendmentReview';
+import RestoreBusinessAmendmentReview from './RestoreBusinessAmendmentReview';
 
 const BusinessAmendmentsReview = () => {
   // STATE VARIABLES
@@ -287,11 +293,31 @@ const BusinessAmendmentsReview = () => {
               'AMEND_BUSINESS_EMPLOYMENT_INFO' && (
               <EmploymentInfoAmendmentReview />
             )}
+            {queryParams?.amendmentType ===
+              'AMEND_BUSINESS_DORMANCY_DECLARATION' && (
+              <BusinessDormancyDeclarationReview />
+            )}
+            {queryParams?.amendmentType === 'AMEND_CESSATION_TO_BE_DORMANT' && (
+              <BusinessCessationToDormancyReview />
+            )}
+            {queryParams?.amendmentType === 'AMEND_BUSINESS_NEW_BRANCH' && (
+              <BusinessNewBranchReview />
+            )}
+            {queryParams?.amendmentType ===
+              'AMEND_BUSINESS_TRANSFER_OF_REGISTRATION' && (
+              <TransferOfRegistrationReview />
+            )}
+            {queryParams?.amendmentType === 'AMEND_BUSINESS_DISSOLUTION' && (
+              <CloseBusinessAmendmentReview />
+            )}
+            {queryParams?.amendmentType === 'AMEND_BUSINESS_RESTORATION' && (
+              <RestoreBusinessAmendmentReview />
+            )}
           </menu>
         )}
         {(selectedBusinessAmendment?.amendmentAttachmentDetails || [])?.length >
           0 && (
-          <section className="w-full flex flex-col gap-3">
+          <section className="w-full flex flex-col gap-3 px-5">
             <h3>Attachments</h3>
             <BusinessAttachmentsTable
               businessAttachmentsList={
@@ -586,9 +612,9 @@ export const BusinessAmendmentRequestSummary = ({
           </p>
         </ul>
         <ul className="flex items-center gap-2">
-          <p>Amendment type:</p>
+          <p>Is Foreign:</p>
           <p className="font-medium">
-            {capitalizeString(businessAmendment?.amendmentType)}
+            {businessAmendment?.business?.isForeign ? 'Yes' : 'No'}
           </p>
         </ul>
         <ul className="flex items-center gap-2">
