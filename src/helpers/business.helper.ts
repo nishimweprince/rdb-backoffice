@@ -52,7 +52,8 @@ export const getBusinessStatusColor = (status: string): string => {
     case 'PENDING_DECISION':
       return 'bg-blue-700';
     case 'INACTIVE':
-      return 'bg-red-600';
+    case 'DORMANT':
+      return 'bg-red-700';
     default:
       return '';
   }
