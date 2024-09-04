@@ -41,6 +41,7 @@ import EmploymentInfoAmendmentReview from './EmploymentInfoAmendmentReview';
 import { navigationPaths } from '@/constants/dashboard.constants';
 import CustomBreadcrumb from '@/components/navigation/CustomBreadcrumb';
 import BusinessAttachmentsTable from '@/pages/business-review/BusinessAttachmentsTable';
+import BusinessDormancyDeclarationReview from './BusinessDormancyDeclarationReview';
 
 const BusinessAmendmentsReview = () => {
   // STATE VARIABLES
@@ -286,6 +287,9 @@ const BusinessAmendmentsReview = () => {
             {queryParams?.amendmentType ===
               'AMEND_BUSINESS_EMPLOYMENT_INFO' && (
               <EmploymentInfoAmendmentReview />
+            )}
+            {queryParams?.amendmentType === 'AMEND_BUSINESS_DORMANCY_DECLARATION' && (
+              <BusinessDormancyDeclarationReview />
             )}
           </menu>
         )}

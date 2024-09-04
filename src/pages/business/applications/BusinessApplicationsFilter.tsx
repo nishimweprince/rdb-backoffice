@@ -111,6 +111,7 @@ const BusinessApplicationsFilter = ({
       )}
       <label className="w-full flex flex-col gap-1">
         <CustomPopover
+          className="w-full"
           trigger={
             <Button
               className="w-full flex items-center gap-2 h-[38px] text-primary"
@@ -121,7 +122,7 @@ const BusinessApplicationsFilter = ({
             </Button>
           }
         >
-          <menu className="flex flex-col gap-2">
+          <menu className="flex flex-col gap-2 w-full bg-white">
             {applicationReviewStatuses?.map((status, index) => {
               return (
                 <Input
@@ -146,16 +147,36 @@ const BusinessApplicationsFilter = ({
                 />
               );
             })}
-            <Button
-              variant={'default'}
-              className="self-end py-[3px] px-[9px] w-fit text-white mt-2"
-              onClick={(e) => {
-                e.preventDefault();
-                onSelectApplicationStatus(selectedApplicationStatuses);
-              }}
-            >
-              Select
-            </Button>
+            <menu className="flex items-center gap-2 justify-between mt-2">
+              <Link
+                to={'#'}
+                className="bg-white border border-background text-primary hover:bg-background p-1 px-3 rounded-md w-fit self-end text-[13px]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSelectedApplicationStatuses([
+                    'SUBMITTED',
+                    'APPROVED',
+                    'ACTIVE',
+                    'IN_REVIEW',
+                    'ACTION_REQUIRED',
+                    'RESUBMITTED',
+                    'PENDING_DECISION',
+                  ]);
+                }}
+              >
+                Clear
+              </Link>
+              <Link
+                to={'#'}
+                className="bg-primary text-white p-1 px-3 rounded-md w-fit self-end text-[13px]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSelectApplicationStatus(selectedApplicationStatuses);
+                }}
+              >
+                Select
+              </Link>
+            </menu>
           </menu>
         </CustomPopover>
         <Link

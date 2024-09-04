@@ -139,13 +139,11 @@ export const founderDetailColumns = [
 
 export const applicationReviewStatuses = [
   'SUBMITTED',
-  'VERIFIED',
   'APPROVED',
   'REJECTED',
   'ACTIVE',
   'RESUBMITTED',
   'ACTION_REQUIRED',
-  'AMENDMENT_SUBMITTED',
   'IN_REVIEW',
   'PENDING_DECISION',
 ];
