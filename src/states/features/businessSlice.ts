@@ -46,6 +46,10 @@ const initialState: {
   businessEmploymentInfoIsSuccess: boolean;
   approveAmendmentIsLoading: boolean;
   approveAmendmentIsSuccess: boolean;
+  rejectBusinessIsLoading: boolean;
+  rejectBusinessIsSuccess: boolean;
+  approveBusinessIsLoading: boolean;
+  approveBusinessIsSuccess: boolean;
 } = {
   businessesList: [],
   business: {} as Business,
@@ -76,6 +80,10 @@ const initialState: {
   approveAmendmentIsLoading: false,
   approveAmendmentIsSuccess: false,
   businessesIsSuccess: false,
+  rejectBusinessIsLoading: false,
+  rejectBusinessIsSuccess: false,
+  approveBusinessIsLoading: false,
+  approveBusinessIsSuccess: false,
 };
 
 // FETCH BUSINESSES
@@ -269,6 +277,46 @@ export const requestBusinessApproverThunk = createAsyncThunk<
   }
 });
 
+// REJECT BUSINESS THUNK
+export const rejectBusinessThunk = createAsyncThunk<
+  Business,
+  { businessId: businessId },
+  { dispatch: AppDispatch }
+>('business/rejectBusiness', async ({ businessId }, { dispatch }) => {
+  try {
+    const response =  await dispatch(
+      businessRegApiSlice.endpoints.rejectBusiness.initiate({
+        businessId,
+      })
+    ).unwrap();
+    return response?.data?.data;
+  } catch (error) {
+    toast.error('An error occurred while rejecting business');
+    throw error;
+  }
+});
+
+// APPROVE BUSINESS THUNK
+export const approveBusinessThunk = createAsyncThunk<
+  Business,
+  { businessId: businessId, companyType: 'domestic' | 'foreign' | 'enterprise' },
+  { dispatch: AppDispatch }
+>('business/approveBusiness', async ({ businessId, companyType }, { dispatch }) => {
+  try {
+    const response = await dispatch(
+      businessRegApiSlice.endpoints.approveBusiness.initiate({
+        businessId,
+        companyType
+      })
+    ).unwrap();
+
+    return response?.data?.data;
+  } catch (error) {
+    toast.error('An error occurred while approving business');
+    throw error;
+  }
+});
+
 export const businessSlice = createSlice({
   name: 'business',
   initialState,
@@ -349,6 +397,12 @@ export const businessSlice = createSlice({
     setUpdateBusinessIsSuccess: (state, action) => {
       state.updateBusinessIsSuccess = action.payload;
     },
+    setRejectBusinessIsSuccess: (state, action) => {
+      state.rejectBusinessIsSuccess = action.payload;
+    },
+    setApproveBusinessIsSuccess: (state, action) => {
+      state.approveBusinessIsSuccess = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBusinessesThunk.pending, (state) => {
@@ -453,6 +507,44 @@ export const businessSlice = createSlice({
       state.updateBusinessIsLoading = false;
       state.updateBusinessIsSuccess = false;
     });
+    builder.addCase(rejectBusinessThunk.pending, (state) => {
+      state.rejectBusinessIsLoading = true;
+      state.rejectBusinessIsSuccess = false;
+    });
+    builder.addCase(rejectBusinessThunk.fulfilled, (state) => {
+      state.rejectBusinessIsLoading = false;
+      state.rejectBusinessIsSuccess = true;
+      state.businessesList = state.businessesList.map((business) => {
+        if (business.id === state.business.id) {
+          return state.business;
+        }
+        return business;
+      }
+      );
+    });
+    builder.addCase(rejectBusinessThunk.rejected, (state) => {
+      state.rejectBusinessIsLoading = false;
+      state.rejectBusinessIsSuccess = false;
+    });
+    builder.addCase(approveBusinessThunk.pending, (state) => {
+      state.approveBusinessIsLoading = true;
+      state.approveBusinessIsSuccess = false;
+    });
+    builder.addCase(approveBusinessThunk.fulfilled, (state) => {
+      state.approveBusinessIsLoading = false;
+      state.approveBusinessIsSuccess = true;
+      state.businessesList = state.businessesList.map((business) => {
+        if (business.id === state.business.id) {
+          return state.business;
+        }
+        return business;
+      }
+      );
+    });
+    builder.addCase(approveBusinessThunk.rejected, (state) => {
+      state.approveBusinessIsLoading = false;
+      state.approveBusinessIsSuccess = false;
+    });
   },
 });
 
@@ -482,4 +574,6 @@ export const {
   setUploadAmendmentAttachmentIsLoading,
   setUploadAmendmentAttachmentIsSuccess,
   setUpdateBusinessIsSuccess,
+  setRejectBusinessIsSuccess,
+  setApproveBusinessIsSuccess
 } = businessSlice.actions;

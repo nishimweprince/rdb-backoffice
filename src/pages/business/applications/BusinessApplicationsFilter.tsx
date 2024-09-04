@@ -1,3 +1,4 @@
+import Combobox from '@/components/inputs/Combobox';
 import CustomPopover from '@/components/inputs/CustomPopover';
 import Input from '@/components/inputs/Input';
 import Loader from '@/components/inputs/Loader';
@@ -37,7 +38,6 @@ const BusinessApplicationsFilter = ({
   const [selectedApplicationStatuses, setSelectedApplicationStatuses] =
     useState<string[]>([
       'SUBMITTED',
-      'AMENDMENT_SUBMITTED',
       'APPROVED',
       'ACTIVE',
       'IN_REVIEW',
@@ -80,7 +80,7 @@ const BusinessApplicationsFilter = ({
                 <label className="w-full flex flex-col gap-1">
                   <Select
                     {...field}
-                    placeholder="Select application stype"
+                    placeholder="Select applications type"
                     options={servicesList?.map((service) => {
                       return {
                         label: service?.name,
@@ -180,7 +180,7 @@ const BusinessApplicationsFilter = ({
             render={({ field }) => {
               return (
                 <label className="w-full flex flex-col gap-1">
-                  <Select
+                  <Combobox
                     {...field}
                     placeholder="Filter by user"
                     options={usersList?.map((user) => {
@@ -201,7 +201,7 @@ const BusinessApplicationsFilter = ({
                     className="text-[13px] underline text-primary px-1"
                     onClick={(e) => {
                       e.preventDefault();
-                      field.onChange(null);
+                      field.onChange(undefined);
                       onSelectUser(undefined);
                     }}
                   >

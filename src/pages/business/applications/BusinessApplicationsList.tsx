@@ -47,10 +47,20 @@ const ReviewBusinessApplications = () => {
     businessesIsFetching,
     selectedBusiness,
   } = useSelector((state: RootState) => state.business);
-  const [applicationStatuses, setSelectedApplicationStatuses] = useState<string[]>([]);
+  const [applicationStatuses, setSelectedApplicationStatuses] = useState<
+    string[]
+  >([
+    'SUBMITTED',
+    'APPROVED',
+    'ACTIVE',
+    'IN_REVIEW',
+    'ACTION_REQUIRED',
+    'RESUBMITTED',
+    'PENDING_DECISION',
+  ]);
   const { user } = useSelector((state: RootState) => state.user);
   const [userId, setUserId] = useState<UUID | undefined>(user?.id);
-  const [showFilter, setShowFilter] = useState<boolean>(false);
+  const [showFilter, setShowFilter] = useState<boolean>(true);
   const [serviceId, setServiceId] = useState<UUID | undefined>(undefined);
 
   // NAVIGATION
@@ -67,7 +77,7 @@ const ReviewBusinessApplications = () => {
         page,
         size,
         userId,
-        serviceId
+        serviceId,
       })
     );
   }, [applicationStatuses, dispatch, page, serviceId, size, userId]);
@@ -113,8 +123,6 @@ const ReviewBusinessApplications = () => {
             'ACTION_REQUIRED',
             'PENDING_DECISION',
             'IN_REVIEW',
-            'ACTIVE',
-            'AMENDMENT_SUBMITTED',
           ].includes(row?.original?.applicationStatus)
         ) {
           return (
@@ -190,7 +198,7 @@ const ReviewBusinessApplications = () => {
               setUserId(user?.id);
             }}
             className={`w-full p-3 rounded-md ${
-              (userId && userId === user?.id)
+              userId && userId === user?.id
                 ? 'bg-primary text-white'
                 : 'bg-white text-primary border-primary border'
             } text-center uppercase`}
@@ -204,7 +212,7 @@ const ReviewBusinessApplications = () => {
               setUserId(undefined);
             }}
             className={`w-full p-3 rounded-md ${
-              (!userId || userId !== user?.id)
+              !userId || userId !== user?.id
                 ? 'bg-primary text-white'
                 : 'bg-white text-primary border-primary border'
             } text-center uppercase`}

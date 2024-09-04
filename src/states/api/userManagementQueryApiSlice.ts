@@ -130,7 +130,7 @@ export const userManagementQueryApiSlice = createApi({
           isLocked,
           roles,
         }) => {
-          let url = `/?page=${page}&size=${size}`;
+          let url = `/user?page=${page}&size=${size}`;
           if (searchKey) {
             url += `&searchKey=${searchKey}`;
           }

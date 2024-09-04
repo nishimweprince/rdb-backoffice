@@ -7,12 +7,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '@/components/inputs/Loader';
 import {
+  approveBusinessThunk,
   fetchBusinessAddressThunk,
   fetchBusinessAttachmentsThunk,
   fetchBusinessDetailsThunk,
   fetchBusinessEmploymentInfoThunk,
   getchBusinessThunk,
+  rejectBusinessThunk,
   requestBusinessApproverThunk,
+  setApproveBusinessIsSuccess,
+  setRejectBusinessIsSuccess,
   setUpdateBusinessIsSuccess,
   updateBusinessThunk,
 } from '@/states/features/businessSlice';
@@ -56,6 +60,10 @@ const BusinessApplicationReview = () => {
     updateBusinessIsLoading,
     updateBusinessIsSuccess,
     businessEmploymentInfoIsFetching,
+    rejectBusinessIsLoading,
+    rejectBusinessIsSuccess,
+    approveBusinessIsLoading,
+    approveBusinessIsSuccess,
   } = useSelector((state: RootState) => state.business);
   const {
     boardOfDirectorsList,
@@ -219,11 +227,23 @@ const BusinessApplicationReview = () => {
 
   // HANDLE UPDATE BUSINESS RESPONSE
   useEffect(() => {
-    if (updateBusinessIsSuccess) {
+    if (
+      updateBusinessIsSuccess ||
+      rejectBusinessIsSuccess ||
+      approveBusinessIsSuccess
+    ) {
       dispatch(setUpdateBusinessIsSuccess(false));
+      dispatch(setRejectBusinessIsSuccess(false));
+      dispatch(setApproveBusinessIsSuccess(false));
       navigate(`/applications/business`);
     }
-  }, [dispatch, navigate, updateBusinessIsSuccess]);
+  }, [
+    approveBusinessIsSuccess,
+    dispatch,
+    navigate,
+    rejectBusinessIsSuccess,
+    updateBusinessIsSuccess,
+  ]);
 
   return (
     <StaffLayout>
@@ -568,13 +588,9 @@ const BusinessApplicationReview = () => {
                 businessAttachmentsList={businessAttachmentsList}
               />
             </BusinessPreviewCard>
-            {[
-              'SUBMITTED',
-              'RESUBMITTED',
-              'IN_REVIEW',
-              'PENDING_DECISION',
-              'PENDING_REJECTION',
-            ].includes(business?.applicationStatus) && (
+            {['SUBMITTED', 'RESUBMITTED', 'IN_REVIEW'].includes(
+              business?.applicationStatus
+            ) && (
               <menu className="w-full flex items-center gap-3 justify-between my-4">
                 <Button route="/applications/business">Cancel</Button>
                 {businessReviewCommentsList?.filter(
@@ -599,46 +615,77 @@ const BusinessApplicationReview = () => {
                       'Return for correction'
                     )}
                   </Button>
-                ) : business?.applicationStatus === 'IN_REVIEW' &&
+                ) : (
+                  business?.applicationStatus === 'IN_REVIEW' &&
                   businessReviewCommentsList?.filter(
                     (reviewComment) =>
                       !['REJECTED', 'APPROVED'].includes(reviewComment?.status)
-                  )?.length <= 0 ? (
-                  <Button
-                    primary
-                    onClick={(e) => {
-                      e.preventDefault();
-                      dispatch(
-                        requestBusinessApproverThunk({
-                          businessId: businessId as businessId,
-                        })
-                      );
-                    }}
-                  >
-                    {updateBusinessIsLoading ? (
-                      <Loader />
-                    ) : (
-                      'Submit for decision'
-                    )}
-                  </Button>
-                ) : (
-                  business?.applicationStatus === 'PENDING_DECISION' && (
+                  )?.length <= 0 && (
                     <Button
                       primary
                       onClick={(e) => {
                         e.preventDefault();
                         dispatch(
-                          updateBusinessThunk({
+                          requestBusinessApproverThunk({
                             businessId: businessId as businessId,
-                            applicationStatus: 'ACTIVE',
                           })
                         );
                       }}
                     >
-                      {updateBusinessIsLoading ? <Loader /> : 'Approve'}
+                      {updateBusinessIsLoading ? (
+                        <Loader />
+                      ) : (
+                        'Submit for decision'
+                      )}
                     </Button>
                   )
                 )}
+              </menu>
+            )}
+            {['PENDING_DECISION', 'PENDING_REJECTION'].includes(
+              business?.applicationStatus
+            ) && (
+              <menu className="w-full flex items-center gap-3 justify-between mt-5 mb-3">
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/applications/business');
+                  }}
+                >
+                  Back
+                </Button>
+                <Button
+                  primary
+                  danger
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(
+                      rejectBusinessThunk({
+                        businessId: businessId as businessId,
+                      })
+                    );
+                  }}
+                >
+                  {rejectBusinessIsLoading ? <Loader /> : 'Reject'}
+                </Button>
+                <Button
+                  primary
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(
+                      approveBusinessThunk({
+                        businessId: businessId as businessId,
+                        companyType: business?.isForeign
+                          ? 'foreign'
+                          : business?.enterpriseName
+                          ? 'enterprise'
+                          : 'domestic',
+                      })
+                    );
+                  }}
+                >
+                  {approveBusinessIsLoading ? <Loader /> : 'Approve'}
+                </Button>
               </menu>
             )}
           </main>

@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { businessBaseQueryWithReauth } from './rootApiSlice';
+import { businessId } from '@/types/models/business';
 
 export const businessRegApiSlice = createApi({
   reducerPath: 'businessRegistrationApi',
@@ -224,7 +225,30 @@ export const businessRegApiSlice = createApi({
             }
           }
         }
-      })
+      }),
+
+      // APPROVE BUSINESS
+      approveBusiness: builder.mutation({
+        query: ({ businessId, companyType }: {
+          businessId: businessId,
+          companyType: 'domestic' | 'foreign' | 'enterprise',
+        }) => {
+          return {
+            url: `/back-office/approve-${companyType}?businessId=${businessId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
+
+      // REJECT BUSINESS
+      rejectBusiness: builder.mutation({
+        query: ({ businessId }) => {
+          return {
+            url: `/back-office/reject-business?businessId=${businessId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
     };
   },
 });
@@ -247,7 +271,9 @@ export const {
   useApproveAmendmentMutation,
   useRejectAmendmentMutation,
   useRecommendAmendmentRejectionMutation,
-  useUpdateBusinessLineMutation
+  useUpdateBusinessLineMutation,
+  useApproveBusinessMutation,
+  useRejectBusinessMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;
