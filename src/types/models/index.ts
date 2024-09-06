@@ -6,4 +6,6 @@ export type AbstractDomain = {
   updatedAt: Date;
   state: string;
   version: number;
+  createdByAudit?: string;
+  lastModifiedBy?: string;
 };

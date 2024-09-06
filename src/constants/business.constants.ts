@@ -164,3 +164,23 @@ export const businessActivityStatus = [
   'INACTIVE',
   'LICENSE_REQUIRED',
 ];
+
+// BUSINESS NAMES COLUMNS
+export const similarBusinessNamesColumns = [
+  {
+    header: 'No',
+    accessorKey: 'no',
+  },
+  {
+    header: 'Business Name',
+    accessorKey: 'name',
+  },
+  {
+    header: 'Similarity',
+    accessorKey: 'similarity',
+  },
+  {
+    header: 'Status',
+    accessorKey: 'status',
+  },
+];

@@ -18,6 +18,11 @@ export const formatDateTime = (date: string | Date | undefined) => {
   return moment(date).format('YYYY-MM-DD HH:mm:ss');
 };
 
+export const convertDecimalToPercentage = (number: number | string) => {
+  if (!number) return '';
+  return Number(Number(number).toFixed(2)) * 100;
+};
+
 // CAPITALIZE STRING
 export const capitalizeString = (string: string | undefined | null) => {
   if (!string) return '';

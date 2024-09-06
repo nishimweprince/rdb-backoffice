@@ -32,7 +32,7 @@ const BusinessNewBranchReview = () => {
           <menu className="grid grid-cols-2 gap-5 w-full">
             <ul className="w-full flex items-center gap-1">
               <p>Branch name:</p>
-              <p className="font-medium">
+              <p className="font-medium text-black">
                 {selectedBusinessAmendment?.newValue?.branchName}
               </p>
             </ul>

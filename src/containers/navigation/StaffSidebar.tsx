@@ -1,8 +1,6 @@
 import {
   faBars,
   faHouse,
-  faHouseChimney,
-  faMagnifyingGlass,
   faUser,
   faChevronDown,
   faChevronUp,
@@ -10,7 +8,11 @@ import {
   faPenToSquare,
   faGear,
   faChartLine,
+  faFileLines,
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCreativeCommonsNd,
+} from '@fortawesome/free-brands-svg-icons';
 import { motion, useAnimation } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
@@ -37,7 +39,7 @@ const StaffSidebar = () => {
     {
       title: 'Applications',
       path: '#',
-      icon: faMagnifyingGlass,
+      icon: faFileLines,
       subcategories: [
         {
           title: 'Business Applications',
@@ -50,9 +52,9 @@ const StaffSidebar = () => {
           icon: faPenToSquare,
         },
         {
-          title: 'Collateral Applications',
-          path: '/collaterals/review',
-          icon: faHouseChimney,
+          title: 'Name reservations',
+          path: '/applications/name-reservations',
+          icon: faCreativeCommonsNd,
         },
         {
           title: 'Foreign Accounts',
