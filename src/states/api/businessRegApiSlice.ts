@@ -216,22 +216,25 @@ export const businessRegApiSlice = createApi({
       // UPDATE BUSINESS LINE
       updateBusinessLine: builder.mutation({
         query: ({ disclaimer, status, businessLineId }) => {
-          return{
+          return {
             url: `/back-office/business-line?businessLineId=${businessLineId}`,
             method: 'PATCH',
             body: {
               disclaimer,
-              status
-            }
-          }
-        }
+              status,
+            },
+          };
+        },
       }),
 
       // APPROVE BUSINESS
       approveBusiness: builder.mutation({
-        query: ({ businessId, companyType }: {
-          businessId: businessId,
-          companyType: 'domestic' | 'foreign' | 'enterprise',
+        query: ({
+          businessId,
+          companyType,
+        }: {
+          businessId: businessId;
+          companyType: 'domestic' | 'foreign' | 'enterprise';
         }) => {
           return {
             url: `/back-office/approve-${companyType}?businessId=${businessId}`,
@@ -246,6 +249,29 @@ export const businessRegApiSlice = createApi({
           return {
             url: `/back-office/reject-business?businessId=${businessId}`,
             method: 'PATCH',
+          };
+        },
+      }),
+
+      // APPROVE NAME RESERVATION
+      approveNameReservation: builder.mutation({
+        query: ({ id }) => {
+          return {
+            url: `/name-reservations/back-office/approve/${id}`,
+            method: 'PATCH',
+          };
+        },
+      }),
+
+      // REJECT NAME RESERVATION
+      rejectNameReservation: builder.mutation({
+        query: ({ id, comment }) => {
+          return {
+            url: `/name-reservations/back-office/reject/${id}`,
+            method: 'PATCH',
+            body: {
+              comment,
+            },
           };
         },
       }),
@@ -274,6 +300,8 @@ export const {
   useUpdateBusinessLineMutation,
   useApproveBusinessMutation,
   useRejectBusinessMutation,
+  useApproveNameReservationMutation,
+  useRejectNameReservationMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;

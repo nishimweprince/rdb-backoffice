@@ -128,8 +128,7 @@ const BusinessAmendmentsReview = () => {
     if (fetchBusinessAmendmentsIsSuccess) {
       dispatch(setSelectedBusinessAmendment(businessAmendmentsList?.[0]));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, fetchBusinessAmendmentsIsSuccess]);
+  }, [businessAmendmentsList, dispatch, fetchBusinessAmendmentsIsSuccess]);
 
   // HANDLE CREATE AMENDMENT REVIEW COMMENT RESPONSE
   useEffect(() => {

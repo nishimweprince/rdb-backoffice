@@ -33,7 +33,7 @@ export const findNavigationFlowByStepName = (
 export const getBusinessStatusColor = (status: string): string => {
   switch (status) {
     case 'SUBMITTED':
-      return 'bg-blue-700';
+      return 'bg-slate-700';
     case 'VERIFIED':
       return 'bg-green-700';
     case 'APPROVED':
