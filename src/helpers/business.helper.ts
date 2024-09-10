@@ -33,7 +33,7 @@ export const findNavigationFlowByStepName = (
 export const getBusinessStatusColor = (status: string): string => {
   switch (status) {
     case 'SUBMITTED':
-      return 'bg-blue-700';
+      return 'bg-slate-700';
     case 'VERIFIED':
       return 'bg-green-700';
     case 'APPROVED':
@@ -51,8 +51,24 @@ export const getBusinessStatusColor = (status: string): string => {
       return 'bg-blue-700';
     case 'PENDING_DECISION':
       return 'bg-blue-700';
+    case 'INACTIVE':
+    case 'DORMANT':
+      return 'bg-red-700';
     default:
       return '';
   }
-
 }
+
+export const getBusinessActivityStatusColor = (status: string): string => {
+  switch (status) {
+    case 'LICENSE_REQUIRED':
+      return 'bg-yellow-700';
+    case 'INACTIVE':
+      return 'bg-red-700';
+    case 'APPROVED':
+    case 'ACTIVE':
+      return 'bg-green-700';
+    default:
+      return '';
+  }
+};

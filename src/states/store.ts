@@ -1,3 +1,4 @@
+import configurationSlice from "./features/controlPanelSlice"
 import { configureStore } from "@reduxjs/toolkit"
 import userSlice from "./features/userSlice"
 import authApiSlice from "./api/authApiSlice"
@@ -16,7 +17,7 @@ import serviceSlice from "./features/serviceSlice"
 import userManagementQueryApiSlice from "./api/userManagementQueryApiSlice"
 import businessAmendmentSlice from "./features/businessAmendmentSlice"
 import settingsApiSlices from "./api/settingsApiSlice"
-import configurationSlice from "./features/controlPanelSlice"
+import nameReservationSlice from "./features/nameReservationSlice"
 
 export const store = configureStore({
   reducer: {
@@ -38,7 +39,8 @@ export const store = configureStore({
     businessReviewComment: businessReviewCommentSlice,
     service: serviceSlice,
     configuration: configurationSlice,
-    businessAmendment: businessAmendmentSlice
+    businessAmendment: businessAmendmentSlice,
+    nameReservation: nameReservationSlice
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(

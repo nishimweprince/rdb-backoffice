@@ -19,12 +19,15 @@ import RegistrarGeneral from "@/pages/settings/registrar-general"
 import AmendedBusinessesList from "@/pages/business/amendments/AmendedBusinessesList"
 import BusinessAmendmentsList from "@/pages/business/amendments/BusinessAmendmentsList"
 import ControlPanel from "@/pages/settings/control-panel"
+import ListBusinessActivities from "@/pages/settings/business-activities/ListBusinessActivities"
+import NameReservationsList from "@/pages/name-reservation/NameReservationsList"
+import NameReservationDetails from "@/pages/name-reservation/NameReservationDetails"
 
 const Router = () => {
   return (
     <>
       <ToastContainer
-        autoClose={2000}
+        autoClose={3000}
         position="top-center"
         hideProgressBar
         closeButton={true}
@@ -60,12 +63,24 @@ const Router = () => {
               <Route path="" element={<BusinessAmendmentsList />} />
               <Route path="review" element={<BusinessAmendmentsReview />} />
             </Route>
+            <Route
+              path="name-reservations"
+              element={<NameReservationsList />}
+            />
+            <Route
+              path="name-reservations/:id/details"
+              element={<NameReservationDetails />}
+            />
           </Route>
         </Route>
 
         {/* SETTINGS ROUTES */}
         <Route path="/settings" element={<StaffAuthenticatedRoutes />}>
           <Route path="registrar-general" element={<RegistrarGeneral />} />
+          <Route
+            path="business-activities"
+            element={<ListBusinessActivities />}
+          />
         </Route>
         <Route path="/settings" element={<StaffAuthenticatedRoutes />}>
           <Route path="control-panel" element={<ControlPanel />} />

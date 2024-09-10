@@ -190,6 +190,55 @@ export const businessRegQueryApiSlice = createApi({
           };
         },
       }),
+
+      // FETCH BUSINESS ACTIVITY SECTORS
+      fetchBusinessActivitiesSectors: builder.query({
+        query: () => {
+          return {
+            url: `/business-activity/sectors`,
+          };
+        },
+      }),
+
+      // FETCH BUSINESS LINES
+      fetchBusinessLines: builder.query({
+        query: ({ sectorCode }) => {
+          return {
+            url: `/business-activity/business-lines?sectorCode=${sectorCode}`,
+          };
+        },
+      }),
+
+      // FETCH ALL NAME RESERVATIONS
+      fetchNameReservations: builder.query({
+        query: ({ page, size, searchKey, status, code, assignedTo }) => {
+          let url = `/name-reservations/back-office/all?page=${page}&size=${size}`;
+          if (searchKey) {
+            url += `&searchKey=${searchKey}`;
+          }
+          if (status) {
+            url += `&status=${status}`;
+          }
+          if (code) {
+            url += `&code=${code}`;
+          }
+          if (assignedTo) {
+            url += `&assignedTo=${assignedTo}`;
+          }
+          return {
+            url,
+          };
+        },
+      }),
+
+      // SEARCH BUSINESS NAME AVAILABILITY
+      searchBusinessNameAvailability: builder.query({
+        query: ({ companyName }) => {
+          return {
+            url: `/search-availability?companyName=${companyName}`,
+          };
+        },
+      }),
     };
   },
 });
@@ -213,6 +262,10 @@ export const {
   useLazyFetchServicesQuery,
   useLazyFetchBusinessAmendmentsQuery,
   useLazyFetchAmendmentReviewCommentsQuery,
+  useLazyFetchBusinessActivitiesSectorsQuery,
+  useLazyFetchBusinessLinesQuery,
+  useLazyFetchNameReservationsQuery,
+  useLazySearchBusinessNameAvailabilityQuery,
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

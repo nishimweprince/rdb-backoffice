@@ -82,8 +82,11 @@ export type EmploymentInfo = {
 export type businessId = string | number | (string | number | null)[] | null;
 
 export type BusinessActivity = {
+  id: UUID;
   code: number;
   description: string;
+  disclaimer?: string;
+  status: string;
 };
 
 export type Service = {

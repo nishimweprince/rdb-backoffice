@@ -8,12 +8,20 @@ const initialState: {
     mainBusinessActivity: BusinessActivity;
     businessLine: BusinessActivity[];
   };
+  businessActivitiesSectorsList?: BusinessActivity[];
   businessActivitiesIsFetching: boolean;
   businessActivitiesIsSuccess: boolean;
+  businessLinesList: BusinessActivity[];
+  updateBusinessLineModal: boolean;
+  selectedBusinessLine?: BusinessActivity;
 } = {
   businessActivitiesList: undefined,
   businessActivitiesIsFetching: false,
   businessActivitiesIsSuccess: false,
+  businessLinesList: [],
+  businessActivitiesSectorsList: [],
+  updateBusinessLineModal: false,
+  selectedBusinessLine: undefined
 };
 
 // FETCH BUSINESS ACTIVITIES
@@ -42,6 +50,26 @@ const businessActivitiesSlice = createSlice({
     setBusinessActivitiesList: (state, action) => {
       state.businessActivitiesList = action.payload;
     },
+    setBusinessLinesList: (state, action) => {
+      state.businessLinesList = action.payload;
+    },
+    setBusinessActivitiesSectorsList: (state, action) => {
+      state.businessActivitiesSectorsList = action.payload;
+    },
+    setUpdateBusinessLineModal: (state, action) => {
+      state.updateBusinessLineModal = action.payload;
+    },
+    setSelectedBusinessLine: (state, action) => {
+      state.selectedBusinessLine = action.payload;
+    },
+    setUpdateBusinessLine: (state, action) => {
+      state.businessLinesList = state.businessLinesList.map((businessLine) => {
+        if (businessLine.id === action.payload.id) {
+          return action.payload;
+        }
+        return businessLine;
+      });
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBusinessActivitiesThunk.pending, (state) => {
@@ -59,6 +87,13 @@ const businessActivitiesSlice = createSlice({
   },
 });
 
-export const { setBusinessActivitiesList } = businessActivitiesSlice.actions;
+export const {
+  setBusinessActivitiesList,
+  setBusinessLinesList,
+  setBusinessActivitiesSectorsList,
+  setUpdateBusinessLineModal,
+  setSelectedBusinessLine,
+  setUpdateBusinessLine,
+} = businessActivitiesSlice.actions;
 
 export default businessActivitiesSlice.reducer;
