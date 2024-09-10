@@ -1,38 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { useState } from "react"
+import { toast } from "react-toastify"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
 import {
   useAddRegistrarGeneralMutation,
-  useDeleteRegistrarGeneralMutation,
-  useInactiveOrActiveRegistrarGeneralMutation,
-  useUploadRegistrarGeneralSignatureMutation,
-} from '@/states/api/settingsApiSlice';
+  useDeleteConfigurationMutation,
+  useInactiveOrActiveConfigurationMutation,
+  useUploadRegistrarGeneralSignatureMutation
+} from "@/states/api/settingsApiSlice"
 
 // Define Zod schema
 
 interface AddRegistrarDto {
-  parameterName: string;
-  parameterValue: string;
-  signature: File;
+  parameterName: string
+  parameterValue: string
+  signature: File
 }
 const schema: z.ZodType<AddRegistrarDto> = z.object({
-  parameterName: z.string().min(1, { message: 'Name is required' }),
-  parameterValue: z.string().min(1, { message: 'Position is required' }),
+  parameterName: z.string().min(1, { message: "Name is required" }),
+  parameterValue: z.string().min(1, { message: "Position is required" }),
   signature: z.instanceof(File, {
-    message: 'Signature is required and must be a file',
-  }),
-});
+    message: "Signature is required and must be a file"
+  })
+})
 
 interface Props {
-  refetch: () => void;
+  refetch: () => void
 }
 
 export default function useAddRegistrar(props: Props) {
-  const [showAddRegistrar, setShowAddRegistrar] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [showAddRegistrar, setShowAddRegistrar] = useState(false)
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null)
 
   const {
     control,
@@ -40,109 +40,109 @@ export default function useAddRegistrar(props: Props) {
     register,
     setValue,
     formState: { errors },
-    reset,
+    reset
   } = useForm<AddRegistrarDto>({
-    resolver: zodResolver(schema), // Use zodResolver with your schema
-  });
+    resolver: zodResolver(schema) // Use zodResolver with your schema
+  })
 
   const [addRegistrarGeneral, { isLoading: creatingRegistrarGeneral }] =
-    useAddRegistrarGeneralMutation();
+    useAddRegistrarGeneralMutation()
 
   // upload signature image
 
   const [uploadSignature, { isLoading: uploadingSignature }] =
-    useUploadRegistrarGeneralSignatureMutation();
+    useUploadRegistrarGeneralSignatureMutation()
 
   // activate or inactivate registrar general
   const [inactivateOrActivate, { isLoading: inactivatingOrActivating }] =
-    useInactiveOrActiveRegistrarGeneralMutation();
+    useInactiveOrActiveConfigurationMutation()
 
   // delete registrar general
-  const [deleteRegistrarGeneral] = useDeleteRegistrarGeneralMutation();
+  const [deleteRegistrarGeneral] = useDeleteConfigurationMutation()
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
     if (file) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onloadend = () => {
-        setUploadedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      setValue('signature', file);
+        setUploadedImage(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+      setValue("signature", file)
     } else {
-      toast.info('No file selected');
+      toast.info("No file selected")
     }
-  };
+  }
 
   const handleRemoveImage = () => {
-    setUploadedImage(null);
-    setValue('signature', undefined as unknown as File);
-  };
+    setUploadedImage(null)
+    setValue("signature", undefined as unknown as File)
+  }
 
   const onSubmit = async (data: AddRegistrarDto) => {
     try {
-      const { signature, ...rest } = data;
+      const { signature, ...rest } = data
       const response = await addRegistrarGeneral({
         ...rest,
-        parameterType: 'REGISTRAR_GENERAL',
-      }).unwrap();
+        parameterType: "REGISTRAR_GENERAL"
+      }).unwrap()
       if (response) {
         if (signature) {
-          const formData = new FormData();
-          formData.append('file', signature);
+          const formData = new FormData()
+          formData.append("file", signature)
           const uploadResponse = await uploadSignature({
             id: response?.data.id,
-            formData,
-          }).unwrap();
+            formData
+          }).unwrap()
           if (uploadResponse) {
-            toast.success('Registrar General added successfully');
-            reset();
-            props?.refetch && props.refetch();
-            setShowAddRegistrar(false);
-            setShowAddRegistrar(false);
+            toast.success("Registrar General added successfully")
+            reset()
+            props?.refetch && props.refetch()
+            setShowAddRegistrar(false)
+            setShowAddRegistrar(false)
           }
         }
       }
     } catch (error: any) {
       toast.error(
         error?.data?.message ||
-          'An error occurred while adding registrar general'
-      );
+          "An error occurred while adding registrar general"
+      )
     }
-  };
+  }
 
   const handleInactivateOrActivate = async (
     id: string,
-    action: 'activate' | 'inactivate'
+    action: "activate" | "inactivate",
+    message: string
   ) => {
     try {
-      const response = await inactivateOrActivate({ id, action }).unwrap();
+      const response = await inactivateOrActivate({ id, action }).unwrap()
       if (response) {
-        toast.success(`Registrar General ${action}d successfully`);
-        props?.refetch && props.refetch();
+        toast.success(message)
+        props?.refetch && props.refetch()
       }
     } catch (error: any) {
       toast.error(
         error?.data?.message ||
-          `An error occurred while ${action}ing registrar general`
-      );
+          `An error occurred while ${action}ing configuration`
+      )
     }
-  };
+  }
 
-  const handleDeleteRegistrarGeneral = async (id: string) => {
+  const handleDeleteConfiguration = async (id: string, message: string) => {
     try {
-      const response = await deleteRegistrarGeneral(id).unwrap();
+      const response = await deleteRegistrarGeneral(id).unwrap()
       if (response) {
-        toast.success('Registrar General deleted successfully');
-        props?.refetch && props.refetch();
+        toast.success(message)
+        props?.refetch && props.refetch()
       }
     } catch (error: any) {
       toast.error(
-        error?.data?.message ||
-          'An error occurred while deleting registrar general'
-      );
+        error?.data?.message || "An error occurred while deleting configuration"
+      )
     }
-  };
+  }
 
   return {
     showAddRegistrar,
@@ -159,6 +159,6 @@ export default function useAddRegistrar(props: Props) {
     isLoading: creatingRegistrarGeneral || uploadingSignature,
     handleInactivateOrActivate,
     inactivatingOrActivating,
-    handleDeleteRegistrarGeneral,
-  };
+    handleDeleteConfiguration
+  }
 }

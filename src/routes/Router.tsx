@@ -1,23 +1,24 @@
-import { Routes, Route } from 'react-router-dom';
-import Login from '../pages/authentication/Login';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import RequestResetPassword from '@/pages/authentication/RequestResetPassword';
-import VerifyPasswordReset from '@/pages/authentication/VerifyResetPassword';
-import NewResetPassword from '@/pages/authentication/NewResetPassword';
-import StaffDashboard from '@/pages/dashboard/StaffDashboard';
-import BusinessApplicationsList from '@/pages/business/applications/BusinessApplicationsList';
-import BusinessApplicationRoutes from './BusinessApplicationRoutes';
-import BusinessApplicationReview from '@/pages/business-review/BusinessApplicationReview';
-import AuthenticationRoutes from './AuthenticationRoutes';
-import StaffAuthenticatedRoutes from '@/outlets/StaffAuthenticatedRoutes';
-import LandingRoute from './LandingRoute';
-import BusinessAmendmentsReview from '@/pages/business/amendments/BusinessAmendmentsReview';
-import ApplicationsRoutes from './ApplicationsRoutes';
-import BusinessAmendmentRoutes from './BusinessAmendmentRoutes';
-import RegistrarGeneral from '@/pages/settings/registrar-general';
-import AmendedBusinessesList from '@/pages/business/amendments/AmendedBusinessesList';
-import BusinessAmendmentsList from '@/pages/business/amendments/BusinessAmendmentsList';
+import { Routes, Route } from "react-router-dom"
+import Login from "../pages/authentication/Login"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import RequestResetPassword from "@/pages/authentication/RequestResetPassword"
+import VerifyPasswordReset from "@/pages/authentication/VerifyResetPassword"
+import NewResetPassword from "@/pages/authentication/NewResetPassword"
+import StaffDashboard from "@/pages/dashboard/StaffDashboard"
+import BusinessApplicationsList from "@/pages/business/applications/BusinessApplicationsList"
+import BusinessApplicationRoutes from "./BusinessApplicationRoutes"
+import BusinessApplicationReview from "@/pages/business-review/BusinessApplicationReview"
+import AuthenticationRoutes from "./AuthenticationRoutes"
+import StaffAuthenticatedRoutes from "@/outlets/StaffAuthenticatedRoutes"
+import LandingRoute from "./LandingRoute"
+import BusinessAmendmentsReview from "@/pages/business/amendments/BusinessAmendmentsReview"
+import ApplicationsRoutes from "./ApplicationsRoutes"
+import BusinessAmendmentRoutes from "./BusinessAmendmentRoutes"
+import RegistrarGeneral from "@/pages/settings/registrar-general"
+import AmendedBusinessesList from "@/pages/business/amendments/AmendedBusinessesList"
+import BusinessAmendmentsList from "@/pages/business/amendments/BusinessAmendmentsList"
+import ControlPanel from "@/pages/settings/control-panel"
 
 const Router = () => {
   return (
@@ -53,14 +54,11 @@ const Router = () => {
                 path=":id/review"
                 element={<BusinessApplicationReview />}
               />
-              <Route
-                path="amendments"
-                element={<AmendedBusinessesList />}
-              />
+              <Route path="amendments" element={<AmendedBusinessesList />} />
             </Route>
-            <Route path='amendments' element={<BusinessAmendmentRoutes />}>
-            <Route path="" element={<BusinessAmendmentsList />} />
-            <Route path="review" element={<BusinessAmendmentsReview />} />
+            <Route path="amendments" element={<BusinessAmendmentRoutes />}>
+              <Route path="" element={<BusinessAmendmentsList />} />
+              <Route path="review" element={<BusinessAmendmentsReview />} />
             </Route>
           </Route>
         </Route>
@@ -69,6 +67,9 @@ const Router = () => {
         <Route path="/settings" element={<StaffAuthenticatedRoutes />}>
           <Route path="registrar-general" element={<RegistrarGeneral />} />
         </Route>
+        <Route path="/settings" element={<StaffAuthenticatedRoutes />}>
+          <Route path="control-panel" element={<ControlPanel />} />
+        </Route>
 
         {/* BUSINESS AMENDMENT ROUTE */}
 
@@ -76,7 +77,7 @@ const Router = () => {
         <Route path="*" element={<LandingRoute />} />
       </Routes>
     </>
-  );
-};
+  )
+}
 
-export default Router;
+export default Router

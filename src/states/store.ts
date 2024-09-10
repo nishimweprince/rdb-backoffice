@@ -1,21 +1,22 @@
-import { configureStore } from '@reduxjs/toolkit';
-import userSlice from './features/userSlice';
-import authApiSlice from './api/authApiSlice';
-import sidebarSlice from './features/sidebarSlice';
-import businessRegApiSlice from './api/businessRegApiSlice';
-import businessSlice from './features/businessSlice';
-import businessRegQueryApiSlice from './api/businessRegQueryApiSlice';
-import navigationFlowSlice from './features/navigationFlowSlice';
-import boardOfDirectorsSlice from './features/boardOfDirectorsSlice';
-import businessPeopleSlice from './features/businessPeopleSlice';
-import executiveManagementSlice from './features/executiveManagementSlice';
-import founderDetailSlice from './features/founderDetailSlice';
-import businessActivitiesSlice from './features/businessActivitiesSlice';
-import businessReviewCommentSlice from './features/businessReviewCommentSlice';
-import serviceSlice from './features/serviceSlice';
-import userManagementQueryApiSlice from './api/userManagementQueryApiSlice';
-import businessAmendmentSlice from './features/businessAmendmentSlice';
-import settingsApiSlices from './api/settingsApiSlice';
+import { configureStore } from "@reduxjs/toolkit"
+import userSlice from "./features/userSlice"
+import authApiSlice from "./api/authApiSlice"
+import sidebarSlice from "./features/sidebarSlice"
+import businessRegApiSlice from "./api/businessRegApiSlice"
+import businessSlice from "./features/businessSlice"
+import businessRegQueryApiSlice from "./api/businessRegQueryApiSlice"
+import navigationFlowSlice from "./features/navigationFlowSlice"
+import boardOfDirectorsSlice from "./features/boardOfDirectorsSlice"
+import businessPeopleSlice from "./features/businessPeopleSlice"
+import executiveManagementSlice from "./features/executiveManagementSlice"
+import founderDetailSlice from "./features/founderDetailSlice"
+import businessActivitiesSlice from "./features/businessActivitiesSlice"
+import businessReviewCommentSlice from "./features/businessReviewCommentSlice"
+import serviceSlice from "./features/serviceSlice"
+import userManagementQueryApiSlice from "./api/userManagementQueryApiSlice"
+import businessAmendmentSlice from "./features/businessAmendmentSlice"
+import settingsApiSlices from "./api/settingsApiSlice"
+import configurationSlice from "./features/controlPanelSlice"
 
 export const store = configureStore({
   reducer: {
@@ -36,7 +37,8 @@ export const store = configureStore({
     businessActivities: businessActivitiesSlice,
     businessReviewComment: businessReviewCommentSlice,
     service: serviceSlice,
-    businessAmendment: businessAmendmentSlice,
+    configuration: configurationSlice,
+    businessAmendment: businessAmendmentSlice
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat(
@@ -45,10 +47,10 @@ export const store = configureStore({
       businessRegQueryApiSlice.middleware,
       userManagementQueryApiSlice.middleware,
       settingsApiSlices.middleware
-    );
-  },
-});
+    )
+  }
+})
 
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>
 
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = typeof store.dispatch
