@@ -1,7 +1,5 @@
-import { UUID } from "crypto"
-
-export type RegistrarGeneralType = {
-  id: UUID
+export type Configuration = {
+  id: string
   version: number
   state?: string
   createdAt: Date
