@@ -123,7 +123,11 @@ const ReviewBusinessApplications = () => {
             'ACTION_REQUIRED',
             'PENDING_DECISION',
             'IN_REVIEW',
-          ].includes(row?.original?.applicationStatus)
+          ].includes(row?.original?.applicationStatus) &&
+          [
+            row?.original?.assignedApprover?.id,
+            row?.original?.assignedVerifier?.id,
+          ].includes(user?.id)
         ) {
           return (
             <CustomPopover

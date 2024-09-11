@@ -10,7 +10,7 @@ import {
   fetchBusinessAmendmentsThunk,
   setSelectedBusinessAmendment,
 } from '@/states/features/businessAmendmentSlice';
-import { getchBusinessThunk } from '@/states/features/businessSlice';
+import { getBusinessThunk } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
 import { BusinessAmendment } from '@/types/models/business';
 import {
@@ -58,7 +58,7 @@ const BusinessAmendmentsList = () => {
   // GET BUSINESS THUNK
   useEffect(() => {
     if (queryParams?.businessId) {
-      dispatch(getchBusinessThunk(queryParams?.businessId as UUID));
+      dispatch(getBusinessThunk(queryParams?.businessId as UUID));
     }
   }, [userId, dispatch, queryParams?.businessId]);
 

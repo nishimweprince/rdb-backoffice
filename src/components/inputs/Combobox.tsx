@@ -77,7 +77,7 @@ const Combobox = ({
             <CommandList className='w-full'>
               <CommandEmpty>No option found.</CommandEmpty>
               <CommandGroup>
-                {options.map((option) => (
+                {(options ?? [])?.map((option) => (
                   <CommandItem
                     key={option.label}
                     disabled={option?.disabled}

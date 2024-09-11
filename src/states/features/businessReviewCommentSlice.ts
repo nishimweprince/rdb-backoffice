@@ -54,17 +54,18 @@ export const updateBusinessReviewCommentStatusThunk = createAsyncThunk<
   BusinessReviewComment,
   { id: UUID; status: string },
   { dispatch: AppDispatch }
->('businessReviewComment/updateBusinessReviewCommentStatus', async ({
-    id, status
-}, { dispatch }) => {
+>(
+  'businessReviewComment/updateBusinessReviewCommentStatus',
+  async ({ id, status }, { dispatch }) => {
     const response = await dispatch(
       businessRegApiSlice.endpoints.updateBusinessReviewCommentStatus.initiate({
         id,
-        status
+        status,
       })
     ).unwrap();
     return response.data;
-});
+  }
+);
 
 const businessReviewCommentSlice = createSlice({
   name: 'businessReviewComment',
@@ -162,7 +163,7 @@ export const {
   setCreateBusinessReviewCommentModal,
   setListBusinessReviewCommentsModal,
   setDeleteBusinessReviewCommentModal,
-  setUpdateBusinessReviewCommentModal
+  setUpdateBusinessReviewCommentModal,
 } = businessReviewCommentSlice.actions;
 
 export default businessReviewCommentSlice.reducer;

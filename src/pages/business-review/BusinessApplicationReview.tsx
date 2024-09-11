@@ -7,16 +7,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loader from '@/components/inputs/Loader';
 import {
-  approveBusinessThunk,
   fetchBusinessAddressThunk,
   fetchBusinessAttachmentsThunk,
   fetchBusinessDetailsThunk,
   fetchBusinessEmploymentInfoThunk,
-  getchBusinessThunk,
-  rejectBusinessThunk,
-  requestBusinessApproverThunk,
+  getBusinessThunk,
   setApproveBusinessIsSuccess,
+  setBusinessConfirmApproveModal,
+  setBusinessConfirmRejectModal,
+  setBusinessRecommendForApprovalModal,
+  setBusinessRecommendForRejectionModal,
   setRejectBusinessIsSuccess,
+  setSelectedBusiness,
   setUpdateBusinessIsSuccess,
   updateBusinessThunk,
 } from '@/states/features/businessSlice';
@@ -42,6 +44,12 @@ import ListBusinessReviewComments from './ListBusinessReviewComments';
 import DeleteBusinessReviewComment from './DeleteBusinessReviewComment';
 import UpdateBusinessReviewComment from './UpdateBusinessReviewComment';
 import { businessId } from '@/types/models/business';
+import Table from '@/components/table/Table';
+import { businessLineColumns } from '@/constants/business.constants';
+import BusinessRecommendForRejection from './BusinessRecommendForRejection';
+import BusinessRecommendForApproval from './BusinessRecommendForApproval';
+import BusinessConfirmReject from './BusinessConfirmReject';
+import BusinessConfirmApprove from './BusinessConfirmApprove';
 
 const BusinessApplicationReview = () => {
   // STATE VARIABLES
@@ -96,7 +104,7 @@ const BusinessApplicationReview = () => {
   // FETCH BUSINESS
   useEffect(() => {
     if (businessId) {
-      dispatch(getchBusinessThunk(businessId as UUID));
+      dispatch(getBusinessThunk(businessId as UUID));
     }
   }, [dispatch, businessId]);
 
@@ -407,37 +415,32 @@ const BusinessApplicationReview = () => {
                     'Business Activity & VAT'
                   )}
                 >
-                  <menu className="flex flex-col gap-3">
-                    <p className="flex items-center gap-1">
-                      <span className="font-medium">
-                        {' '}
-                        Main business activity:
-                      </span>{' '}
-                      {String(businessActivitiesList?.mainBusinessActivity)}
+                  <menu className="flex flex-col gap-2">
+                    <h3 className="flex items-center gap-2 font-medium underline uppercase text-primary">
+                      Main business activity:{' '}
+                    </h3>
+                    <p>
+                      <Table
+                        showPagination={false}
+                        data={[
+                          {
+                            description:
+                              businessActivitiesList?.mainBusinessActivity,
+                            code: businessActivitiesList?.mainBusinessActivityCode,
+                          },
+                        ]}
+                        columns={businessLineColumns}
+                      />
                     </p>
-                    <ul className="flex flex-col gap-2 w-full">
-                      <h3 className="font-medium underline uppercase">
-                        Business lines
+                    <article>
+                      <h3 className="flex items-center gap-2 font-medium underline uppercase text-primary">
+                        Other activities
                       </h3>
-                      {businessActivitiesList?.businessLine?.map(
-                        (businessActivity) => {
-                          return (
-                            <li
-                              key={businessActivity.code}
-                              className="flex items-center gap-1"
-                            >
-                              <p className="text-[14px] font-semibold">
-                                {businessActivity.code}
-                              </p>{' '}
-                              -
-                              <p className="text-[14px]">
-                                {businessActivity.description}
-                              </p>
-                            </li>
-                          );
-                        }
-                      )}
-                    </ul>
+                      <Table
+                        data={businessActivitiesList?.businessLine || []}
+                        columns={businessLineColumns}
+                      />
+                    </article>
                   </menu>
                 </BusinessPreviewCard>
               )
@@ -590,15 +593,54 @@ const BusinessApplicationReview = () => {
             </BusinessPreviewCard>
             {['SUBMITTED', 'RESUBMITTED', 'IN_REVIEW'].includes(
               business?.applicationStatus
-            ) && (
-              <menu className="w-full flex items-center gap-3 justify-between my-4">
-                <Button route="/applications/business">Cancel</Button>
-                {businessReviewCommentsList?.filter(
-                  (reviewComment) =>
-                    !['REJECTED', 'APPROVED'].includes(reviewComment?.status)
-                )?.length > 0 ? (
+            ) &&
+              !business?.enterpriseName && (
+                <menu className="w-full flex items-center gap-3 justify-between my-4">
+                  <Button route="/applications/business">Cancel</Button>
+
+                  <Button
+                    danger
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(setSelectedBusiness(business));
+                      dispatch(setBusinessRecommendForRejectionModal(true));
+                    }}
+                  >
+                    Recommend for rejection
+                  </Button>
+
                   <Button
                     primary
+                    disabled={
+                      businessReviewCommentsList?.filter(
+                        (reviewComment) =>
+                          !['REJECTED', 'APPROVED'].includes(
+                            reviewComment?.status
+                          )
+                      )?.length > 0
+                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(setSelectedBusiness(business));
+                      dispatch(setBusinessRecommendForApprovalModal(true));
+                    }}
+                  >
+                    {updateBusinessIsLoading ? (
+                      <Loader />
+                    ) : (
+                      'Recommend for approval'
+                    )}
+                  </Button>
+                  <Button
+                    primary
+                    disabled={
+                      businessReviewCommentsList?.filter(
+                        (reviewComment) =>
+                          !['REJECTED', 'APPROVED'].includes(
+                            reviewComment?.status
+                          )
+                      )?.length <= 0
+                    }
                     onClick={(e) => {
                       e.preventDefault();
                       dispatch(
@@ -615,36 +657,12 @@ const BusinessApplicationReview = () => {
                       'Return for correction'
                     )}
                   </Button>
-                ) : (
-                  business?.applicationStatus === 'IN_REVIEW' &&
-                  businessReviewCommentsList?.filter(
-                    (reviewComment) =>
-                      !['REJECTED', 'APPROVED'].includes(reviewComment?.status)
-                  )?.length <= 0 && (
-                    <Button
-                      primary
-                      onClick={(e) => {
-                        e.preventDefault();
-                        dispatch(
-                          requestBusinessApproverThunk({
-                            businessId: businessId as businessId,
-                          })
-                        );
-                      }}
-                    >
-                      {updateBusinessIsLoading ? (
-                        <Loader />
-                      ) : (
-                        'Submit for decision'
-                      )}
-                    </Button>
-                  )
-                )}
-              </menu>
-            )}
-            {['PENDING_DECISION', 'PENDING_REJECTION'].includes(
+                </menu>
+              )}
+            {(['PENDING_DECISION', 'PENDING_REJECTION'].includes(
               business?.applicationStatus
-            ) && (
+            ) ||
+              business?.enterpriseName) && (
               <menu className="w-full flex items-center gap-3 justify-between mt-5 mb-3">
                 <Button
                   onClick={(e) => {
@@ -659,11 +677,8 @@ const BusinessApplicationReview = () => {
                   danger
                   onClick={(e) => {
                     e.preventDefault();
-                    dispatch(
-                      rejectBusinessThunk({
-                        businessId: businessId as businessId,
-                      })
-                    );
+                    dispatch(setSelectedBusiness(business));
+                    dispatch(setBusinessConfirmRejectModal(true));
                   }}
                 >
                   {rejectBusinessIsLoading ? <Loader /> : 'Reject'}
@@ -672,19 +687,37 @@ const BusinessApplicationReview = () => {
                   primary
                   onClick={(e) => {
                     e.preventDefault();
+                    dispatch(setSelectedBusiness(business));
+                    dispatch(setBusinessConfirmApproveModal(true));
+                  }}
+                >
+                  {approveBusinessIsLoading ? <Loader /> : 'Approve'}
+                </Button>
+                <Button
+                  primary
+                  disabled={
+                    businessReviewCommentsList?.filter(
+                      (reviewComment) =>
+                        !['REJECTED', 'APPROVED'].includes(
+                          reviewComment?.status
+                        )
+                    )?.length <= 0
+                  }
+                  onClick={(e) => {
+                    e.preventDefault();
                     dispatch(
-                      approveBusinessThunk({
+                      updateBusinessThunk({
                         businessId: businessId as businessId,
-                        companyType: business?.isForeign
-                          ? 'foreign'
-                          : business?.enterpriseName
-                          ? 'enterprise'
-                          : 'domestic',
+                        applicationStatus: 'ACTION_REQUIRED',
                       })
                     );
                   }}
                 >
-                  {approveBusinessIsLoading ? <Loader /> : 'Approve'}
+                  {updateBusinessIsLoading ? (
+                    <Loader />
+                  ) : (
+                    'Return for correction'
+                  )}
                 </Button>
               </menu>
             )}
@@ -701,6 +734,10 @@ const BusinessApplicationReview = () => {
       <ListBusinessReviewComments />
       <DeleteBusinessReviewComment />
       <UpdateBusinessReviewComment />
+      <BusinessRecommendForRejection />
+      <BusinessRecommendForApproval />
+      <BusinessConfirmReject />
+      <BusinessConfirmApprove />
     </StaffLayout>
   );
 };

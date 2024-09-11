@@ -441,7 +441,7 @@ const BusinessAmendmentsReview = () => {
               disabled={
                 businessAmendmentReviewComments?.filter(
                   (amendmentReviewComment) =>
-                    amendmentReviewComment?.status === 'UNRESOLVED'
+                    amendmentReviewComment?.status === 'SUBMITTED'
                 )?.length <= 0
               }
               onClick={(e) => {
@@ -508,13 +508,13 @@ const BusinessAmendmentsReview = () => {
               primary={
                 businessAmendmentReviewComments?.filter(
                   (amendmentReviewComment) =>
-                    amendmentReviewComment?.status === 'UNRESOLVED'
+                    amendmentReviewComment?.status === 'SUBMITTED'
                 )?.length > 0
               }
               disabled={
                 businessAmendmentReviewComments?.filter(
                   (amendmentReviewComment) =>
-                    amendmentReviewComment?.status === 'UNRESOLVED'
+                    amendmentReviewComment?.status === 'SUBMITTED'
                 )?.length <= 0
               }
               onClick={(e) => {

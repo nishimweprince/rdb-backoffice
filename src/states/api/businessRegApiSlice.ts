@@ -101,10 +101,13 @@ export const businessRegApiSlice = createApi({
 
       // REQUEST BUSINESS APPROVER
       requestBusinessApprover: builder.mutation({
-        query: ({ businessId }) => {
+        query: ({ businessId, comment }) => {
           return {
             url: `/back-office/request-approval?businessId=${businessId}`,
             method: 'PATCH',
+            body: {
+              comment,
+            },
           };
         },
       }),
@@ -245,10 +248,13 @@ export const businessRegApiSlice = createApi({
 
       // REJECT BUSINESS
       rejectBusiness: builder.mutation({
-        query: ({ businessId }) => {
+        query: ({ businessId, comment }) => {
           return {
             url: `/back-office/reject-business?businessId=${businessId}`,
             method: 'PATCH',
+            body: {
+              comment,
+            },
           };
         },
       }),
@@ -268,6 +274,33 @@ export const businessRegApiSlice = createApi({
         query: ({ id, comment }) => {
           return {
             url: `/name-reservations/back-office/reject/${id}`,
+            method: 'PATCH',
+            body: {
+              comment,
+            },
+          };
+        },
+      }),
+
+      // CREATE GENERAL COMMENT
+      createBusinessGeneralComment: builder.mutation({
+        query: ({ businessId, comment }) => {
+          return {
+            url: `/review-comments/general?businessId=${businessId}`,
+            method: 'POST',
+            body: {
+              businessId,
+              comment,
+            },
+          };
+        },
+      }),
+
+      // RECOMMEND BUSINESS FOR REJECTION
+      recommendBusinessForRejection: builder.mutation({
+        query: ({ businessId, comment }) => {
+          return {
+            url: `/back-office/recommend-rejection?businessId=${businessId}`,
             method: 'PATCH',
             body: {
               comment,
@@ -302,6 +335,8 @@ export const {
   useRejectBusinessMutation,
   useApproveNameReservationMutation,
   useRejectNameReservationMutation,
+  useCreateBusinessGeneralCommentMutation,
+  useRecommendBusinessForRejectionMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;
