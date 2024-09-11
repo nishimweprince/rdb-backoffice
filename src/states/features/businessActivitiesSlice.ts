@@ -7,6 +7,7 @@ const initialState: {
   businessActivitiesList?: {
     mainBusinessActivity: BusinessActivity;
     businessLine: BusinessActivity[];
+    mainBusinessActivityCode: number;
   };
   businessActivitiesSectorsList?: BusinessActivity[];
   businessActivitiesIsFetching: boolean;

@@ -31,7 +31,7 @@ const JSX_MODAL: FC<ModalProps> = ({
       <DialogContent className={`z-[10000] min-w-fit ${className} max-h-[90vh]`}>
         <DialogHeader>
           <DialogTitle
-            className={`text-lg font-semibold text-primary uppercase ${headingClassName}`}
+            className={`text-lg font-semibold text-primary uppercase mt-[-10px] ${headingClassName}`}
           >
             {heading}
           </DialogTitle>

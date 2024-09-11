@@ -1,3 +1,4 @@
+import { Business } from '@/types/models/business';
 import {
   NavigationFlow,
   NavigationFlowMass,
@@ -71,4 +72,15 @@ export const getBusinessActivityStatusColor = (status: string): string => {
     default:
       return '';
   }
+};
+
+export const getBusinessName = (business?: Business): string => {
+  if (!business) return '';
+  return (
+    business?.companyName ||
+    business?.enterpriseName ||
+    business?.enterpriseBusinessName ||
+    business?.branchName ||
+    ''
+  );
 };

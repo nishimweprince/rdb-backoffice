@@ -30,6 +30,7 @@ const BusinessPeopleTable = ({
 
   // BUSINESS PEOPLE EXTENDED COLUMNS
   const businessPeopleExtendedColumns = [
+    ...businessPeopleColumns,
     {
       id: 'actions',
       header: 'Actions',
@@ -66,7 +67,6 @@ const BusinessPeopleTable = ({
         );
       },
     },
-    ...businessPeopleColumns,
   ];
 
   return (
