@@ -394,8 +394,7 @@ export const fetchBusinessGeneralCommentsThunk = createAsyncThunk<
       ).unwrap();
       return response.data;
     } catch (error) {
-      toast.error('An error occurred while fetching business general comments');
-      throw error;
+      return error;
     }
   }
 );

@@ -81,15 +81,15 @@ const ListBusinessReviewComments = () => {
                 <p className="text-[14px]">
                   {reviewComment?.comment}{' '}
                   <span className="text-[14px] font-medium text-green-700">
-                    {reviewComment?.status === 'RESOLVED'
+                    {reviewComment?.status === 'COMMENT_ACCEPTED'
                       ? '(Marked as resolved by the user)'
                       : ''}
-                    {reviewComment?.status === 'APPROVED'
+                    {reviewComment?.status === 'COMMENT_ACCEPTED'
                       ? '(Marked as approved)'
                       : ''}
                   </span>
                   <span className='text-[14px] font-medium text-red-700'>
-                  {reviewComment?.status === 'REJECTED' ? '(Marked as rejected)' : ''}
+                  {reviewComment?.status === 'COMMENT_DENIED' ? '(Marked as rejected)' : ''}
                   </span>
                 </p>
                 <ul className="flex flex-col gap-2">
@@ -102,7 +102,7 @@ const ListBusinessReviewComments = () => {
                 </ul>
               </article>
               <figure className="flex flex-col gap-2">
-                {reviewComment?.status === 'RESOLVED' && (
+                {reviewComment?.status === 'COMMENT_ACCEPTED' && (
                   <menu className="flex items-center gap-3">
                     <CustomTooltip label="Approve">
                       {updateBusinessReviewCommentIsLoading ? (
@@ -146,7 +146,7 @@ const ListBusinessReviewComments = () => {
                     </CustomTooltip>
                   </menu>
                 )}
-                {reviewComment?.status === 'UNRESOLVED' &&
+                {reviewComment?.status === 'SUBMITTED' &&
                   ['IN_REVIEW'].includes(business?.applicationStatus) && (
                     <FontAwesomeIcon
                       className="h-4 w-4 bg-primary text-white rounded-full p-2 cursor-pointer transition-all ease-in-out duration-300 hover:scale-[1.03]"
@@ -161,7 +161,7 @@ const ListBusinessReviewComments = () => {
                       }}
                     />
                   )}
-                {reviewComment?.status === 'UNRESOLVED' &&
+                {reviewComment?.status === 'SUBMITTED' &&
                   ['IN_REVIEW'].includes(business?.applicationStatus) && (
                     <FontAwesomeIcon
                       className="h-4 w-4 bg-red-600 text-white rounded-full p-2 cursor-pointer transition-all ease-in-out duration-300 hover:scale-[1.03]"
