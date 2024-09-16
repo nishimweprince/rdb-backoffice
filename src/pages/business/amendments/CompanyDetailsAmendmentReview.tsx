@@ -3,7 +3,7 @@ import BusinessAmendmentNavigation from './BusinessAmendmentNavigation';
 import { RootState } from '@/states/store';
 import { useSelector } from 'react-redux';
 import { capitalizeString, formatDate } from '@/helpers/strings.helper';
-import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
+import { BusinessAmendmentRequestSummary } from './BusinessAmendmentReview';
 import { Business } from '@/types/models/business';
 
 const CompanyDetailsAmendmentReview = () => {

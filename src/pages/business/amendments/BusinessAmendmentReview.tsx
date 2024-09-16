@@ -1,14 +1,12 @@
 import StaffLayout from '@/containers/navigation/StaffLayout';
-import { useEffect, useState } from 'react';
-import queryString, { ParsedQuery } from 'query-string';
+import { useEffect } from 'react';
 import { AppDispatch, RootState } from '@/states/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { ErrorResponse, useLocation, useNavigate } from 'react-router-dom';
+import { ErrorResponse, useNavigate, useParams } from 'react-router-dom';
 import {
   addToBusinessAmendmentReviewComments,
   approveAmendmentThunk,
   fetchAmendmentReviewCommentsThunk,
-  fetchBusinessAmendmentsThunk,
   recommendAmendmentForApprovalThunk,
   recommendAmendmentRejectionThunk,
   rejectAmendmentThunk,
@@ -47,16 +45,12 @@ import BusinessNewBranchReview from './BusinessNewBranchReview';
 import TransferOfRegistrationReview from './TransferOfRegistrationReview';
 import CloseBusinessAmendmentReview from './CloseBusinessAmendmentReview';
 import RestoreBusinessAmendmentReview from './RestoreBusinessAmendmentReview';
+import { useLazyGetAmendmentDetailsQuery } from '@/states/api/businessRegQueryApiSlice';
 
-const BusinessAmendmentsReview = () => {
+const BusinessAmendmentReview = () => {
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
-  const [queryParams, setQueryParams] = useState<ParsedQuery<string | number>>(
-    {}
-  );
   const {
-    fetchBusinessAmendmentsIsFetching,
-    fetchBusinessAmendmentsIsSuccess,
     businessAmendmentsList,
     selectedBusinessAmendment,
     businessAmendmentReviewComments,
@@ -74,7 +68,7 @@ const BusinessAmendmentsReview = () => {
   } = useSelector((state: RootState) => state.businessAmendment);
 
   // NAVIGATION
-  const { search } = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
 
   // REACT HOOK FORM
@@ -108,27 +102,45 @@ const BusinessAmendmentsReview = () => {
     });
   };
 
-  // GET PARAM FROM PATH
-  useEffect(() => {
-    setQueryParams(queryString.parse(search));
-  }, [search]);
+  // INITIALIZE GET AMENDMENT DETAILS QUERY
+  const [
+    getAmendmentDetails,
+    {
+      data: getAmendmentDetailsData,
+      error: getAmendmentDetailsError,
+      isFetching: getAmendmentDetailsIsFetching,
+      isSuccess: getAmendmentDetailsIsSuccess,
+      isError: getAmendmentDetailsIsError,
+    },
+  ] = useLazyGetAmendmentDetailsQuery();
 
-  // FETCH BUSINESS AMENDMENT
+  // GET AMENDMENT DETAILS
   useEffect(() => {
-    dispatch(
-      fetchBusinessAmendmentsThunk({
-        businessId: queryParams?.businessId,
-        searchKey: queryParams?.amendmentType,
-      })
-    );
-  }, [dispatch, queryParams]);
+    if (id) {
+      getAmendmentDetails({
+        id,
+      });
+    }
+  }, [id, getAmendmentDetails]);
 
   // HANDLE FETCH BUSINESS AMENDMENT RESPONSE
   useEffect(() => {
-    if (fetchBusinessAmendmentsIsSuccess) {
-      dispatch(setSelectedBusinessAmendment(businessAmendmentsList?.[0]));
+    if (getAmendmentDetailsIsSuccess) {
+      dispatch(setSelectedBusinessAmendment(getAmendmentDetailsData?.data));
+    } else if (getAmendmentDetailsIsError) {
+      const errorResponse =
+        (getAmendmentDetailsError as ErrorResponse)?.data?.message ||
+        'Failed to fetch amendment details';
+      toast.error(errorResponse);
     }
-  }, [businessAmendmentsList, dispatch, fetchBusinessAmendmentsIsSuccess]);
+  }, [
+    businessAmendmentsList,
+    dispatch,
+    getAmendmentDetailsData?.data,
+    getAmendmentDetailsError,
+    getAmendmentDetailsIsError,
+    getAmendmentDetailsIsSuccess,
+  ]);
 
   // HANDLE CREATE AMENDMENT REVIEW COMMENT RESPONSE
   useEffect(() => {
@@ -246,70 +258,74 @@ const BusinessAmendmentsReview = () => {
     },
     {
       label: `${
-        fetchBusinessAmendmentsIsFetching
+        getAmendmentDetailsIsFetching
           ? '...'
           : selectedBusinessAmendment?.business?.applicationReferenceId
       }`,
       route: `/applications/amendments?businessId=${selectedBusinessAmendment?.business?.id}`,
     },
     {
-      label: `${capitalizeString(String(queryParams?.amendmentType))}`,
-      route: `/applications/amendments/review?businessId=${queryParams?.businessId}&amendmentType=${queryParams?.amendmentType}`,
+      label: getAmendmentDetailsIsFetching
+        ? `...`
+        : `${capitalizeString(
+            String(selectedBusinessAmendment?.amendmentType)
+          )}`,
+      route: `/applications/amendments/${id}/review`,
     },
   ];
 
   return (
     <StaffLayout>
       <main className="w-full flex flex-col gap-4">
-        {fetchBusinessAmendmentsIsFetching ? (
+        {getAmendmentDetailsIsFetching ? (
           <figure className="w-full flex items-center justify-center h-[40vh]">
             <Loader className="text-primary" />
           </figure>
         ) : (
           <menu className="w-full flex flex-col gap-4 p-5">
             <CustomBreadcrumb navigationLinks={navigationExtendedPaths} />
-            {queryParams?.amendmentType === 'AMEND_BUSINESS_DETAILS' && (
-              <CompanyDetailsAmendmentReview />
-            )}
-            {queryParams?.amendmentType === 'AMEND_BUSINESS_ADDRESS' && (
-              <CompanyAddressAmendmentReview />
-            )}
-            {queryParams?.amendmentType === 'AMEND_BUSINESS_ACTIVITIES' && (
+            {selectedBusinessAmendment?.amendmentType ===
+              'AMEND_BUSINESS_DETAILS' && <CompanyDetailsAmendmentReview />}
+            {selectedBusinessAmendment?.amendmentType ===
+              'AMEND_BUSINESS_ADDRESS' && <CompanyAddressAmendmentReview />}
+            {selectedBusinessAmendment?.amendmentType ===
+              'AMEND_BUSINESS_ACTIVITIES' && (
               <BusinessActivitiesAmendmentReview />
             )}
-            {queryParams?.amendmentType === 'AMEND_ADD_BUSINESS_FOUNDER' && (
+            {selectedBusinessAmendment?.amendmentType ===
+              'AMEND_ADD_BUSINESS_FOUNDER' && (
               <BusinessFounderAmendmentReview />
             )}
-            {queryParams?.amendmentType ===
+            {selectedBusinessAmendment?.amendmentType ===
               'AMEND_ADD_BUSINESS_BOARD_MEMBER' && (
               <BusinessBoardMemberAmendmentReview />
             )}
-            {queryParams?.amendmentType ===
+            {selectedBusinessAmendment?.amendmentType ===
               'AMEND_ADD_BUSINESS_EXECUTIVE_MEMBER' && (
               <ExecutiveMemberAmendmentReview />
             )}
-            {queryParams?.amendmentType ===
+            {selectedBusinessAmendment?.amendmentType ===
               'AMEND_BUSINESS_EMPLOYMENT_INFO' && (
               <EmploymentInfoAmendmentReview />
             )}
-            {queryParams?.amendmentType ===
+            {selectedBusinessAmendment?.amendmentType ===
               'AMEND_BUSINESS_DORMANCY_DECLARATION' && (
               <BusinessDormancyDeclarationReview />
             )}
-            {queryParams?.amendmentType === 'AMEND_CESSATION_TO_BE_DORMANT' && (
+            {selectedBusinessAmendment?.amendmentType ===
+              'AMEND_CESSATION_TO_BE_DORMANT' && (
               <BusinessCessationToDormancyReview />
             )}
-            {queryParams?.amendmentType === 'AMEND_BUSINESS_NEW_BRANCH' && (
-              <BusinessNewBranchReview />
-            )}
-            {queryParams?.amendmentType ===
+            {selectedBusinessAmendment?.amendmentType ===
+              'AMEND_BUSINESS_NEW_BRANCH' && <BusinessNewBranchReview />}
+            {selectedBusinessAmendment?.amendmentType ===
               'AMEND_BUSINESS_TRANSFER_OF_REGISTRATION' && (
               <TransferOfRegistrationReview />
             )}
-            {queryParams?.amendmentType === 'AMEND_BUSINESS_DISSOLUTION' && (
-              <CloseBusinessAmendmentReview />
-            )}
-            {queryParams?.amendmentType === 'AMEND_BUSINESS_RESTORATION' && (
+            {selectedBusinessAmendment?.amendmentType ===
+              'AMEND_BUSINESS_DISSOLUTION' && <CloseBusinessAmendmentReview />}
+            {selectedBusinessAmendment?.amendmentType ===
+              'AMEND_BUSINESS_RESTORATION' && (
               <RestoreBusinessAmendmentReview />
             )}
           </menu>
@@ -398,7 +414,7 @@ const BusinessAmendmentsReview = () => {
               Back
             </Button>
             <Button
-            disabled={businessAmendmentReviewComments?.length <= 0}
+              disabled={businessAmendmentReviewComments?.length <= 0}
               danger
               onClick={(e) => {
                 e.preventDefault();
@@ -647,4 +663,4 @@ export const BusinessAmendmentRequestSummary = ({
   );
 };
 
-export default BusinessAmendmentsReview;
+export default BusinessAmendmentReview;

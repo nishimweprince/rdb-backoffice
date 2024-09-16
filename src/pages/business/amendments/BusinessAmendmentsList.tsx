@@ -146,7 +146,7 @@ const BusinessAmendmentsList = () => {
                         e.preventDefault();
                         dispatch(setSelectedBusinessAmendment(row?.original));
                         navigate(
-                          `/applications/amendments/review?businessId=${row?.original?.businessId}&amendmentType=${row?.original?.amendmentType}`
+                          `/applications/amendments/${row?.original?.id}/review`
                         );
                       }}
                       to={'#'}

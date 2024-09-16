@@ -11,7 +11,7 @@ import BusinessApplicationRoutes from './BusinessApplicationRoutes';
 import BusinessApplicationReview from '@/pages/business-review/BusinessApplicationReview';
 import AuthenticationRoutes from './AuthenticationRoutes';
 import StaffAuthenticatedRoutes from '@/outlets/StaffAuthenticatedRoutes';
-import BusinessAmendmentsReview from '@/pages/business/amendments/BusinessAmendmentsReview';
+import BusinessAmendmentReview from '@/pages/business/amendments/BusinessAmendmentReview';
 import ApplicationsRoutes from './ApplicationsRoutes';
 import BusinessAmendmentRoutes from './BusinessAmendmentRoutes';
 import RegistrarGeneral from '@/pages/settings/registrar-general';
@@ -61,7 +61,7 @@ const Router = () => {
             </Route>
             <Route path="amendments" element={<BusinessAmendmentRoutes />}>
               <Route path="" element={<BusinessAmendmentsList />} />
-              <Route path="review" element={<BusinessAmendmentsReview />} />
+              <Route path=":id/review" element={<BusinessAmendmentReview />} />
             </Route>
             <Route
               path="name-reservations"

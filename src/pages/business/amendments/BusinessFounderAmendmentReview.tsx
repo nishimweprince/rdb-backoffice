@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import BusinessAmendmentNavigation from './BusinessAmendmentNavigation';
-import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
+import { BusinessAmendmentRequestSummary } from './BusinessAmendmentReview';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/states/store';
 import FounderDetailsTable from '@/pages/business-review/FounderDetailsTable';

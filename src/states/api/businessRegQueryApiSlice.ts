@@ -182,6 +182,15 @@ export const businessRegQueryApiSlice = createApi({
         },
       }),
 
+      // GET BUSINESS AMENDMENT DETAILS
+      getAmendmentDetails: builder.query({
+        query: ({ id }) => {
+          return {
+            url: `/back-office/amendments/${id}`,
+          };
+        },
+      }),
+
       // FETCH AMENDMENT REVIEW COMMENTS
       fetchAmendmentReviewComments: builder.query({
         query: ({ amendmentDetailId }) => {
@@ -281,6 +290,7 @@ export const {
   useLazyFetchNameReservationsQuery,
   useLazySearchBusinessNameAvailabilityQuery,
   useLazyFetchBusinessGeneralCommentsQuery,
+  useLazyGetAmendmentDetailsQuery
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;
