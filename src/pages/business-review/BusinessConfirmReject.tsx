@@ -10,12 +10,11 @@ import {
   setSelectedBusiness,
 } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
-import { Business, businessId } from '@/types/models/business';
+import { businessId } from '@/types/models/business';
 import { useEffect, useState } from 'react';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import BusinessGeneralComments from './BusinessGeneralComments';
 
 const BusinessConfirmReject = () => {
   // STATE VARIABLES
@@ -79,9 +78,6 @@ const BusinessConfirmReject = () => {
           ? The user will be notified of the rejection and receive a reason for
           it.
         </h3>
-        <BusinessGeneralComments
-          business={selectedBusiness as Business}
-        />
         {addNewComment ? (
           <Button
             primary
@@ -105,7 +101,7 @@ const BusinessConfirmReject = () => {
             Add new comment
           </Button>
         )}
-        {(addNewComment || businessGeneralCommentsList?.length === 0) && (
+        {(addNewComment || businessGeneralCommentsList?.length <= 0) && (
           <Controller
             name="comment"
             control={control}

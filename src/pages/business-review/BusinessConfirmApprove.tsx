@@ -9,12 +9,11 @@ import {
   setSelectedBusiness,
 } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
-import { Business, businessId } from '@/types/models/business';
+import { businessId } from '@/types/models/business';
 import { useEffect, useState } from 'react';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import BusinessGeneralComments from './BusinessGeneralComments';
 import { InputErrorMessage } from '@/components/feedback/ErrorLabels';
 import TextArea from '@/components/inputs/TextArea';
 
@@ -104,9 +103,6 @@ const BusinessConfirmApprove = () => {
           <span className="font-bold">{getBusinessName(selectedBusiness)}</span>
           ? The user will be notified of the approval.
         </h3>
-        <BusinessGeneralComments
-          business={selectedBusiness as Business}
-        />
         {addNewComment ? (
           <Button
             primary

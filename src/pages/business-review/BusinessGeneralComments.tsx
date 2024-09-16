@@ -88,7 +88,7 @@ const BusinessGeneralComments = ({
               return (
                 <section
                   key={index}
-                  className="w-full flex items-center gap-3 justify-between p-1 pr-4 rounded-md hover:bg-background"
+                  className="w-full flex items-center gap-3 pr-4 p-3 rounded-md shadow-md justify-between hover:bg-background"
                 >
                   <article className="w-full flex flex-col gap-2">
                     <p className="text-[15px]">

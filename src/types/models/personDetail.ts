@@ -54,4 +54,5 @@ export type FounderDetail = {
   verified?: boolean;
   personDetail?: PersonDetail;
   assignedShares: ShareDetail[];
+  organization: Organization;
 };

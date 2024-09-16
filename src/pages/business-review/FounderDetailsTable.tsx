@@ -11,7 +11,10 @@ import { Link } from 'react-router-dom';
 import FounderDetails from './BusinessFounderDetails';
 import { AppDispatch } from '@/states/store';
 import { useDispatch } from 'react-redux';
-import { setFounderDetailsModal, setSelectedFounderDetail } from '@/states/features/founderDetailSlice';
+import {
+  setFounderDetailsModal,
+  setSelectedFounderDetail,
+} from '@/states/features/founderDetailSlice';
 
 type FounderDetailsTableProps = {
   founderDetailsList: FounderDetail[];
@@ -71,7 +74,7 @@ const FounderDetailsTable = ({
             ...founder,
             name: `${
               founder?.personDetail?.firstName ||
-              founder?.personDetail?.organization?.organizationName ||
+              founder?.organization?.organizationName ||
               ''
             } ${founder?.personDetail?.middleName || ''} ${
               founder?.personDetail?.lastName || ''

@@ -162,7 +162,8 @@ export const businessLineColumns = [
 export const businessActivityStatus = [
   'ACTIVE',
   'INACTIVE',
-  'LICENSE_REQUIRED',
+  'LICENSE_PRE_REQUIRED',
+  'LICENSE_POST_REQUIRED',
 ];
 
 // BUSINESS NAMES COLUMNS

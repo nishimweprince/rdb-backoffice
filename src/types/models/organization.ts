@@ -12,4 +12,5 @@ export interface Organization {
   dateOfIncorporation?: number;
   approved?: boolean;
   foreign?: boolean;
+  tin?: string;
 }

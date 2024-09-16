@@ -59,7 +59,7 @@ export const getBusinessStatusColor = (status: string): string => {
     default:
       return '';
   }
-}
+};
 
 export const getBusinessActivityStatusColor = (status: string): string => {
   switch (status) {
@@ -93,12 +93,13 @@ export const getBusinessAmendmentStatusColor = (status: string): string => {
       return 'bg-blue-700';
     case 'PENDING_REJECTION':
       return 'bg-red-700';
+    case 'PENDING_APPROVAL':
     case 'PENDING_DECISION':
       return 'bg-primary';
     default:
       return '';
   }
-}
+};
 
 export const getBusinessName = (business?: Business): string => {
   if (!business) return '';

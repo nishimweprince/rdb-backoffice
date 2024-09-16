@@ -60,7 +60,7 @@ function renderCompanyDetails(
   return (
     <menu>
       <ul className="flex flex-col gap-3">
-        {Object.entries(displayValue)?.map(([key, value]) => {
+        {Object.entries(displayValue ?? {})?.map(([key, value]) => {
           const comparisonValueForKey = comparisonValue?.[key];
           if (
             [

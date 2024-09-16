@@ -29,13 +29,13 @@ const FounderDetails = () => {
         <menu className="grid grid-cols-2 w-full gap-5">
           <p>
             Name:{' '}
-            {`${selectedFounderDetail?.personDetail?.firstName} ${
+            {`${selectedFounderDetail?.personDetail?.firstName || selectedFounderDetail?.organization?.organizationName || ''} ${
               selectedFounderDetail?.personDetail?.lastName || ''
             }`}
           </p>
           <p>
             Document Number:{' '}
-            {selectedFounderDetail?.personDetail?.personDocNo || ''}
+            {selectedFounderDetail?.personDetail?.personDocNo || selectedFounderDetail?.organization?.tin || ''}
           </p>
           <p>
             Phone number:{' '}

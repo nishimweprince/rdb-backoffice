@@ -6,13 +6,10 @@ import { ErrorResponse, useNavigate, useParams } from 'react-router-dom';
 import {
   addToBusinessAmendmentReviewComments,
   approveAmendmentThunk,
-  fetchAmendmentReviewCommentsThunk,
   recommendAmendmentForApprovalThunk,
   recommendAmendmentRejectionThunk,
   rejectAmendmentThunk,
-  setDeleteAmendmentReviewCommentModal,
-  setSelectedAmendmentReviewComment,
-  setSelectedBusinessAmendment,
+  setBusinessAmendmentDetails,
   updateBusinessAmendmentStatusThunk,
 } from '@/states/features/businessAmendmentSlice';
 import Loader from '@/components/inputs/Loader';
@@ -27,9 +24,6 @@ import Button from '@/components/inputs/Button';
 import { InputErrorMessage } from '@/components/feedback/ErrorLabels';
 import { useCreateAmendmentReviewCommentMutation } from '@/states/api/businessRegApiSlice';
 import { toast } from 'react-toastify';
-import { BusinessAmendmentReviewComment } from '@/types/models/businessAmendmentReviewComment';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import CustomTooltip from '@/components/inputs/CustomTooltip';
 import DeleteAmendmentReviewComment from './DeleteAmendmentReviewComment';
 import BusinessFounderAmendmentReview from './BusinessFounderAmendmentReview';
@@ -46,15 +40,16 @@ import TransferOfRegistrationReview from './TransferOfRegistrationReview';
 import CloseBusinessAmendmentReview from './CloseBusinessAmendmentReview';
 import RestoreBusinessAmendmentReview from './RestoreBusinessAmendmentReview';
 import { useLazyGetAmendmentDetailsQuery } from '@/states/api/businessRegQueryApiSlice';
+import BusinessAmendmentReviewComments from './BusinessAmendmentReviewComments';
+import UpdateAmendmentReviewComment from './UpdateAmendmentReviewComment';
 
 const BusinessAmendmentReview = () => {
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
   const {
     businessAmendmentsList,
-    selectedBusinessAmendment,
+    businessAmendmentDetails,
     businessAmendmentReviewComments,
-    businessAmendmentReviewCommentsIsFetching,
     updateBusinessAmendmentStatusIsLoading,
     updateBusinessAmendmentStatusIsSuccess,
     recommendAmendmentForApprovalIsLoading,
@@ -97,7 +92,7 @@ const BusinessAmendmentReview = () => {
   const onSubmit = (data: FieldValues) => {
     createAmendmentReviewComment({
       comment: data?.amendmentReviewComment,
-      amendmentDetailId: selectedBusinessAmendment?.id,
+      amendmentDetailId: businessAmendmentDetails?.id,
       status: 'SUBMITTED',
     });
   };
@@ -126,7 +121,7 @@ const BusinessAmendmentReview = () => {
   // HANDLE FETCH BUSINESS AMENDMENT RESPONSE
   useEffect(() => {
     if (getAmendmentDetailsIsSuccess) {
-      dispatch(setSelectedBusinessAmendment(getAmendmentDetailsData?.data));
+      dispatch(setBusinessAmendmentDetails(getAmendmentDetailsData?.data));
     } else if (getAmendmentDetailsIsError) {
       const errorResponse =
         (getAmendmentDetailsError as ErrorResponse)?.data?.message ||
@@ -168,28 +163,17 @@ const BusinessAmendmentReview = () => {
     setValue,
   ]);
 
-  // FETCH AMENDMENT REVIEW COMMENTS
-  useEffect(() => {
-    if (selectedBusinessAmendment?.id) {
-      dispatch(
-        fetchAmendmentReviewCommentsThunk({
-          amendmentDetailId: selectedBusinessAmendment?.id,
-        })
-      );
-    }
-  }, [dispatch, selectedBusinessAmendment]);
-
   // HANDLE UPDATE BUSINESS AMENDMENT STATUS RESPONSE
   useEffect(() => {
     if (updateBusinessAmendmentStatusIsSuccess) {
       navigate(
-        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+        `/applications/amendments?businessId=${businessAmendmentDetails?.businessId}`
       );
       window.location.reload();
     }
   }, [
     navigate,
-    selectedBusinessAmendment?.businessId,
+    businessAmendmentDetails?.businessId,
     updateBusinessAmendmentStatusIsSuccess,
   ]);
 
@@ -197,56 +181,56 @@ const BusinessAmendmentReview = () => {
   useEffect(() => {
     if (recommendAmendmentForApprovalIsSuccess) {
       navigate(
-        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+        `/applications/amendments?businessId=${businessAmendmentDetails?.businessId}`
       );
       window.location.reload();
     }
   }, [
     navigate,
     recommendAmendmentForApprovalIsSuccess,
-    selectedBusinessAmendment?.businessId,
+    businessAmendmentDetails?.businessId,
   ]);
 
   // HANDLE APPROVE AMENDMENT RESPONSE
   useEffect(() => {
     if (approveAmendmentIsSuccess) {
       navigate(
-        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+        `/applications/amendments?businessId=${businessAmendmentDetails?.businessId}`
       );
       window.location.reload();
     }
   }, [
     approveAmendmentIsSuccess,
     navigate,
-    selectedBusinessAmendment?.businessId,
+    businessAmendmentDetails?.businessId,
   ]);
 
   // HANDLE REJECT AMENDMENT RESPONSE
   useEffect(() => {
     if (rejectAmendmentIsSuccess) {
       navigate(
-        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+        `/applications/amendments?businessId=${businessAmendmentDetails?.businessId}`
       );
       window.location.reload();
     }
   }, [
     navigate,
     rejectAmendmentIsSuccess,
-    selectedBusinessAmendment?.businessId,
+    businessAmendmentDetails?.businessId,
   ]);
 
   // HANDLE RECOMMEND AMENDMENT REJECTION RESPONSE
   useEffect(() => {
     if (recommendAmendmentRejectionIsSuccess) {
       navigate(
-        `/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`
+        `/applications/amendments?businessId=${businessAmendmentDetails?.businessId}`
       );
       window.location.reload();
     }
   }, [
     navigate,
     recommendAmendmentRejectionIsSuccess,
-    selectedBusinessAmendment?.businessId,
+    businessAmendmentDetails?.businessId,
   ]);
 
   // NAVIGATION LINKS
@@ -260,15 +244,15 @@ const BusinessAmendmentReview = () => {
       label: `${
         getAmendmentDetailsIsFetching
           ? '...'
-          : selectedBusinessAmendment?.business?.applicationReferenceId
+          : businessAmendmentDetails?.business?.applicationReferenceId
       }`,
-      route: `/applications/amendments?businessId=${selectedBusinessAmendment?.business?.id}`,
+      route: `/applications/amendments?businessId=${businessAmendmentDetails?.business?.id}`,
     },
     {
       label: getAmendmentDetailsIsFetching
         ? `...`
         : `${capitalizeString(
-            String(selectedBusinessAmendment?.amendmentType)
+            String(businessAmendmentDetails?.amendmentType)
           )}`,
       route: `/applications/amendments/${id}/review`,
     },
@@ -284,59 +268,62 @@ const BusinessAmendmentReview = () => {
         ) : (
           <menu className="w-full flex flex-col gap-4 p-5">
             <CustomBreadcrumb navigationLinks={navigationExtendedPaths} />
-            {selectedBusinessAmendment?.amendmentType ===
+            {businessAmendmentDetails?.amendmentType ===
               'AMEND_BUSINESS_DETAILS' && <CompanyDetailsAmendmentReview />}
-            {selectedBusinessAmendment?.amendmentType ===
+            {businessAmendmentDetails?.amendmentType ===
               'AMEND_BUSINESS_ADDRESS' && <CompanyAddressAmendmentReview />}
-            {selectedBusinessAmendment?.amendmentType ===
+            {businessAmendmentDetails?.amendmentType ===
               'AMEND_BUSINESS_ACTIVITIES' && (
               <BusinessActivitiesAmendmentReview />
             )}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_ADD_BUSINESS_FOUNDER' && (
+            {[
+              'AMEND_ADD_BUSINESS_FOUNDER',
+              'AMEND_DELETE_BUSINESS_FOUNDER',
+            ].includes(String(businessAmendmentDetails?.amendmentType)) && (
               <BusinessFounderAmendmentReview />
             )}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_ADD_BUSINESS_BOARD_MEMBER' && (
+            {[
+              'AMEND_ADD_BUSINESS_BOARD_MEMBER',
+              'AMEND_DELETE_BUSINESS_BOARD_MEMBER',
+            ].includes(String(businessAmendmentDetails?.amendmentType)) && (
               <BusinessBoardMemberAmendmentReview />
             )}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_ADD_BUSINESS_EXECUTIVE_MEMBER' && (
+            {[
+              'AMEND_ADD_BUSINESS_EXECUTIVE_MEMBER',
+              'AMEND_DELETE_BUSINESS_EXECUTIVE_MEMBER',
+            ].includes(String(businessAmendmentDetails?.amendmentType)) && (
               <ExecutiveMemberAmendmentReview />
             )}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_BUSINESS_EMPLOYMENT_INFO' && (
-              <EmploymentInfoAmendmentReview />
-            )}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_BUSINESS_DORMANCY_DECLARATION' && (
-              <BusinessDormancyDeclarationReview />
-            )}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_CESSATION_TO_BE_DORMANT' && (
-              <BusinessCessationToDormancyReview />
-            )}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_BUSINESS_NEW_BRANCH' && <BusinessNewBranchReview />}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_BUSINESS_TRANSFER_OF_REGISTRATION' && (
-              <TransferOfRegistrationReview />
-            )}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_BUSINESS_DISSOLUTION' && <CloseBusinessAmendmentReview />}
-            {selectedBusinessAmendment?.amendmentType ===
-              'AMEND_BUSINESS_RESTORATION' && (
-              <RestoreBusinessAmendmentReview />
-            )}
+            {['AMEND_BUSINESS_EMPLOYMENT_INFO'].includes(
+              String(businessAmendmentDetails?.amendmentType)
+            ) && <EmploymentInfoAmendmentReview />}
+            {['AMEND_BUSINESS_DORMANCY_DECLARATION'].includes(
+              String(businessAmendmentDetails?.amendmentType)
+            ) && <BusinessDormancyDeclarationReview />}
+            {['AMEND_CESSATION_TO_BE_DORMANT'].includes(
+              String(businessAmendmentDetails?.amendmentType)
+            ) && <BusinessCessationToDormancyReview />}
+            {['AMEND_BUSINESS_NEW_BRANCH'].includes(
+              String(businessAmendmentDetails?.amendmentType)
+            ) && <BusinessNewBranchReview />}
+            {['AMEND_BUSINESS_TRANSFER_OF_REGISTRATION'].includes(
+              String(businessAmendmentDetails?.amendmentType)
+            ) && <TransferOfRegistrationReview />}
+            {['AMEND_BUSINESS_DISSOLUTION'].includes(
+              String(businessAmendmentDetails?.amendmentType)
+            ) && <CloseBusinessAmendmentReview />}
+            {['AMEND_BUSINESS_RESTORATION'].includes(
+              String(businessAmendmentDetails?.amendmentType)
+            ) && <RestoreBusinessAmendmentReview />}
           </menu>
         )}
-        {(selectedBusinessAmendment?.amendmentAttachmentDetails || [])?.length >
+        {(businessAmendmentDetails?.amendmentAttachmentDetails || [])?.length >
           0 && (
           <section className="w-full flex flex-col gap-3 px-5">
             <h3>Attachments</h3>
             <BusinessAttachmentsTable
               businessAttachmentsList={
-                selectedBusinessAmendment?.amendmentAttachmentDetails
+                businessAmendmentDetails?.amendmentAttachmentDetails
               }
             />
           </section>
@@ -381,35 +368,15 @@ const BusinessAmendmentReview = () => {
             )}
           </menu>
         </form>
-        {businessAmendmentReviewComments?.length > 0 && (
-          <article className="w-full flex flex-col gap-5 px-5">
-            {businessAmendmentReviewCommentsIsFetching ? (
-              <figure className="w-full flex items-center justify-center min-h-[30vh]">
-                <Loader className="text-primary" />
-              </figure>
-            ) : (
-              <menu className="w-full flex flex-col gap-4">
-                <h3 className="uppercase text-primary font-medium">
-                  Comment(s)
-                </h3>
-                {businessAmendmentReviewComments?.map((comment, index) => {
-                  return (
-                    <AmendmentReviewComment
-                      amendmentReviewComment={comment}
-                      key={index}
-                    />
-                  );
-                })}
-              </menu>
-            )}
-          </article>
-        )}
+        <BusinessAmendmentReviewComments
+          businessAmendment={businessAmendmentDetails}
+        />
         {['AMENDMENT_SUBMITTED', 'RESUBMITTED'].includes(
-          String(selectedBusinessAmendment?.status)
+          String(businessAmendmentDetails?.status)
         ) && (
           <menu className="w-full flex items-center justify-between p-5">
             <Button
-              route={`/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`}
+              route={`/applications/amendments?businessId=${businessAmendmentDetails?.businessId}`}
             >
               Back
             </Button>
@@ -418,10 +385,10 @@ const BusinessAmendmentReview = () => {
               danger
               onClick={(e) => {
                 e.preventDefault();
-                if (selectedBusinessAmendment) {
+                if (businessAmendmentDetails) {
                   dispatch(
                     recommendAmendmentRejectionThunk({
-                      amendmentId: selectedBusinessAmendment?.id,
+                      amendmentId: businessAmendmentDetails?.id,
                     })
                   );
                 }
@@ -451,10 +418,10 @@ const BusinessAmendmentReview = () => {
               className="!bg-green-700 hover:!bg-green-700 border-none"
               onClick={(e) => {
                 e.preventDefault();
-                if (selectedBusinessAmendment) {
+                if (businessAmendmentDetails) {
                   dispatch(
                     recommendAmendmentForApprovalThunk({
-                      amendmentId: selectedBusinessAmendment?.id,
+                      amendmentId: businessAmendmentDetails?.id,
                     })
                   );
                 }
@@ -476,10 +443,10 @@ const BusinessAmendmentReview = () => {
               }
               onClick={(e) => {
                 e.preventDefault();
-                if (selectedBusinessAmendment) {
+                if (businessAmendmentDetails) {
                   dispatch(
                     updateBusinessAmendmentStatusThunk({
-                      id: selectedBusinessAmendment?.id,
+                      id: businessAmendmentDetails?.id,
                       amendmentStatus: 'ACTION_REQUIRED',
                     })
                   );
@@ -495,11 +462,11 @@ const BusinessAmendmentReview = () => {
           </menu>
         )}
         {['PENDING_APPROVAL', 'PENDING_REJECTION'].includes(
-          String(selectedBusinessAmendment?.status)
+          String(businessAmendmentDetails?.status)
         ) && (
           <menu className="w-full flex items-center justify-between p-5">
             <Button
-              route={`/applications/amendments?businessId=${selectedBusinessAmendment?.businessId}`}
+              route={`/applications/amendments?businessId=${businessAmendmentDetails?.businessId}`}
             >
               Back
             </Button>
@@ -507,11 +474,11 @@ const BusinessAmendmentReview = () => {
               danger
               onClick={(e) => {
                 e.preventDefault();
-                if (selectedBusinessAmendment) {
+                if (businessAmendmentDetails) {
                   dispatch(
                     rejectAmendmentThunk({
-                      amendmentId: selectedBusinessAmendment?.id,
-                      entityId: selectedBusinessAmendment?.entityId,
+                      amendmentId: businessAmendmentDetails?.id,
+                      entityId: businessAmendmentDetails?.entityId,
                     })
                   );
                 }
@@ -523,10 +490,10 @@ const BusinessAmendmentReview = () => {
               className="!bg-green-700 hover:!bg-green-700 border-none text-white"
               onClick={(e) => {
                 e.preventDefault();
-                if (selectedBusinessAmendment) {
+                if (businessAmendmentDetails) {
                   dispatch(
                     approveAmendmentThunk({
-                      amendmentId: selectedBusinessAmendment?.id,
+                      amendmentId: businessAmendmentDetails?.id,
                     })
                   );
                 }
@@ -549,10 +516,10 @@ const BusinessAmendmentReview = () => {
               }
               onClick={(e) => {
                 e.preventDefault();
-                if (selectedBusinessAmendment) {
+                if (businessAmendmentDetails) {
                   dispatch(
                     updateBusinessAmendmentStatusThunk({
-                      id: selectedBusinessAmendment?.id,
+                      id: businessAmendmentDetails?.id,
                       amendmentStatus: 'ACTION_REQUIRED',
                     })
                   );
@@ -569,42 +536,8 @@ const BusinessAmendmentReview = () => {
         )}
       </main>
       <DeleteAmendmentReviewComment />
+      <UpdateAmendmentReviewComment />
     </StaffLayout>
-  );
-};
-
-export const AmendmentReviewComment = ({
-  amendmentReviewComment,
-}: {
-  amendmentReviewComment: BusinessAmendmentReviewComment;
-}) => {
-  // STATE VARIABLES
-  const dispatch: AppDispatch = useDispatch();
-
-  return (
-    <article className="w-full flex items-center gap-4 p-3 rounded-md shadow-md justify-between">
-      <ul className="flex flex-col gap-2">
-        <p>{amendmentReviewComment?.comment}</p>
-        <p className="text-[13px]">{amendmentReviewComment?.status}</p>
-      </ul>
-      {['SUBMITTED'].includes(amendmentReviewComment?.status) && (
-        <menu className="flex items-center gap-2">
-          <CustomTooltip label="Click to delete" labelClassName="bg-red-600">
-            <FontAwesomeIcon
-              onClick={(e) => {
-                e.preventDefault();
-                dispatch(
-                  setSelectedAmendmentReviewComment(amendmentReviewComment)
-                );
-                dispatch(setDeleteAmendmentReviewCommentModal(true));
-              }}
-              className="p-2 px-[8.1px] rounded-full transition-all ease-in-out duration-300 hover:scale-[1.01] shadow-md bg-red-600 text-white cursor-pointer"
-              icon={faTrash}
-            />
-          </CustomTooltip>
-        </menu>
-      )}
-    </article>
   );
 };
 
