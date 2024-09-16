@@ -235,13 +235,18 @@ export const businessRegApiSlice = createApi({
         query: ({
           businessId,
           companyType,
+          comment
         }: {
           businessId: businessId;
           companyType: 'domestic' | 'foreign' | 'enterprise';
+          comment?: string;
         }) => {
           return {
             url: `/back-office/approve-${companyType}?businessId=${businessId}`,
             method: 'PATCH',
+            body: {
+              comment,
+            }
           };
         },
       }),

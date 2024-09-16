@@ -605,7 +605,7 @@ const BusinessApplicationReview = () => {
 
             {/* BUSINESS REVIEW COMMENTS */}
             <section className='w-full'>
-            <BusinessGeneralComments businessId={business?.id} />
+            <BusinessGeneralComments business={business} />
             </section>
 
             {['SUBMITTED', 'RESUBMITTED', 'IN_REVIEW'].includes(

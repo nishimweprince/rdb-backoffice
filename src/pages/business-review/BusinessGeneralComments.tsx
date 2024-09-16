@@ -2,9 +2,14 @@ import CustomTooltip from '@/components/inputs/CustomTooltip';
 import Loader from '@/components/inputs/Loader';
 import { getUserFullName } from '@/helpers/users.helper';
 import { useLazyFetchBusinessGeneralCommentsQuery } from '@/states/api/businessRegQueryApiSlice';
-import { setBusinessGeneralCommentsList, setDeleteBusinessGeneralCommentModal, setSelectedBusinessGeneralComment, setUpdateBusinessGeneralCommentModal } from '@/states/features/businessSlice';
+import {
+  setBusinessGeneralCommentsList,
+  setDeleteBusinessGeneralCommentModal,
+  setSelectedBusinessGeneralComment,
+  setUpdateBusinessGeneralCommentModal,
+} from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
-import { businessId } from '@/types/models/business';
+import { Business } from '@/types/models/business';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect } from 'react';
@@ -15,11 +20,11 @@ import DeleteBusinessGeneralComment from './DeleteBusinessGeneralComment';
 import UpdateBusinessGeneralComment from './UpdateBusinessGeneralComment';
 
 interface BusinessGeneralCommentsProps {
-  businessId: businessId;
+  business: Business;
 }
 
 const BusinessGeneralComments = ({
-  businessId,
+  business,
 }: BusinessGeneralCommentsProps) => {
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
@@ -41,10 +46,10 @@ const BusinessGeneralComments = ({
 
   // FETCH BUSINESS GENERAL COMMENTS
   useEffect(() => {
-    if (businessId) {
-      fetchBusinessGeneralComments({ businessId });
+    if (business?.id) {
+      fetchBusinessGeneralComments({ businessId: business?.id });
     }
-  }, [businessId, dispatch, fetchBusinessGeneralComments]);
+  }, [business?.id, dispatch, fetchBusinessGeneralComments]);
 
   // HANDLE BUSINESS GENERAL COMMENTS RESPONSE
   useEffect(() => {
@@ -75,7 +80,7 @@ const BusinessGeneralComments = ({
         </figure>
       ) : (
         businessGeneralCommentsList?.length > 0 && (
-          <menu className="w-full flex flex-col items-start my-4 gap-3 justify-between">
+          <menu className="w-full flex flex-col items-start my-3 gap-3 justify-between">
             <h3 className="text-lg uppercase font-semibold text-primary">
               Review comment(s)
             </h3>
@@ -101,37 +106,45 @@ const BusinessGeneralComments = ({
                       </CustomTooltip>
                     </ul>
                   </article>
-                  <menu className="w-fit flex items-center gap-5">
-                    <CustomTooltip label="Click to update">
-                      <FontAwesomeIcon
-                      onClick={(e) => {
-                        e.preventDefault();
-                        dispatch(
-                          setSelectedBusinessGeneralComment(generalComment)
-                        );
-                        dispatch(setUpdateBusinessGeneralCommentModal(true));
-                      }}
-                        className="p-2 rounded-full bg-primary text-white px-[8px] cursor-pointer transition-all duration-300 hover:scale-[1.01]"
-                        icon={faPenToSquare}
-                      />
-                    </CustomTooltip>
-                    <CustomTooltip
-                      label="Click to delete"
-                      labelClassName="bg-red-600"
-                    >
-                      <FontAwesomeIcon
-                        onClick={(e) => {
-                          e.preventDefault();
-                          dispatch(
-                            setSelectedBusinessGeneralComment(generalComment)
-                          );
-                          dispatch(setDeleteBusinessGeneralCommentModal(true));
-                        }}
-                        className="p-2 rounded-full bg-red-600 text-white px-[8.1px] cursor-pointer transition-all duration-300 hover:scale-[1.01]"
-                        icon={faTrash}
-                      />
-                    </CustomTooltip>
-                  </menu>
+                  {!['ACTIVE', 'REJECTED'].includes(
+                    business?.applicationStatus
+                  ) && (
+                    <menu className="w-fit flex items-center gap-5">
+                      <CustomTooltip label="Click to update">
+                        <FontAwesomeIcon
+                          onClick={(e) => {
+                            e.preventDefault();
+                            dispatch(
+                              setSelectedBusinessGeneralComment(generalComment)
+                            );
+                            dispatch(
+                              setUpdateBusinessGeneralCommentModal(true)
+                            );
+                          }}
+                          className="p-2 rounded-full bg-primary text-white px-[8px] cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+                          icon={faPenToSquare}
+                        />
+                      </CustomTooltip>
+                      <CustomTooltip
+                        label="Click to delete"
+                        labelClassName="bg-red-600"
+                      >
+                        <FontAwesomeIcon
+                          onClick={(e) => {
+                            e.preventDefault();
+                            dispatch(
+                              setSelectedBusinessGeneralComment(generalComment)
+                            );
+                            dispatch(
+                              setDeleteBusinessGeneralCommentModal(true)
+                            );
+                          }}
+                          className="p-2 rounded-full bg-red-600 text-white px-[8.1px] cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+                          icon={faTrash}
+                        />
+                      </CustomTooltip>
+                    </menu>
+                  )}
                 </section>
               );
             })}

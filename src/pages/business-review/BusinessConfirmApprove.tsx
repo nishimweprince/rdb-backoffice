@@ -9,10 +9,14 @@ import {
   setSelectedBusiness,
 } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
-import { businessId } from '@/types/models/business';
-import { useEffect } from 'react';
+import { Business, businessId } from '@/types/models/business';
+import { useEffect, useState } from 'react';
+import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import BusinessGeneralComments from './BusinessGeneralComments';
+import { InputErrorMessage } from '@/components/feedback/ErrorLabels';
+import TextArea from '@/components/inputs/TextArea';
 
 const BusinessConfirmApprove = () => {
   // STATE VARIABLES
@@ -21,13 +25,44 @@ const BusinessConfirmApprove = () => {
     businessConfirmApproveModal,
     selectedBusiness,
     businessGeneralCommentsList,
-    businessGeneralCommentsIsFetching,
     approveBusinessIsLoading,
     approveBusinessIsSuccess,
+    selectedBusinessGeneralComment
   } = useSelector((state: RootState) => state.business);
+  const [addNewComment, setAddNewComment] = useState(false);
 
   // NAVIGATION
   const navigate = useNavigate();
+
+  // REACT HOOK FORM
+  const {
+    control,
+    watch,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm();
+  const { comment } = watch();
+
+  // SET DEFAULT VALUE FOR COMMENT
+  useEffect(() => {
+    setValue('comment', selectedBusinessGeneralComment?.comment);
+  }, [selectedBusinessGeneralComment?.comment, setValue]);
+
+  // HANDLE FORM SUBMISSION
+  const onSubmit = (data: FieldValues) => {
+    dispatch(
+      approveBusinessThunk({
+        businessId: selectedBusiness?.id as businessId,
+        companyType: selectedBusiness?.isForeign
+          ? 'foreign'
+          : selectedBusiness?.enterpriseName
+          ? 'enterprise'
+          : 'domestic',
+        comment: data?.comment,
+      })
+    );
+  };
 
   // FETCH BUSINESS GENERAL COMMENTS
   useEffect(() => {
@@ -60,28 +95,61 @@ const BusinessConfirmApprove = () => {
       headingClassName="text-green-600"
       className="min-w-[40vw]"
     >
-      <form className="w-full flex flex-col gap-4">
+      <form
+        className="w-full flex flex-col gap-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <h3>
           Are you sure you want to approve{' '}
           <span className="font-bold">{getBusinessName(selectedBusiness)}</span>
           ? The user will be notified of the approval.
         </h3>
-        {businessGeneralCommentsIsFetching ? (
-          <figure className="w-full flex items-center justify-center min-h-[20vh]">
-            <Loader className="text-primary" />
-          </figure>
+        <BusinessGeneralComments
+          business={selectedBusiness as Business}
+        />
+        {addNewComment ? (
+          <Button
+            primary
+            className="w-fit !text-[13px] !py-1"
+            onClick={(e) => {
+              e.preventDefault();
+              setAddNewComment(false);
+            }}
+          >
+            Close comment box
+          </Button>
         ) : (
-          businessGeneralCommentsList?.length > 0 && (
-            <menu className="w-full flex flex-col gap-2">
-              {businessGeneralCommentsList.map((generalComment, index) => {
-                return (
-                  <p key={index} className="text-[13px]">
-                    {index + 1}. {generalComment?.comment}
-                  </p>
-                );
-              })}
-            </menu>
-          )
+          <Button
+            className="w-fit !text-[13px] !py-1"
+            primary
+            onClick={(e) => {
+              e.preventDefault();
+              setAddNewComment(true);
+            }}
+          >
+            Add new comment (optional)
+          </Button>
+        )}
+        {(addNewComment || businessGeneralCommentsList?.length === 0) && (
+          <Controller
+            name="comment"
+            control={control}
+            render={({ field }) => {
+              return (
+                <label className="w-full flex flex-col gap-2">
+                  <TextArea
+                    resize
+                    {...field}
+                    label={'Comment message'}
+                    required
+                  />
+                  {errors.comment && (
+                    <InputErrorMessage message={errors?.comment?.message} />
+                  )}
+                </label>
+              );
+            }}
+          />
         )}
         <menu className="w-full flex items-center gap-3 justify-between">
           <Button
@@ -93,22 +161,7 @@ const BusinessConfirmApprove = () => {
           >
             Cancel
           </Button>
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              dispatch(
-                approveBusinessThunk({
-                  businessId: selectedBusiness?.id as businessId,
-                  companyType: selectedBusiness?.isForeign
-                    ? 'foreign'
-                    : selectedBusiness?.enterpriseName
-                    ? 'enterprise'
-                    : 'domestic',
-                })
-              );
-            }}
-            primary
-          >
+          <Button submit primary disabled={!comment}>
             {approveBusinessIsLoading ? <Loader /> : 'Approve'}
           </Button>
         </menu>

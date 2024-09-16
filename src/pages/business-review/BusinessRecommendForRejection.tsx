@@ -21,10 +21,9 @@ import { useRecommendBusinessForRejectionMutation } from '@/states/api/businessR
 const BusinessRecommendForRejection: React.FC = () => {
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
-  const {
-    businessRecommendForRejectionModal,
-    selectedBusiness,
-  } = useSelector((state: RootState) => state.business);
+  const { businessRecommendForRejectionModal, selectedBusiness } = useSelector(
+    (state: RootState) => state.business
+  );
 
   // REACT HOOK FORM
   const {
@@ -38,21 +37,24 @@ const BusinessRecommendForRejection: React.FC = () => {
   const navigate = useNavigate();
 
   // INITIALIZE RECOMMEND BUSINESS FOR REJECTION MUTATION
-  const [recommendBusinessForRejection, {
-    isLoading: recommendBusinessForRejectionIsLoading,
-    isSuccess: recommendBusinessForRejectionIsSuccess,
-    isError: recommendBusinessForRejectionIsError,
-    reset: resetRecommendBusinessForRejection,
-    error: recommendBusinessForRejectionError,
-    data: recommendBusinessForRejectionData,
-  }] = useRecommendBusinessForRejectionMutation();
+  const [
+    recommendBusinessForRejection,
+    {
+      isLoading: recommendBusinessForRejectionIsLoading,
+      isSuccess: recommendBusinessForRejectionIsSuccess,
+      isError: recommendBusinessForRejectionIsError,
+      reset: resetRecommendBusinessForRejection,
+      error: recommendBusinessForRejectionError,
+      data: recommendBusinessForRejectionData,
+    },
+  ] = useRecommendBusinessForRejectionMutation();
 
   // HANDLE FORM SUBMISSION
   const onSubmit = (data: FieldValues) => {
     recommendBusinessForRejection({
-        businessId: selectedBusiness?.id as businessId,
-        comment: data?.comment,
-      })
+      businessId: selectedBusiness?.id as businessId,
+      comment: data?.comment,
+    });
   };
 
   // HANDLE SUCCESS AND ERROR STATES

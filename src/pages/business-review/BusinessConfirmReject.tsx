@@ -5,13 +5,12 @@ import Loader from '@/components/inputs/Loader';
 import TextArea from '@/components/inputs/TextArea';
 import { getBusinessName } from '@/helpers/business.helper';
 import {
-  fetchBusinessGeneralCommentsThunk,
   rejectBusinessThunk,
   setBusinessConfirmRejectModal,
   setSelectedBusiness,
 } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
-import { businessId } from '@/types/models/business';
+import { Business, businessId } from '@/types/models/business';
 import { useEffect, useState } from 'react';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,17 +39,6 @@ const BusinessConfirmReject = () => {
     formState: { errors },
   } = useForm();
 
-  // FETCH BUSINESS GENERAL COMMENTS
-  useEffect(() => {
-    if (businessConfirmRejectModal) {
-      dispatch(
-        fetchBusinessGeneralCommentsThunk({
-          businessId: selectedBusiness?.id as businessId,
-        })
-      );
-    }
-  }, [dispatch, selectedBusiness?.id, businessConfirmRejectModal]);
-
   // HANDLE REJECT BUSINESS RESPONE
   useEffect(() => {
     if (rejectBusinessIsSuccess) {
@@ -62,7 +50,12 @@ const BusinessConfirmReject = () => {
 
   // HANDLE FORM SUBMISSION
   const onSubmit = (data: FieldValues) => {
-    console.log(data);
+    dispatch(
+      rejectBusinessThunk({
+        businessId: selectedBusiness?.id as businessId,
+        comment: data?.comment,
+      })
+    );
   };
 
   return (
@@ -87,7 +80,7 @@ const BusinessConfirmReject = () => {
           it.
         </h3>
         <BusinessGeneralComments
-          businessId={selectedBusiness?.id as businessId}
+          business={selectedBusiness as Business}
         />
         {addNewComment ? (
           <Button
@@ -143,17 +136,7 @@ const BusinessConfirmReject = () => {
           >
             Cancel
           </Button>
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              dispatch(
-                rejectBusinessThunk({
-                  businessId: selectedBusiness?.id as businessId,
-                })
-              );
-            }}
-            danger
-          >
+          <Button submit danger>
             {rejectBusinessIsLoading ? <Loader /> : 'Reject'}
           </Button>
         </menu>

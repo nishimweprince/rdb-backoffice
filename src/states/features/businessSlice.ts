@@ -319,16 +319,18 @@ export const approveBusinessThunk = createAsyncThunk<
   {
     businessId: businessId;
     companyType: 'domestic' | 'foreign' | 'enterprise';
+    comment?: string;
   },
   { dispatch: AppDispatch }
 >(
   'business/approveBusiness',
-  async ({ businessId, companyType }, { dispatch }) => {
+  async ({ businessId, companyType, comment }, { dispatch }) => {
     try {
       const response = await dispatch(
         businessRegApiSlice.endpoints.approveBusiness.initiate({
           businessId,
           companyType,
+          comment,
         })
       ).unwrap();
 
