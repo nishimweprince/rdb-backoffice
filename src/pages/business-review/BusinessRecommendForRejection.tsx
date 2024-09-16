@@ -6,16 +6,17 @@ import TextArea from '@/components/inputs/TextArea';
 import Loader from '@/components/inputs/Loader';
 import { getBusinessName } from '@/helpers/business.helper';
 import {
-  recommendBusinessForRejectionThunk,
   setBusinessRecommendForRejectionModal,
   setSelectedBusiness,
+  setUpdateBusinessesList,
 } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
 import { businessId } from '@/types/models/business';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { ErrorResponse, useNavigate } from 'react-router-dom';
+import { useRecommendBusinessForRejectionMutation } from '@/states/api/businessRegApiSlice';
 
 const BusinessRecommendForRejection: React.FC = () => {
   // STATE VARIABLES
@@ -23,9 +24,6 @@ const BusinessRecommendForRejection: React.FC = () => {
   const {
     businessRecommendForRejectionModal,
     selectedBusiness,
-    recommendBusinessForRejectionIsLoading,
-    recommendBusinessForRejectionIsError,
-    recommendBusinessForRejectionIsSuccess,
   } = useSelector((state: RootState) => state.business);
 
   // REACT HOOK FORM
@@ -39,29 +37,42 @@ const BusinessRecommendForRejection: React.FC = () => {
   // NAVIGATION
   const navigate = useNavigate();
 
+  // INITIALIZE RECOMMEND BUSINESS FOR REJECTION MUTATION
+  const [recommendBusinessForRejection, {
+    isLoading: recommendBusinessForRejectionIsLoading,
+    isSuccess: recommendBusinessForRejectionIsSuccess,
+    isError: recommendBusinessForRejectionIsError,
+    reset: resetRecommendBusinessForRejection,
+    error: recommendBusinessForRejectionError,
+    data: recommendBusinessForRejectionData,
+  }] = useRecommendBusinessForRejectionMutation();
+
   // HANDLE FORM SUBMISSION
   const onSubmit = (data: FieldValues) => {
-    dispatch(
-      recommendBusinessForRejectionThunk({
+    recommendBusinessForRejection({
         businessId: selectedBusiness?.id as businessId,
         comment: data?.comment,
       })
-    );
   };
 
   // HANDLE SUCCESS AND ERROR STATES
   useEffect(() => {
     if (recommendBusinessForRejectionIsSuccess) {
       toast.success('Business recommended for rejection successfully');
+      dispatch(
+        setUpdateBusinessesList(recommendBusinessForRejectionData?.data)
+      );
       dispatch(setSelectedBusiness(undefined));
       dispatch(setBusinessRecommendForRejectionModal(false));
+      resetRecommendBusinessForRejection();
       reset();
       navigate(`/applications/business`);
     }
     if (recommendBusinessForRejectionIsError) {
-      toast.error(
-        'Failed to recommend business for rejection. Please try again.'
-      );
+      const errorResponse =
+        (recommendBusinessForRejectionError as ErrorResponse)?.data?.message ||
+        'An error occurred while recommending business for rejection';
+      toast.error(errorResponse);
     }
   }, [
     recommendBusinessForRejectionIsSuccess,
@@ -69,6 +80,9 @@ const BusinessRecommendForRejection: React.FC = () => {
     dispatch,
     reset,
     navigate,
+    recommendBusinessForRejectionData?.data,
+    resetRecommendBusinessForRejection,
+    recommendBusinessForRejectionError,
   ]);
 
   return (

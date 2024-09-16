@@ -240,26 +240,26 @@ export const businessRegQueryApiSlice = createApi({
         },
       }),
 
-            // FETCH BUSINESS GENERAL COMMENTS
-            fetchBusinessGeneralComments: builder.query({
-              query: ({ businessId, userId }) => {
-                let url = `/review-comments/general?businessId=${businessId}`;
-                if (userId) {
-                  url += `&userId=${userId}`;
-                }
-                return {
-                  url,
-                  method: 'GET',
-                };
-              },
-            }),
+      // FETCH BUSINESS GENERAL COMMENTS
+      fetchBusinessGeneralComments: builder.query({
+        query: ({ businessId, userId }) => {
+          let url = `/review-comments/general?businessId=${businessId}`;
+          if (userId) {
+            url += `&userId=${userId}`;
+          }
+          return {
+            url,
+            method: 'GET',
+          };
+        },
+      }),
     };
   },
 });
 
 export const {
   useSearchBusinessesQuery,
-  useFetchBusinessesQuery,
+  useLazyFetchBusinessesQuery,
   useFetchNavigationFlowMassQuery,
   useFetchBusinessNavigationFlowsQuery,
   useFetchBusinessDetailsQuery,

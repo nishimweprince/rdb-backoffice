@@ -308,6 +308,29 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // DELETE BUSINESS GENERAL COMMENT
+      deleteBusinessGeneralComment: builder.mutation({
+        query: ({ id }) => {
+          return {
+            url: `/review-comments/general/${id}`,
+            method: 'DELETE',
+          };
+        },
+      }),
+
+      // UPDATE BUSINESS GENERAL COMMENT
+      updateBusinessGeneralComment: builder.mutation({
+        query: ({ id, comment }) => {
+          return {
+            url: `/review-comments/general/${id}`,
+            method: 'PATCH',
+            body: {
+              comment,
+            },
+          };
+        },
+      }),
     };
   },
 });
@@ -337,6 +360,8 @@ export const {
   useRejectNameReservationMutation,
   useCreateBusinessGeneralCommentMutation,
   useRecommendBusinessForRejectionMutation,
+  useDeleteBusinessGeneralCommentMutation,
+  useUpdateBusinessGeneralCommentMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;

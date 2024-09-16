@@ -31,12 +31,14 @@ const BusinessConfirmApprove = () => {
 
   // FETCH BUSINESS GENERAL COMMENTS
   useEffect(() => {
-    dispatch(
-      fetchBusinessGeneralCommentsThunk({
-        businessId: selectedBusiness?.id as businessId,
-      })
-    );
-  }, [dispatch, selectedBusiness?.id]);
+    if (businessConfirmApproveModal) {
+      dispatch(
+        fetchBusinessGeneralCommentsThunk({
+          businessId: selectedBusiness?.id as businessId,
+        })
+      );
+    }
+  }, [dispatch, selectedBusiness?.id, businessConfirmApproveModal]);
 
   // HANDLE APPROVE BUSINESS RESPONSE
   useEffect(() => {

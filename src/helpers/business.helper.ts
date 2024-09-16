@@ -40,6 +40,7 @@ export const getBusinessStatusColor = (status: string): string => {
     case 'APPROVED':
     case 'ACTIVE':
       return 'bg-green-700';
+    case 'PENDING_REJECTION':
     case 'REJECTED':
       return 'bg-red-700';
     case 'RESUBMITTED':

@@ -9,7 +9,6 @@ import {
   updateNameReservation,
 } from '@/states/features/nameReservationSlice';
 import { AppDispatch, RootState } from '@/states/store';
-import moment from 'moment';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -64,11 +63,7 @@ const ApproveNameReservation = () => {
       heading={`Approve ${selectedNameReservation?.name}`}
       className="min-w-[35vw] z-[10000]"
     >
-      <p>
-        Are you sure you want to approve {selectedNameReservation?.name}? The
-        name will be reserved for a period of three (3) months from now. It will
-        expire on {moment().add(3, 'M').format('YYYY-MM-DD')}.
-      </p>
+      <p>Are you sure you want to approve {selectedNameReservation?.name}?</p>
       <menu className="w-full flex items-center gap-3 justify-between mt-4">
         <Button
           onClick={(e) => {
