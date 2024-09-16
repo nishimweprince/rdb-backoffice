@@ -6,6 +6,8 @@ import Table from '@/components/table/Table';
 import { businessAmendmentColumns } from '@/constants/businessAmendment.constants';
 import { navigationPaths } from '@/constants/dashboard.constants';
 import StaffLayout from '@/containers/navigation/StaffLayout';
+import { getBusinessAmendmentStatusColor } from '@/helpers/business.helper';
+import { capitalizeString } from '@/helpers/strings.helper';
 import {
   fetchBusinessAmendmentsThunk,
   setSelectedBusinessAmendment,
@@ -90,6 +92,19 @@ const BusinessAmendmentsList = () => {
   const businessAmendmentExtendedColumns = [
     ...businessAmendmentColumns,
     {
+      header: 'Amendment Status',
+      accessorKey: 'amendmentStatus',
+      cell: ({ row }: { row: Row<BusinessAmendment> }) => (
+        <p
+          className={`${getBusinessAmendmentStatusColor(
+            row?.original?.status
+          )} text-white rounded-md text-center p-1 text-[13px]`}
+        >
+          {capitalizeString(row?.original?.status)}
+        </p>
+      ),
+    },
+    {
       id: 'action',
       header: 'Action',
       accessorKey: 'action',
@@ -115,35 +130,34 @@ const BusinessAmendmentsList = () => {
               fetchBusinessAmendmentsIsSuccess &&
               getBusinessIsSuccess && (
                 <menu className="flex flex-col gap-1 p-0 bg-white rounded-md">
-                  {[
-                    'AMENDMENT_SUBMITTED',
-                    'PENDING_APPROVAL',
-                    'RESUBMITTED',
-                    'PENDING_REJECTION',
-                  ].includes(row?.original?.status) &&
-                    ([
-                      row?.original?.assignedApprover?.id,
-                      row?.original?.assignedVerifier?.id,
-                    ].includes(user?.id) ||
-                      true) && (
-                      <Link
-                        className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
-                        onClick={async (e) => {
-                          e.preventDefault();
-                          dispatch(setSelectedBusinessAmendment(row?.original));
-                          navigate(
-                            `/applications/amendments/review?businessId=${row?.original?.businessId}&amendmentType=${row?.original?.amendmentType}`
-                          );
-                        }}
-                        to={'#'}
-                      >
-                        <FontAwesomeIcon
-                          className="text-primary"
-                          icon={faMagnifyingGlass}
-                        />{' '}
-                        Review
-                      </Link>
-                    )}
+                  {((['AMENDMENT_SUBMITTED', 'RESUBMITTED'].includes(
+                    row?.original?.status
+                  ) &&
+                    [row?.original?.assignedVerifier?.id].includes(user?.id)) ||
+                    (['PENDING_APPROVAL', 'PENDING_REJECTION'].includes(
+                      row?.original?.status
+                    ) &&
+                      [row?.original?.assignedApprover?.id].includes(
+                        user?.id
+                      ))) && (
+                    <Link
+                      className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        dispatch(setSelectedBusinessAmendment(row?.original));
+                        navigate(
+                          `/applications/amendments/review?businessId=${row?.original?.businessId}&amendmentType=${row?.original?.amendmentType}`
+                        );
+                      }}
+                      to={'#'}
+                    >
+                      <FontAwesomeIcon
+                        className="text-primary"
+                        icon={faMagnifyingGlass}
+                      />{' '}
+                      Review
+                    </Link>
+                  )}
                   <Link
                     className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
                     onClick={(e) => {

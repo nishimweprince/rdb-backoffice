@@ -155,18 +155,20 @@ const ReviewBusinessApplications = () => {
       accessorKey: 'action',
       cell: ({ row }: { row: Row<Business> }) => {
         if (
-          [
+          ([
             'SUBMITTED',
             'RESUBMITTED',
+            'ACTION_REQUIRED',
+            'IN_REVIEW',
+          ].includes(row?.original?.applicationStatus) &&
+            [row?.original?.assignedVerifier?.id].includes(user?.id)) ||
+          ([
             'ACTION_REQUIRED',
             'PENDING_DECISION',
             'IN_REVIEW',
             'PENDING_REJECTION',
           ].includes(row?.original?.applicationStatus) &&
-          [
-            row?.original?.assignedApprover?.id,
-            row?.original?.assignedVerifier?.id,
-          ].includes(user?.id)
+            [row?.original?.assignedApprover?.id].includes(user?.id))
         ) {
           return (
             <CustomPopover

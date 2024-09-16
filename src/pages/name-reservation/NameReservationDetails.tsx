@@ -21,6 +21,8 @@ import Table from '@/components/table/Table';
 import { similarBusinessNamesColumns } from '@/constants/business.constants';
 import Loader from '@/components/inputs/Loader';
 import Modal from '@/components/cards/Modal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const NameReservationDetails = () => {
   // STATE VARIABLES
@@ -138,9 +140,18 @@ const NameReservationDetails = () => {
         </figure>
       ) : (
         <menu className="w-full flex flex-col gap-2 mt-5">
-          <h2 className="uppercase text-primary font-semibold text-lg">
-            Similar business names
-          </h2>
+          <menu className="w-full flex items-center gap-3 justify-between">
+            <h2 className="uppercase text-primary font-semibold text-lg">
+              Similar business names
+            </h2>
+            <Button className="flex items-center gap-2 hover:text-white hover:!gap-3 transition-all ease-in-out duration-300">
+              Advanced search{' '}
+              <FontAwesomeIcon
+                className="text-[13px] underline"
+                icon={faArrowRight}
+              />
+            </Button>
+          </menu>
           {nameAvailabilitiesList?.length > 0 ? (
             <Table
               showFilter={false}

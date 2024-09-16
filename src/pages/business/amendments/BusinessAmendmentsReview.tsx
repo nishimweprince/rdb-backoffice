@@ -104,7 +104,7 @@ const BusinessAmendmentsReview = () => {
     createAmendmentReviewComment({
       comment: data?.amendmentReviewComment,
       amendmentDetailId: selectedBusinessAmendment?.id,
-      status: 'UNRESOLVED',
+      status: 'SUBMITTED',
     });
   };
 
@@ -268,10 +268,10 @@ const BusinessAmendmentsReview = () => {
         ) : (
           <menu className="w-full flex flex-col gap-4 p-5">
             <CustomBreadcrumb navigationLinks={navigationExtendedPaths} />
-            {queryParams?.amendmentType === 'AMEND_COMPANY_DETAILS' && (
+            {queryParams?.amendmentType === 'AMEND_BUSINESS_DETAILS' && (
               <CompanyDetailsAmendmentReview />
             )}
-            {queryParams?.amendmentType === 'AMEND_COMPANY_ADDRESS' && (
+            {queryParams?.amendmentType === 'AMEND_BUSINESS_ADDRESS' && (
               <CompanyAddressAmendmentReview />
             )}
             {queryParams?.amendmentType === 'AMEND_BUSINESS_ACTIVITIES' && (
@@ -398,6 +398,7 @@ const BusinessAmendmentsReview = () => {
               Back
             </Button>
             <Button
+            disabled={businessAmendmentReviewComments?.length <= 0}
               danger
               onClick={(e) => {
                 e.preventDefault();
@@ -413,7 +414,20 @@ const BusinessAmendmentsReview = () => {
               {recommendAmendmentRejectionIsLoading ? (
                 <Loader />
               ) : (
-                'Recommend for rejection'
+                <CustomTooltip
+                  labelClassName={
+                    businessAmendmentReviewComments?.length <= 0
+                      ? 'bg-red-600'
+                      : 'bg-transparent'
+                  }
+                  label={
+                    businessAmendmentReviewComments?.length <= 0
+                      ? 'Enter comment to submit'
+                      : ''
+                  }
+                >
+                  <p className="text-[14px]">Recommend for rejection</p>
+                </CustomTooltip>
               )}
             </Button>
             <Button
@@ -557,7 +571,7 @@ export const AmendmentReviewComment = ({
         <p>{amendmentReviewComment?.comment}</p>
         <p className="text-[13px]">{amendmentReviewComment?.status}</p>
       </ul>
-      {['UNRESOLVED'].includes(amendmentReviewComment?.status) && (
+      {['SUBMITTED'].includes(amendmentReviewComment?.status) && (
         <menu className="flex items-center gap-2">
           <CustomTooltip label="Click to delete" labelClassName="bg-red-600">
             <FontAwesomeIcon

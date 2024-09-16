@@ -137,7 +137,7 @@ const NameReservationsList = () => {
           formatDateTime(row.original.expiryDate)
         ) : (
           <CustomTooltip label="Available after approval">
-            <p className="text-[13px] cursor-pointer">N/A</p>
+            <p className="text-[13px]">N/A</p>
           </CustomTooltip>
         ),
     },
@@ -145,6 +145,7 @@ const NameReservationsList = () => {
       header: 'Actions',
       accessorKey: 'actions',
       cell: ({ row }: { row: Row<NameReservation> }) => {
+        if (row?.original?.assignedApprover?.id !== user?.id) return null;
         return (
           <Link
             to={`#`}

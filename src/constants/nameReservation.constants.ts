@@ -27,4 +27,12 @@ export const nameReservationColumns = [
     cell: ({ row }: { row: Row<NameReservation> }) =>
       formatDateTime(row.original.createdAt),
   },
+  {
+    header: 'Assigned approver',
+    accessorKey: 'assignedApprover.fullName',
+    cell: ({ row }: { row: Row<NameReservation> }) =>
+      `${row?.original?.assignedApprover?.firstName || ''} ${
+        row?.original?.assignedApprover?.lastName || ''
+      }`,
+  },
 ];
