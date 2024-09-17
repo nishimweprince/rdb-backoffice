@@ -22,6 +22,7 @@ import ListBusinessActivities from '@/pages/settings/business-activities/ListBus
 import NameReservationsList from '@/pages/name-reservation/NameReservationsList';
 import NameReservationDetails from '@/pages/name-reservation/NameReservationDetails';
 import NameAvailabilitySearch from '@/pages/name-availability/NameAvailability';
+import CurrencySettings from "@/pages/settings/currency-settings/CurrencySettings"
 
 const Router = () => {
   return (
@@ -84,6 +85,7 @@ const Router = () => {
             path="business-activities"
             element={<ListBusinessActivities />}
           />
+          <Route path="currency" element={<CurrencySettings />} />
         </Route>
         <Route path="/settings" element={<StaffAuthenticatedRoutes />}>
           <Route path="control-panel" element={<ControlPanel />} />

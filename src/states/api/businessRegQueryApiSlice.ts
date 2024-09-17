@@ -262,6 +262,25 @@ export const businessRegQueryApiSlice = createApi({
           };
         },
       }),
+
+      // FETCH BUSINESS BY REFERENCE ID FOR CURRENCY SETTING
+      fetchBusinessByReferenceId: builder.query({
+        query: ({ referenceId }) => {
+          return {
+            url: `/back-office/business/applicationRefNumber?applicationRefNumber=${referenceId}`,
+          };
+        },
+      }),
+
+      // UPDATE BUSINESS CURRENCY SETTINGS
+      updateBusinessCurrencySettings: builder.mutation({
+        query: ({ applicationReferenceId, endpoint }) => {
+          return {
+            url: `/back-office/${endpoint}?applicationReferenceId=${applicationReferenceId}`,
+            method: 'PATCH',
+          };
+        },
+      }),
     };
   },
 });
@@ -290,7 +309,9 @@ export const {
   useLazyFetchNameReservationsQuery,
   useLazySearchBusinessNameAvailabilityQuery,
   useLazyFetchBusinessGeneralCommentsQuery,
-  useLazyGetAmendmentDetailsQuery
+  useLazyGetAmendmentDetailsQuery,
+  useLazyFetchBusinessByReferenceIdQuery,
+  useUpdateBusinessCurrencySettingsMutation,
 } = businessRegQueryApiSlice;
 
 export default businessRegQueryApiSlice;

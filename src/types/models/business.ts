@@ -33,6 +33,7 @@ export interface Business extends AbstractDomain {
   service: Service;
   assignedVerifier?: User;
   assignedApprover?: User;
+  isOtherCurrencyAllowed?: boolean | null;
 }
 
 export type Details = {

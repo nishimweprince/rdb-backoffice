@@ -4,13 +4,13 @@ import StaffLayout from '@/containers/navigation/StaffLayout';
 import {
   setNameReservationPage,
 } from '@/states/features/nameReservationSlice';
-import SimilarBusinessNames from './SimilarBusinessNames';
-import NameAvailabilityFilters from './NameAvailabilityFilters';
-import useNameAvailabilitySearch from './hooks/useNameAvailabilitySearch';
+import BusApplications from './BusApplications';
+import CurrencySettingsFilters from './Filters';
+import useApplicationCurrencySettings from './hooks/useApplicationCurrencySetting';
 
-const NameAvailabilitySearch = () => {
+const CurrencySettings = () => {
   // FETCH NAME RESERVATIONS
-  const { searchBusinessNameAvailability, businessNameAvailabilityIsFetching,handleFilterBusinessListsByStatus } = useNameAvailabilitySearch();
+  const { searchBusinessApplicationByReference, businessApplicationIsFetching, reset } = useApplicationCurrencySettings();
 
   // NAVIGATION LINKS
   const nameReservationsLinks = [
@@ -19,8 +19,8 @@ const NameAvailabilitySearch = () => {
       route: '/dashboard',
     },
     {
-      label: 'Name Availability',
-      route: '/applications/name-availability',
+      label: 'Currency Settings',
+      route: '/settings/currency',
     },
   ];
 
@@ -30,33 +30,33 @@ const NameAvailabilitySearch = () => {
         <CustomBreadcrumb navigationLinks={nameReservationsLinks} />
         <menu className="w-full flex items-center gap-3 justify-between">
           <h1 className="uppercase text-primary text-lg font-semibold px-2">
-            Name availability search
+            Currency Settings
           </h1>
         </menu>
-          <NameAvailabilityFilters
-            onSelectStatus={(status) => {
-              handleFilterBusinessListsByStatus(status);
-              setNameReservationPage(1);
-            }}
+          <CurrencySettingsFilters
             onHandleSearch={(searchKey) => {
-              searchBusinessNameAvailability({companyName:searchKey});
+              if(searchKey === ''){
+                reset();
+              }
+              else{
+                searchBusinessApplicationByReference({referenceId:searchKey});
+              }
               setNameReservationPage(1);
             }}
             showFilter={true}
-          />
-        {businessNameAvailabilityIsFetching ? (
+            />
+        {businessApplicationIsFetching ? (
           <figure className="w-full flex items-center gap-3 justify-center">
             <Loader className="text-primary" />
           </figure>
         ) : (
           <section className="w-full flex flex-col gap-4 px-2">
-             <SimilarBusinessNames/>
+             <BusApplications/>
           </section>
         )}
       </main>
-     
     </StaffLayout>
   );
 };
 
-export default NameAvailabilitySearch;
+export default CurrencySettings;
