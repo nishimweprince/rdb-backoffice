@@ -77,7 +77,6 @@ export default function useNameAvailabilitySearch() {
           }
         
         useEffect(() => {
-            console.log("filteredBusinessList", filteredBusinessList);
             if (filteredBusinessList?.length > 0) {
               // set copy 
               dispatch(setNameAvailabilitiesListClone(nameAvailabilitiesList));

@@ -71,6 +71,12 @@ const initialState: {
   deleteBusinessGeneralCommentModal: boolean;
   updateBusinessGeneralCommentModal: boolean;
   selectedBusinessGeneralComment?: BusinessReviewComment;
+  recommendBusinessForRejectionIsLoading: boolean;
+  recommendBusinessForRejectionIsSuccess: boolean;
+  recommendBusinessForRejectionIsError: boolean;
+  currencySettings: {
+    business: Business[];
+  }
 } = {
   businessesList: [],
   business: {} as Business,
@@ -120,6 +126,12 @@ const initialState: {
   deleteBusinessGeneralCommentModal: false,
   updateBusinessGeneralCommentModal: false,
   selectedBusinessGeneralComment: undefined,
+  recommendBusinessForRejectionIsLoading: false,
+  recommendBusinessForRejectionIsSuccess: false,
+  recommendBusinessForRejectionIsError: false,
+  currencySettings: {
+    business: [] as Business[]
+  }
 };
 
 // FETCH BUSINESSES
@@ -524,6 +536,9 @@ export const businessSlice = createSlice({
         }
       );
     },
+    setCurrencySettings: (state, action) => {
+      state.currencySettings.business = action.payload?.business;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBusinessesThunk.pending, (state) => {
@@ -725,4 +740,5 @@ export const {
   setSelectedBusinessGeneralComment,
   removeFromBusinessGeneralCommentsList,
   setUpdateBusinessGeneralComment,
+  setCurrencySettings
 } = businessSlice.actions;

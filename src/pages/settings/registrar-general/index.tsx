@@ -91,7 +91,6 @@ const RegistrarGeneral = () => {
               <label
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => {
-                  console.log(row.original.binaryValue)
                   setSignatureBase64(row.original.binaryValue)
                   setShowSignature(true)
                 }}
