@@ -125,7 +125,7 @@ const UpdateBusinessLine = () => {
                     })}
                     onChange={async (e) => {
                       field.onChange(e);
-                      if (e === 'LICENSE_REQUIRED') {
+                      if (['LICENSE_PRE_REQUIRED', 'LICENSE_POST_REQUIRED'].includes(e)) {
                         await trigger('disclaimer');
                       }
                     }}
@@ -148,7 +148,7 @@ const UpdateBusinessLine = () => {
             control={control}
             rules={{
               required:
-                status === 'LICENSE_REQUIRED'
+                ['LICENSE_PRE_REQUIRED', 'LICENSE_POST_REQUIRED'].includes(status)
                   ? 'Disclaimer is required'
                   : false,
             }}
@@ -156,9 +156,17 @@ const UpdateBusinessLine = () => {
               return (
                 <label className="w-full flex flex-col gap-1">
                   <TextArea
-                    required={status === 'LICENSE_REQUIRED'}
+                    required={[
+                      'LICENSE_PRE_REQUIRED',
+                      'LICENSE_POST_REQUIRED',
+                    ].includes(status)}
                     label={`Disclaimer ${
-                      status === 'LICENSE_REQUIRED' ? '' : '(optional)'
+                      [
+                        'LICENSE_PRE_REQUIRED',
+                        'LICENSE_POST_REQUIRED',
+                      ].includes(status)
+                        ? ''
+                        : '(optional)'
                     }`}
                     {...field}
                   />

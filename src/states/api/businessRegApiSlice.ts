@@ -235,13 +235,18 @@ export const businessRegApiSlice = createApi({
         query: ({
           businessId,
           companyType,
+          comment
         }: {
           businessId: businessId;
           companyType: 'domestic' | 'foreign' | 'enterprise';
+          comment?: string;
         }) => {
           return {
             url: `/back-office/approve-${companyType}?businessId=${businessId}`,
             method: 'PATCH',
+            body: {
+              comment,
+            }
           };
         },
       }),
@@ -308,6 +313,29 @@ export const businessRegApiSlice = createApi({
           };
         },
       }),
+
+      // DELETE BUSINESS GENERAL COMMENT
+      deleteBusinessGeneralComment: builder.mutation({
+        query: ({ id }) => {
+          return {
+            url: `/review-comments/general/${id}`,
+            method: 'DELETE',
+          };
+        },
+      }),
+
+      // UPDATE BUSINESS GENERAL COMMENT
+      updateBusinessGeneralComment: builder.mutation({
+        query: ({ id, comment }) => {
+          return {
+            url: `/review-comments/general/${id}`,
+            method: 'PATCH',
+            body: {
+              comment,
+            },
+          };
+        },
+      }),
     };
   },
 });
@@ -337,6 +365,8 @@ export const {
   useRejectNameReservationMutation,
   useCreateBusinessGeneralCommentMutation,
   useRecommendBusinessForRejectionMutation,
+  useDeleteBusinessGeneralCommentMutation,
+  useUpdateBusinessGeneralCommentMutation,
 } = businessRegApiSlice;
 
 export default businessRegApiSlice;

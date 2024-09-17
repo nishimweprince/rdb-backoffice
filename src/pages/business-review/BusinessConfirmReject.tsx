@@ -1,16 +1,18 @@
 import Modal from '@/components/cards/Modal';
+import { InputErrorMessage } from '@/components/feedback/ErrorLabels';
 import Button from '@/components/inputs/Button';
 import Loader from '@/components/inputs/Loader';
+import TextArea from '@/components/inputs/TextArea';
 import { getBusinessName } from '@/helpers/business.helper';
 import {
-  fetchBusinessGeneralCommentsThunk,
   rejectBusinessThunk,
   setBusinessConfirmRejectModal,
   setSelectedBusiness,
 } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
 import { businessId } from '@/types/models/business';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,22 +23,20 @@ const BusinessConfirmReject = () => {
     businessConfirmRejectModal,
     selectedBusiness,
     businessGeneralCommentsList,
-    businessGeneralCommentsIsFetching,
     rejectBusinessIsLoading,
     rejectBusinessIsSuccess,
   } = useSelector((state: RootState) => state.business);
+  const [addNewComment, setAddNewComment] = useState(false);
 
   // NAVIGATION
   const navigate = useNavigate();
 
-  // FETCH BUSINESS GENERAL COMMENTS
-  useEffect(() => {
-    dispatch(
-      fetchBusinessGeneralCommentsThunk({
-        businessId: selectedBusiness?.id as businessId,
-      })
-    );
-  }, [dispatch, selectedBusiness?.id]);
+  // REACT HOOK FORM
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   // HANDLE REJECT BUSINESS RESPONE
   useEffect(() => {
@@ -47,6 +47,16 @@ const BusinessConfirmReject = () => {
     }
   }, [dispatch, navigate, rejectBusinessIsSuccess]);
 
+  // HANDLE FORM SUBMISSION
+  const onSubmit = (data: FieldValues) => {
+    dispatch(
+      rejectBusinessThunk({
+        businessId: selectedBusiness?.id as businessId,
+        comment: data?.comment,
+      })
+    );
+  };
+
   return (
     <Modal
       isOpen={businessConfirmRejectModal}
@@ -56,31 +66,61 @@ const BusinessConfirmReject = () => {
       }}
       heading={`Reject ${getBusinessName(selectedBusiness)}?`}
       headingClassName="text-red-600"
-      className="min-w-[40vw]"
+      className="min-w-[60vw]"
     >
-      <form className="w-full flex flex-col gap-4">
+      <form
+        className="w-full flex flex-col gap-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <h3>
           Are you sure you want to reject{' '}
           <span className="font-bold">{getBusinessName(selectedBusiness)}</span>
           ? The user will be notified of the rejection and receive a reason for
           it.
         </h3>
-        {businessGeneralCommentsIsFetching ? (
-          <figure className="w-full flex items-center justify-center min-h-[20vh]">
-            <Loader className="text-primary" />
-          </figure>
+        {addNewComment ? (
+          <Button
+            primary
+            className="w-fit !text-[13px] !py-1"
+            onClick={(e) => {
+              e.preventDefault();
+              setAddNewComment(false);
+            }}
+          >
+            Close comment box
+          </Button>
         ) : (
-          businessGeneralCommentsList?.length > 0 && (
-            <menu className="w-full flex flex-col gap-2">
-              {businessGeneralCommentsList.map((generalComment, index) => {
-                return (
-                  <p className="text-[13px]">
-                    {index + 1}. {generalComment?.comment}
-                  </p>
-                );
-              })}
-            </menu>
-          )
+          <Button
+            className="w-fit !text-[13px] !py-1"
+            primary
+            onClick={(e) => {
+              e.preventDefault();
+              setAddNewComment(true);
+            }}
+          >
+            Add new comment
+          </Button>
+        )}
+        {(addNewComment || businessGeneralCommentsList?.length <= 0) && (
+          <Controller
+            name="comment"
+            control={control}
+            render={({ field }) => {
+              return (
+                <label className="w-full flex flex-col gap-2">
+                  <TextArea
+                    resize
+                    {...field}
+                    label={'Comment message'}
+                    required
+                  />
+                  {errors.comment && (
+                    <InputErrorMessage message={errors?.comment?.message} />
+                  )}
+                </label>
+              );
+            }}
+          />
         )}
         <menu className="w-full flex items-center gap-3 justify-between">
           <Button
@@ -92,17 +132,7 @@ const BusinessConfirmReject = () => {
           >
             Cancel
           </Button>
-          <Button
-            onClick={(e) => {
-              e.preventDefault();
-              dispatch(
-                rejectBusinessThunk({
-                  businessId: selectedBusiness?.id as businessId,
-                })
-              );
-            }}
-            danger
-          >
+          <Button submit danger>
             {rejectBusinessIsLoading ? <Loader /> : 'Reject'}
           </Button>
         </menu>

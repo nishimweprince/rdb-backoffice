@@ -2,7 +2,7 @@ import { RootState } from '@/states/store';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import BusinessAmendmentNavigation from './BusinessAmendmentNavigation';
-import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
+import { BusinessAmendmentRequestSummary } from './BusinessAmendmentReview';
 import { formatDateTime } from '@/helpers/strings.helper';
 
 const BusinessNewBranchReview = () => {

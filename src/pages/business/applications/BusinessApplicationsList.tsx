@@ -3,7 +3,7 @@ import { AppDispatch, RootState } from '@/states/store';
 import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
-  fetchBusinessesThunk,
+  setBusinessesList,
   setBusinessPage,
   setBusinessSize,
   setSelectedBusiness,
@@ -14,7 +14,7 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import { Business } from '@/types/models/business';
 import Table from '@/components/table/Table';
 import Loader from '@/components/inputs/Loader';
-import { Link, useNavigate } from 'react-router-dom';
+import { ErrorResponse, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { capitalizeString, formatDate } from '@/helpers/strings.helper';
 import { businessColumns } from '@/constants/business.constants';
@@ -32,6 +32,7 @@ import CustomBreadcrumb from '@/components/navigation/CustomBreadcrumb';
 import { UUID } from 'crypto';
 import BusinessApplicationsFilter from './BusinessApplicationsFilter';
 import { getBusinessStatusColor } from '@/helpers/business.helper';
+import { useLazyFetchBusinessesQuery } from '@/states/api/businessRegQueryApiSlice';
 
 const ReviewBusinessApplications = () => {
   // STATE VARIABLES
@@ -44,7 +45,6 @@ const ReviewBusinessApplications = () => {
     totalPages,
     updateBusinessIsLoading,
     updateBusinessIsSuccess,
-    businessesIsFetching,
     selectedBusiness,
   } = useSelector((state: RootState) => state.business);
   const [applicationStatuses, setSelectedApplicationStatuses] = useState<
@@ -57,6 +57,8 @@ const ReviewBusinessApplications = () => {
     'ACTION_REQUIRED',
     'RESUBMITTED',
     'PENDING_DECISION',
+    'REJECTED',
+    'PENDING_REJECTION',
   ]);
   const { user } = useSelector((state: RootState) => state.user);
   const [userId, setUserId] = useState<UUID | undefined>(user?.id);
@@ -69,18 +71,54 @@ const ReviewBusinessApplications = () => {
   // SET DOCUMENT TITLE
   document.title = 'Review Business Applications';
 
+  // INITIALIZE FETCH BUSINESS APPLICATIONS QUERY
+  const [
+    fetchBusinesses,
+    {
+      data: businessesData,
+      error: businessesError,
+      isError: businessesIsError,
+      isSuccess: businessesIsSuccess,
+      isFetching: businessesIsFetching,
+    },
+  ] = useLazyFetchBusinessesQuery();
+
   // FETCH BUSINESSES
   useEffect(() => {
-    dispatch(
-      fetchBusinessesThunk({
-        applicationStatus: applicationStatuses?.join(','),
-        page,
-        size,
-        userId,
-        serviceId,
-      })
-    );
-  }, [applicationStatuses, dispatch, page, serviceId, size, userId]);
+    fetchBusinesses({
+      page,
+      size,
+      applicationStatus: applicationStatuses,
+      serviceId,
+      userId,
+    });
+  }, [
+    applicationStatuses,
+    dispatch,
+    fetchBusinesses,
+    page,
+    serviceId,
+    size,
+    userId,
+  ]);
+
+  // HANDLE FETCH BUSINESSES RESPONSE
+  useEffect(() => {
+    if (businessesIsSuccess) {
+      dispatch(setBusinessesList(businessesData?.data?.data));
+    } else if (businessesIsError) {
+      const errorResponse =
+        (businessesError as ErrorResponse)?.data?.message ||
+        'An error occurred while fetching businesses';
+      toast.error(errorResponse);
+    }
+  }, [
+    businessesData,
+    businessesError,
+    businessesIsError,
+    businessesIsSuccess,
+    dispatch,
+  ]);
 
   // HANDLE UPDATE BUSINESS IS SUCCESS
   useEffect(() => {
@@ -117,17 +155,20 @@ const ReviewBusinessApplications = () => {
       accessorKey: 'action',
       cell: ({ row }: { row: Row<Business> }) => {
         if (
-          [
+          ([
             'SUBMITTED',
             'RESUBMITTED',
             'ACTION_REQUIRED',
-            'PENDING_DECISION',
             'IN_REVIEW',
           ].includes(row?.original?.applicationStatus) &&
-          [
-            row?.original?.assignedApprover?.id,
-            row?.original?.assignedVerifier?.id,
-          ].includes(user?.id)
+            [row?.original?.assignedVerifier?.id].includes(user?.id)) ||
+          ([
+            'ACTION_REQUIRED',
+            'PENDING_DECISION',
+            'IN_REVIEW',
+            'PENDING_REJECTION',
+          ].includes(row?.original?.applicationStatus) &&
+            [row?.original?.assignedApprover?.id].includes(user?.id))
         ) {
           return (
             <CustomPopover
@@ -151,11 +192,20 @@ const ReviewBusinessApplications = () => {
                     await dispatch(
                       updateBusinessThunk({
                         businessId: row?.original?.id,
-                        applicationStatus:
-                          row?.original?.applicationStatus ===
-                          'PENDING_DECISION'
-                            ? 'PENDING_DECISION'
-                            : 'IN_REVIEW',
+                        applicationStatus: [
+                          'SUBMITTED',
+                          'RESUBMITTED',
+                        ].includes(row?.original?.applicationStatus)
+                          ? 'IN_REVIEW'
+                          : ['PENDING_DECISION'].includes(
+                              row?.original?.applicationStatus
+                            )
+                          ? 'PENDING_DECISION'
+                          : ['PENDING_REJECTION'].includes(
+                              row?.original?.applicationStatus
+                            )
+                          ? 'PENDING_REJECTION'
+                          : 'ACTION_REQUIRED',
                       })
                     );
                   }}

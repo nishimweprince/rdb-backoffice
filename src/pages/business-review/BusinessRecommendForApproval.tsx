@@ -6,26 +6,24 @@ import TextArea from '@/components/inputs/TextArea';
 import Loader from '@/components/inputs/Loader';
 import { getBusinessName } from '@/helpers/business.helper';
 import {
-  requestBusinessApproverThunk,
   setBusinessRecommendForApprovalModal,
   setSelectedBusiness,
+  setUpdateBusinessesList,
 } from '@/states/features/businessSlice';
 import { AppDispatch, RootState } from '@/states/store';
 import { businessId } from '@/types/models/business';
 import { Controller, FieldValues, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { ErrorResponse, useNavigate } from 'react-router-dom';
+import { useRequestBusinessApproverMutation } from '@/states/api/businessRegApiSlice';
 
 const BusinessRecommendForApproval: React.FC = () => {
   // STATE VARIABLES
   const dispatch: AppDispatch = useDispatch();
-  const {
-    businessRecommendForApprovalModal,
-    selectedBusiness,
-    updateBusinessIsLoading,
-    updateBusinessIsSuccess,
-  } = useSelector((state: RootState) => state.business);
+  const { businessRecommendForApprovalModal, selectedBusiness } = useSelector(
+    (state: RootState) => state.business
+  );
 
   // REACT HOOK FORM
   const {
@@ -38,26 +36,53 @@ const BusinessRecommendForApproval: React.FC = () => {
   // NAVIGATION
   const navigate = useNavigate();
 
+  // INITIALIZE REQUEST BUSINESS APPROVER MUTATION
+  const [
+    requestBusinessApprover,
+    {
+      data: requestBusinessApproverData,
+      error: requestBusinessApproverError,
+      isError: requestBusinessApproverIsError,
+      isLoading: requestBusinessApproverIsLoading,
+      isSuccess: requestBusinessApproverIsSuccess,
+      reset: resetRequestBusinessApprover,
+    },
+  ] = useRequestBusinessApproverMutation();
+
   // HANDLE FORM SUBMISSION
   const onSubmit = (data: FieldValues) => {
-    dispatch(
-      requestBusinessApproverThunk({
-        businessId: selectedBusiness?.id as businessId,
-        comment: data?.comment,
-      })
-    );
+    requestBusinessApprover({
+      businessId: selectedBusiness?.id as businessId,
+      comment: data?.comment,
+    });
   };
 
   // HANDLE SUCCESS AND ERROR STATES
   useEffect(() => {
-    if (updateBusinessIsSuccess) {
+    if (requestBusinessApproverIsSuccess) {
       toast.success('Business recommended for approval successfully');
+      dispatch(setUpdateBusinessesList(requestBusinessApproverData?.data));
       dispatch(setSelectedBusiness(undefined));
       dispatch(setBusinessRecommendForApprovalModal(false));
       reset();
+      resetRequestBusinessApprover();
       navigate(`/applications/business`);
+    } else if (requestBusinessApproverIsError) {
+      const errorResponse =
+        (requestBusinessApproverError as ErrorResponse)?.data?.message ||
+        'An error occurred while recommending business for approval';
+      toast.error(errorResponse);
     }
-  }, [updateBusinessIsSuccess, dispatch, reset, navigate]);
+  }, [
+    requestBusinessApproverIsSuccess,
+    dispatch,
+    reset,
+    navigate,
+    requestBusinessApproverData?.data,
+    resetRequestBusinessApprover,
+    requestBusinessApproverIsError,
+    requestBusinessApproverError,
+  ]);
 
   return (
     <Modal
@@ -112,9 +137,9 @@ const BusinessRecommendForApproval: React.FC = () => {
             primary
             submit
             className="px-4 py-2"
-            disabled={updateBusinessIsLoading}
+            disabled={requestBusinessApproverIsLoading}
           >
-            {updateBusinessIsLoading ? <Loader /> : 'Confirm'}
+            {requestBusinessApproverIsLoading ? <Loader /> : 'Confirm'}
           </Button>
         </menu>
       </form>

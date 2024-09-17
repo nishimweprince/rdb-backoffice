@@ -35,12 +35,6 @@ export const businessAmendmentColumns = [
       capitalizeString(row?.original?.amendmentType),
   },
   {
-    header: 'Amendment Status',
-    accessorKey: 'amendmentStatus',
-    cell: ({ row }: { row: Row<BusinessAmendment> }) =>
-      capitalizeString(row?.original?.status),
-  },
-  {
     header: 'Company Category',
     accessorKey: 'companyCategory',
     cell: ({ row }: { row: Row<BusinessAmendment> }) =>

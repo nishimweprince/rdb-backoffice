@@ -11,6 +11,7 @@ import {
   fetchBusinessAttachmentsThunk,
   fetchBusinessDetailsThunk,
   fetchBusinessEmploymentInfoThunk,
+  fetchBusinessGeneralCommentsThunk,
   getBusinessThunk,
   setApproveBusinessIsSuccess,
   setBusinessConfirmApproveModal,
@@ -50,6 +51,7 @@ import BusinessRecommendForRejection from './BusinessRecommendForRejection';
 import BusinessRecommendForApproval from './BusinessRecommendForApproval';
 import BusinessConfirmReject from './BusinessConfirmReject';
 import BusinessConfirmApprove from './BusinessConfirmApprove';
+import BusinessGeneralComments from './BusinessGeneralComments';
 
 const BusinessApplicationReview = () => {
   // STATE VARIABLES
@@ -100,6 +102,15 @@ const BusinessApplicationReview = () => {
   // NAVIGATION
   const { id: businessId } = useParams<{ id: UUID }>();
   const navigate = useNavigate();
+
+  // FETCH BUSINESS GENERAL COMMENTS
+  useEffect(() => {
+    dispatch(
+      fetchBusinessGeneralCommentsThunk({
+        businessId: businessId as businessId,
+      })
+    );
+  }, [dispatch, businessId]);
 
   // FETCH BUSINESS
   useEffect(() => {
@@ -591,6 +602,12 @@ const BusinessApplicationReview = () => {
                 businessAttachmentsList={businessAttachmentsList}
               />
             </BusinessPreviewCard>
+
+            {/* BUSINESS REVIEW COMMENTS */}
+            <section className='w-full'>
+            <BusinessGeneralComments business={business} />
+            </section>
+
             {['SUBMITTED', 'RESUBMITTED', 'IN_REVIEW'].includes(
               business?.applicationStatus
             ) &&

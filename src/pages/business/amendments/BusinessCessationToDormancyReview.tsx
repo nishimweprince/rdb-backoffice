@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
+import { BusinessAmendmentRequestSummary } from './BusinessAmendmentReview';
 import BusinessAmendmentNavigation from './BusinessAmendmentNavigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store';

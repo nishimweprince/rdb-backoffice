@@ -44,6 +44,8 @@ const BusinessApplicationsFilter = ({
       'ACTION_REQUIRED',
       'RESUBMITTED',
       'PENDING_DECISION',
+      'REJECTED',
+      'PENDING_REJECTION'
     ]);
 
   // REACT HOOK FORM
