@@ -29,6 +29,11 @@ const initialState: {
     similarity: string | number;
     status?: string;
   }[];
+  nameAvailabilitiesListClone: {
+    name: string;
+    similarity: string | number;
+    status?: string;
+  }[];
   similarBusinessNamesModal: boolean;
   businessDetails?: Details;
   businessAddress?: Address;
@@ -76,6 +81,7 @@ const initialState: {
   selectedBusiness: undefined,
   deleteBusinessModal: false,
   nameAvailabilitiesList: [],
+  nameAvailabilitiesListClone: [],
   similarBusinessNamesModal: false,
   businessDetails: undefined,
   businessAddress: undefined,
@@ -459,6 +465,9 @@ export const businessSlice = createSlice({
     setNameAvailabilitiesList: (state, action) => {
       state.nameAvailabilitiesList = action.payload;
     },
+    setNameAvailabilitiesListClone: (state, action) => {
+      state.nameAvailabilitiesListClone= action.payload;
+    },
     setSimilarBusinessNamesModal: (state, action) => {
       state.similarBusinessNamesModal = action.payload;
     },
@@ -732,6 +741,7 @@ export const {
   setDeleteBusinessModal,
   setSelectedBusiness,
   setNameAvailabilitiesList,
+  setNameAvailabilitiesListClone,
   setSimilarBusinessNamesModal,
   setBusinessDetails,
   setBusinessAddress,

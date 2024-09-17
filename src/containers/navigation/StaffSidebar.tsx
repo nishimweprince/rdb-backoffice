@@ -12,6 +12,7 @@ import {
   faFileLines
 } from "@fortawesome/free-solid-svg-icons"
 import { faCreativeCommonsNd } from "@fortawesome/free-brands-svg-icons"
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { motion, useAnimation } from "framer-motion"
 import { Link, useLocation } from "react-router-dom"
 import { useCallback, useEffect, useState } from "react"
@@ -64,7 +65,12 @@ const StaffSidebar = () => {
           title: "Foreign Accounts",
           path: "/foreign-applicants",
           icon: faUser
-        }
+        },
+        {
+          title: "Name Availability",
+          path: "/applications/name-availability",
+          icon: faSearch
+        },
       ]
     },
     {
