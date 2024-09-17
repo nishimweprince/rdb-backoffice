@@ -16,6 +16,12 @@ export const nameReservationColumns = [
     accessorKey: 'renewalCount',
   },
   {
+    header: 'Assigned To',
+    accessorKey: 'assignedTo',
+    cell: ({ row }: { row: Row<NameReservation> }) => 
+      row.original?.assignedApprover?.fullName || 'N/A',
+  },
+  {
     header: 'Date Created',
     accessorKey: 'createdAt',
     cell: ({ row }: { row: Row<NameReservation> }) =>

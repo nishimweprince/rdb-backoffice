@@ -22,6 +22,7 @@ import ControlPanel from "@/pages/settings/control-panel"
 import ListBusinessActivities from "@/pages/settings/business-activities/ListBusinessActivities"
 import NameReservationsList from "@/pages/name-reservation/NameReservationsList"
 import NameReservationDetails from "@/pages/name-reservation/NameReservationDetails"
+import NameAvailabilitySearch from "@/pages/name-availability/NameAvailability"
 
 const Router = () => {
   return (
@@ -70,6 +71,9 @@ const Router = () => {
             <Route
               path="name-reservations/:id/details"
               element={<NameReservationDetails />}
+            />
+            <Route path="name-availability"
+              element={<NameAvailabilitySearch />}
             />
           </Route>
         </Route>
