@@ -1,187 +1,188 @@
-import { capitalizeString, formatDateTime } from '@/helpers/strings.helper';
-import { BusinessAttachment } from '@/types/models/attachment';
-import { Business } from '@/types/models/business';
-import { Row } from '@tanstack/react-table';
+import { capitalizeString, formatDateTime } from "@/helpers/strings.helper"
+import { BusinessAttachment } from "@/types/models/attachment"
+import { Business } from "@/types/models/business"
+import { Row } from "@tanstack/react-table"
 
 export const businessColumns = [
   {
-    id: 'companyName',
-    header: 'Company Name',
-    accessorKey: 'companyName',
+    id: "companyName",
+    header: "Company Name",
+    accessorKey: "companyName",
     cell: ({ row }: { row: Row<Business> }) =>
       (
         row?.original?.companyName ||
         row?.original?.enterpriseName ||
         row?.original?.branchName
-      )?.toUpperCase() || 'N/A',
+      )?.toUpperCase() || "N/A"
   },
   {
-    id: 'companyType',
-    header: 'Company Type',
-    accessorKey: 'companyType',
+    id: "companyType",
+    header: "Company Type",
+    accessorKey: "companyType",
     cell: ({ row }: { row: Row<Business> }) =>
-      capitalizeString(row.original.companyType),
+      capitalizeString(row.original.companyType)
   },
   {
-    id: 'applicationType',
-    header: 'Application type',
-    accessorKey: 'service.name',
+    id: "applicationType",
+    header: "Application type",
+    accessorKey: "service.name",
     filterFn: (row: Row<unknown>, id: string, value: string) => {
-      return value.includes(row.getValue(id));
+      return value.includes(row.getValue(id))
     },
     cell: ({ row }: { row: Row<Business> }) =>
-      capitalizeString(row?.original?.service?.name),
+      capitalizeString(row?.original?.service?.name)
   },
   {
-    header: 'Last updated',
-    accessorKey: 'updatedAt',
+    header: "Last updated",
+    accessorKey: "updatedAt",
     cell: ({ row }: { row: Row<Business> }) =>
-      formatDateTime(row?.original?.updatedAt),
+      formatDateTime(row?.original?.updatedAt)
   },
   {
-    id: 'assignedVerifier',
-    header: 'Assigned Verifier',
-    accessorKey: 'assignedVerifier',
+    id: "assignedVerifier",
+    header: "Assigned Verifier",
+    accessorKey: "assignedVerifier",
     cell: ({ row }: { row: Row<Business> }) =>
       `${
         row?.original?.assignedVerifier?.firstName ||
-        row?.original?.assignedVerifier?.username || '-'
-      } ${row?.original?.assignedVerifier?.lastName || ''}`,
+        row?.original?.assignedVerifier?.username ||
+        "-"
+      } ${row?.original?.assignedVerifier?.lastName || ""}`
   },
   {
-    id: 'assignedApprover',
-    header: 'Assigned Approver',
-    accessorKey: 'assignedApprover',
+    id: "assignedApprover",
+    header: "Assigned Approver",
+    accessorKey: "assignedApprover",
     cell: ({ row }: { row: Row<Business> }) =>
       `${
         row?.original?.assignedApprover?.firstName ||
         row?.original?.assignedApprover?.username ||
-        '-'
-      } ${row?.original?.assignedApprover?.lastName || ''}`,
-  },
-];
+        "-"
+      } ${row?.original?.assignedApprover?.lastName || ""}`
+  }
+]
 
 export const attachmentColumns = [
   {
-    header: 'File Name',
-    accessorKey: 'fileName',
+    header: "File Name",
+    accessorKey: "fileName"
   },
   {
-    header: 'Attachment Type',
-    accessorKey: 'attachmentTypeId',
-    cell: ({ row }: { row: Row<BusinessAttachment> }) => `${row?.original?.attachmentTypeId || 'N/A'}`,
+    header: "Attachment Type",
+    accessorKey: "attachmentTypeId",
+    cell: ({ row }: { row: Row<BusinessAttachment> }) =>
+      `${row?.original?.attachmentTypeId || "N/A"}`
   },
   {
-    header: 'Attachment Size',
-    accessorKey: 'size',
-  },
-];
+    header: "Attachment Size",
+    accessorKey: "size"
+  }
+]
 
 // MANAGEMENT PEOPLE COLUMNS
 export const businessPeopleColumns = [
   {
-    header: 'Position',
-    accessorKey: 'position',
+    header: "Position",
+    accessorKey: "position"
   },
   {
-    header: 'Document No',
-    accessorKey: 'personDocNo',
+    header: "Document No",
+    accessorKey: "personDocNo"
   },
   {
-    header: 'First name',
-    accessorKey: 'firstName',
+    header: "First name",
+    accessorKey: "firstName"
   },
   {
-    header: 'Last name',
-    accessorKey: 'lastName',
+    header: "Last name",
+    accessorKey: "lastName"
   },
   {
-    header: 'Email',
-    accessorKey: 'email',
+    header: "Email",
+    accessorKey: "email"
   },
   {
-    header: 'Phone number',
-    accessorKey: 'phoneNumber',
+    header: "Phone number",
+    accessorKey: "phoneNumber"
   },
   {
-    header: 'Sex',
-    accessorKey: 'gender',
+    header: "Sex",
+    accessorKey: "gender"
   },
   {
-    header: 'Nationality',
-    accessorKey: 'nationality',
-  },
-];
+    header: "Nationality",
+    accessorKey: "nationality"
+  }
+]
 
 export const founderDetailColumns = [
-  
   {
-    header: 'Name',
-    accessorKey: 'name',
+    header: "Name",
+    accessorKey: "name"
   },
   {
-    header: 'Document Number',
-    accessorKey: 'personDocNo',
+    header: "Document Number",
+    accessorKey: "personDocNo"
   },
   {
-    header: 'Type',
-    accessorKey: 'shareHolderType',
+    header: "Type",
+    accessorKey: "shareHolderType"
   },
   {
-    header: 'Number of shares',
-    accessorKey: 'shareQuantity',
+    header: "Number of shares",
+    accessorKey: "shareQuantity"
   },
   {
-    header: 'Total value',
-    accessorKey: 'totalQuantity',
-  },
-];
+    header: "Total value",
+    accessorKey: "totalQuantity"
+  }
+]
 
 export const applicationReviewStatuses = [
-  'SUBMITTED',
-  'APPROVED',
-  'REJECTED',
-  'ACTIVE',
-  'RESUBMITTED',
-  'ACTION_REQUIRED',
-  'IN_REVIEW',
-  'PENDING_DECISION',
-];
+  "SUBMITTED",
+  "APPROVED",
+  "REJECTED",
+  "ACTIVE",
+  "RESUBMITTED",
+  "ACTION_REQUIRED",
+  "IN_REVIEW",
+  "PENDING_DECISION"
+]
 
 export const businessLineColumns = [
   {
-    header: 'Code',
-    accessorKey: 'code',
+    header: "Code",
+    accessorKey: "code"
   },
   {
-    header: 'Description',
-    accessorKey: 'description',
-  },
-];
+    header: "Description",
+    accessorKey: "description"
+  }
+]
 
 export const businessActivityStatus = [
-  'ACTIVE',
-  'INACTIVE',
-  'LICENSE_PRE_REQUIRED',
-  'LICENSE_POST_REQUIRED',
-];
+  "ACTIVE",
+  "INACTIVE",
+  "LICENSE_POST_REQUIRED",
+  "LICENSE_PRE_REQUIRED"
+]
 
 // BUSINESS NAMES COLUMNS
 export const similarBusinessNamesColumns = [
   {
-    header: 'No',
-    accessorKey: 'no',
+    header: "No",
+    accessorKey: "no"
   },
   {
-    header: 'Business Name',
-    accessorKey: 'name',
+    header: "Business Name",
+    accessorKey: "name"
   },
   {
-    header: 'Similarity',
-    accessorKey: 'similarity',
+    header: "Similarity",
+    accessorKey: "similarity"
   },
   {
-    header: 'Status',
-    accessorKey: 'status',
-  },
-];
+    header: "Status",
+    accessorKey: "status"
+  }
+]

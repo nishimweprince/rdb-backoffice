@@ -1,30 +1,30 @@
-import Modal from '@/components/cards/Modal';
-import { InputErrorMessage } from '@/components/feedback/ErrorLabels';
-import Button from '@/components/inputs/Button';
-import Loader from '@/components/inputs/Loader';
-import Select from '@/components/inputs/Select';
-import TextArea from '@/components/inputs/TextArea';
-import { businessActivityStatus } from '@/constants/business.constants';
-import { capitalizeString } from '@/helpers/strings.helper';
-import { useUpdateBusinessLineMutation } from '@/states/api/businessRegApiSlice';
+import Modal from "@/components/cards/Modal"
+import { InputErrorMessage } from "@/components/feedback/ErrorLabels"
+import Button from "@/components/inputs/Button"
+import Loader from "@/components/inputs/Loader"
+import Select from "@/components/inputs/Select"
+import TextArea from "@/components/inputs/TextArea"
+import { businessActivityStatus } from "@/constants/business.constants"
+import { capitalizeString } from "@/helpers/strings.helper"
+import { useUpdateBusinessLineMutation } from "@/states/api/businessRegApiSlice"
 import {
   setSelectedBusinessLine,
   setUpdateBusinessLine,
-  setUpdateBusinessLineModal,
-} from '@/states/features/businessActivitiesSlice';
-import { AppDispatch, RootState } from '@/states/store';
-import { useEffect } from 'react';
-import { Controller, FieldValues, useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { ErrorResponse } from 'react-router-dom';
-import { toast } from 'react-toastify';
+  setUpdateBusinessLineModal
+} from "@/states/features/businessActivitiesSlice"
+import { AppDispatch, RootState } from "@/states/store"
+import { useEffect } from "react"
+import { Controller, FieldValues, useForm } from "react-hook-form"
+import { useDispatch, useSelector } from "react-redux"
+import { ErrorResponse } from "react-router-dom"
+import { toast } from "react-toastify"
 
 const UpdateBusinessLine = () => {
   // STATE VARIABLES
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch()
   const { updateBusinessLineModal, selectedBusinessLine } = useSelector(
     (state: RootState) => state.businessActivities
-  );
+  )
 
   // REACT HOOK FORM
   const {
@@ -33,10 +33,10 @@ const UpdateBusinessLine = () => {
     handleSubmit,
     setValue,
     watch,
-    trigger,
-  } = useForm();
+    trigger
+  } = useForm()
 
-  const { status } = watch();
+  const { status } = watch()
 
   // INITIALIZE UPDATE BUSINESS LINE MUTATION
   const [
@@ -47,39 +47,39 @@ const UpdateBusinessLine = () => {
       isSuccess: updateBusinessLineIsSuccess,
       isError: updateBusinessLineIsError,
       error: updateBusinessLineErrorData,
-      reset: resetUpdateBusinessLine,
-    },
-  ] = useUpdateBusinessLineMutation();
+      reset: resetUpdateBusinessLine
+    }
+  ] = useUpdateBusinessLineMutation()
 
   // HANDLE FORM SUBMISSION
   const onSubmit = (data: FieldValues) => {
     updateBusinessLine({
       businessLineId: selectedBusinessLine?.id,
       disclaimer: data?.disclaimer,
-      status: data?.status,
-    });
-  };
+      status: data?.status
+    })
+  }
 
   // SET DEFAULT VALUES
   useEffect(() => {
     if (selectedBusinessLine) {
-      setValue('status', selectedBusinessLine?.status);
-      setValue('disclaimer', selectedBusinessLine?.disclaimer);
+      setValue("status", selectedBusinessLine?.status)
+      setValue("disclaimer", selectedBusinessLine?.disclaimer)
     }
-  }, [selectedBusinessLine, setValue]);
+  }, [selectedBusinessLine, setValue])
 
   // HANDLE UPDATE BUSINESS LINE RESPONSE
   useEffect(() => {
     if (updateBusinessLineIsSuccess) {
-      dispatch(setUpdateBusinessLine(updateBusinessLineData?.data));
-      dispatch(setSelectedBusinessLine(undefined));
-      dispatch(setUpdateBusinessLineModal(false));
-      resetUpdateBusinessLine();
+      dispatch(setUpdateBusinessLine(updateBusinessLineData?.data))
+      dispatch(setSelectedBusinessLine(undefined))
+      dispatch(setUpdateBusinessLineModal(false))
+      resetUpdateBusinessLine()
     } else if (updateBusinessLineIsError) {
       const errorResponse =
         (updateBusinessLineErrorData as ErrorResponse)?.data?.message ||
-        'An error occurred while updating business activity';
-      toast.error(errorResponse);
+        "An error occurred while updating business activity"
+      toast.error(errorResponse)
     }
   }, [
     updateBusinessLineIsSuccess,
@@ -87,86 +87,93 @@ const UpdateBusinessLine = () => {
     updateBusinessLineIsError,
     updateBusinessLineErrorData,
     updateBusinessLineData,
-    resetUpdateBusinessLine,
-  ]);
+    resetUpdateBusinessLine
+  ])
 
   return (
     <Modal
       isOpen={updateBusinessLineModal}
       onClose={() => {
-        dispatch(setSelectedBusinessLine(undefined));
-        dispatch(setUpdateBusinessLineModal(false));
+        dispatch(setSelectedBusinessLine(undefined))
+        dispatch(setUpdateBusinessLineModal(false))
       }}
       className="min-w-[40vw]"
       heading={`Update business activity - ${selectedBusinessLine?.code}`}
     >
       <form
-        className="w-full flex flex-col gap-4"
+        className="flex flex-col w-full gap-4"
         onSubmit={handleSubmit(onSubmit)}
       >
         <fieldset className="flex flex-col gap-4">
           <Controller
             name="status"
             control={control}
-            rules={{ required: 'Select business activity status' }}
+            rules={{ required: "Select business activity status" }}
             render={({ field }) => {
               return (
-                <label className="w-full flex flex-col gap-1">
+                <label className="flex flex-col w-full gap-1">
                   <Select
-                    label={'Status'}
+                    label={"Status"}
                     required
                     placeholder="Select status"
                     {...field}
                     options={businessActivityStatus?.map((status) => {
                       return {
                         label: capitalizeString(status),
-                        value: status,
-                      };
+                        value: status
+                      }
                     })}
                     onChange={async (e) => {
-                      field.onChange(e);
-                      if (['LICENSE_PRE_REQUIRED', 'LICENSE_POST_REQUIRED'].includes(e)) {
-                        await trigger('disclaimer');
+                      field.onChange(e)
+                      if (
+                        [
+                          "LICENSE_PRE_REQUIRED",
+                          "LICENSE_POST_REQUIRED"
+                        ].includes(e)
+                      ) {
+                        await trigger("disclaimer")
                       }
                     }}
                   />
                   {errors?.status && (
                     <InputErrorMessage message={errors?.status?.message} />
                   )}
-                  {field?.value === 'INACTIVE' && (
+                  {field?.value === "INACTIVE" && (
                     <p className="text-red-600 mt-2 text-[14px]">
                       Business applicants will not be able to select this
                       business activity
                     </p>
                   )}
                 </label>
-              );
+              )
             }}
           />
           <Controller
             name="disclaimer"
             control={control}
             rules={{
-              required:
-                ['LICENSE_PRE_REQUIRED', 'LICENSE_POST_REQUIRED'].includes(status)
-                  ? 'Disclaimer is required'
-                  : false,
+              required: [
+                "LICENSE_PRE_REQUIRED",
+                "LICENSE_POST_REQUIRED"
+              ].includes(status)
+                ? "Disclaimer is required"
+                : false
             }}
             render={({ field }) => {
               return (
-                <label className="w-full flex flex-col gap-1">
+                <label className="flex flex-col w-full gap-1">
                   <TextArea
                     required={[
-                      'LICENSE_PRE_REQUIRED',
-                      'LICENSE_POST_REQUIRED',
+                      "LICENSE_PRE_REQUIRED",
+                      "LICENSE_POST_REQUIRED"
                     ].includes(status)}
                     label={`Disclaimer ${
                       [
-                        'LICENSE_PRE_REQUIRED',
-                        'LICENSE_POST_REQUIRED',
+                        "LICENSE_PRE_REQUIRED",
+                        "LICENSE_POST_REQUIRED"
                       ].includes(status)
-                        ? ''
-                        : '(optional)'
+                        ? ""
+                        : "(optional)"
                     }`}
                     {...field}
                   />
@@ -174,27 +181,35 @@ const UpdateBusinessLine = () => {
                     <InputErrorMessage message={errors?.disclaimer?.message} />
                   )}
                 </label>
-              );
+              )
             }}
           />
         </fieldset>
-        <menu className="w-full flex items-center gap-3 justify-between">
+        <menu className="flex items-center justify-between w-full gap-3">
           <Button
             onClick={(e) => {
-              e.preventDefault();
-              dispatch(setSelectedBusinessLine(undefined));
-              dispatch(setUpdateBusinessLineModal(false));
+              e.preventDefault()
+              dispatch(setSelectedBusinessLine(undefined))
+              dispatch(setUpdateBusinessLineModal(false))
             }}
           >
             Cancel
           </Button>
-          <Button primary submit className={status === 'INACTIVE' ? '!bg-red-600 border-none hover:!bg-red-600' : undefined}>
-            {updateBusinessLineIsLoading ? <Loader /> : 'Update'}
+          <Button
+            primary
+            submit
+            className={
+              status === "INACTIVE"
+                ? "!bg-red-600 border-none hover:!bg-red-600"
+                : undefined
+            }
+          >
+            {updateBusinessLineIsLoading ? <Loader /> : "Update"}
           </Button>
         </menu>
       </form>
     </Modal>
-  );
-};
+  )
+}
 
-export default UpdateBusinessLine;
+export default UpdateBusinessLine
