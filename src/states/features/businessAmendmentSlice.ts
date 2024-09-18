@@ -8,6 +8,7 @@ import { BusinessAmendmentReviewComment } from '@/types/models/businessAmendment
 import businessRegApiSlice from '../api/businessRegApiSlice';
 
 const initialState: {
+  businessAmendmentDetails?: BusinessAmendment;
   businessAmendmentsList: BusinessAmendment[];
   selectedBusinessAmendment?: BusinessAmendment;
   fetchBusinessAmendmentsIsFetching: boolean;
@@ -33,9 +34,10 @@ const initialState: {
   approveAmendmentIsSuccess: boolean;
   recommendAmendmentRejectionIsLoading: boolean;
   recommendAmendmentRejectionIsSuccess: boolean;
-
+  updateAmendmentReviewCommentModal: boolean;
 } = {
   businessAmendmentsList: [],
+  businessAmendmentDetails: undefined,
   selectedBusinessAmendment: undefined,
   fetchBusinessAmendmentsIsFetching: false,
   fetchBusinessAmendmentsIsSuccess: false,
@@ -60,6 +62,7 @@ const initialState: {
   approveAmendmentIsSuccess: false,
   recommendAmendmentRejectionIsLoading: false,
   recommendAmendmentRejectionIsSuccess: false,
+  updateAmendmentReviewCommentModal: false,
 };
 
 // FETCH BUSINESS AMENDMENTS THUNK
@@ -123,19 +126,22 @@ export const updateBusinessAmendmentStatusThunk = createAsyncThunk<
   BusinessAmendment,
   { id: UUID; amendmentStatus: string },
   { dispatch: AppDispatch }
->(`businessAmendment/updateBusinessAmendmentStatus`, async ({ id, amendmentStatus }, { dispatch }) => {
-  try {
-    const response = await dispatch(
-      businessRegApiSlice.endpoints.updateBusinessAmendmentStatus.initiate({
-        id,
-        amendmentStatus,
-      })
-    );
-    return response?.data?.data;
-  } catch (error) {
-    toast.error('Failed to update business amendment status');
+>(
+  `businessAmendment/updateBusinessAmendmentStatus`,
+  async ({ id, amendmentStatus }, { dispatch }) => {
+    try {
+      const response = await dispatch(
+        businessRegApiSlice.endpoints.updateBusinessAmendmentStatus.initiate({
+          id,
+          amendmentStatus,
+        })
+      );
+      return response?.data?.data;
+    } catch (error) {
+      toast.error('Failed to update business amendment status');
+    }
   }
-});
+);
 
 // RECOMMEND AMENDMENT FOR APPROVAL
 export const recommendAmendmentForApprovalThunk = createAsyncThunk<
@@ -179,40 +185,46 @@ export const approveAmendmentThunk = createAsyncThunk<
 // REJECT AMENDMENT THUNK
 export const rejectAmendmentThunk = createAsyncThunk<
   void,
-  { amendmentId: UUID, entityId: UUID },
+  { amendmentId: UUID; entityId: UUID },
   { dispatch: AppDispatch }
->('business/rejectAmendment', async ({ amendmentId, entityId }, { dispatch }) => {
-  try {
-    await dispatch(
-      businessRegApiSlice.endpoints.rejectAmendment.initiate({
-        amendmentId,
-        entityId,
-      })
-    ).unwrap();
-  } catch (error) {
-    toast.error('An error occurred while rejecting amendment');
-    throw error;
+>(
+  'business/rejectAmendment',
+  async ({ amendmentId, entityId }, { dispatch }) => {
+    try {
+      await dispatch(
+        businessRegApiSlice.endpoints.rejectAmendment.initiate({
+          amendmentId,
+          entityId,
+        })
+      ).unwrap();
+    } catch (error) {
+      toast.error('An error occurred while rejecting amendment');
+      throw error;
+    }
   }
-});
+);
 
 // RECOMMEND AMENDMENT REJECTION THUNK
 export const recommendAmendmentRejectionThunk = createAsyncThunk<
   void,
   { amendmentId: UUID },
   { dispatch: AppDispatch }
->(`business/recommendAmendmentRejection`, async ({ amendmentId }, { dispatch }) => {
-  try {
-    const response = await dispatch(
-      businessRegApiSlice.endpoints.recommendAmendmentRejection.initiate({
-        amendmentId,
-      })
-    );
-    return response.data.data
-  } catch (error) {
-    toast.error('An error occurred while recommending amendment rejection');
-    throw error;
+>(
+  `business/recommendAmendmentRejection`,
+  async ({ amendmentId }, { dispatch }) => {
+    try {
+      const response = await dispatch(
+        businessRegApiSlice.endpoints.recommendAmendmentRejection.initiate({
+          amendmentId,
+        })
+      );
+      return response.data.data;
+    } catch (error) {
+      toast.error('An error occurred while recommending amendment rejection');
+      throw error;
+    }
   }
-});
+);
 
 const businessAmendmentSlice = createSlice({
   name: 'businessAmendment',
@@ -261,6 +273,21 @@ const businessAmendmentSlice = createSlice({
     },
     setSelectedAmendmentReviewComment: (state, action) => {
       state.selectedAmendmentReviewComment = action.payload;
+    },
+    setUpdateAmendmentReviewCommentModal: (state, action) => {
+      state.updateAmendmentReviewCommentModal = action.payload;
+    },
+    setBusinessAmendmentDetails: (state, action) => {
+      state.businessAmendmentDetails = action.payload;
+    },
+    setUpdateBusinessAmendmentReviewComment: (state, action) => {
+      state.businessAmendmentReviewComments =
+        state.businessAmendmentReviewComments.map((item) => {
+          if (item.id === action.payload.id) {
+            return action.payload;
+          }
+          return item;
+        });
     },
   },
   extraReducers: (builder) => {
@@ -320,13 +347,10 @@ const businessAmendmentSlice = createSlice({
       state.recommendAmendmentForApprovalIsLoading = true;
       state.recommendAmendmentForApprovalIsSuccess = false;
     });
-    builder.addCase(
-      recommendAmendmentForApprovalThunk.fulfilled,
-      (state) => {
-        state.recommendAmendmentForApprovalIsLoading = false;
-        state.recommendAmendmentForApprovalIsSuccess = true;
-      }
-    );
+    builder.addCase(recommendAmendmentForApprovalThunk.fulfilled, (state) => {
+      state.recommendAmendmentForApprovalIsLoading = false;
+      state.recommendAmendmentForApprovalIsSuccess = true;
+    });
     builder.addCase(recommendAmendmentForApprovalThunk.rejected, (state) => {
       state.recommendAmendmentForApprovalIsLoading = false;
       state.recommendAmendmentForApprovalIsSuccess = false;
@@ -384,6 +408,9 @@ export const {
   setDeleteAmendmentReviewCommentModal,
   setSelectedAmendmentReviewComment,
   removeFromBusinessAmendmentReviewComments,
+  setUpdateAmendmentReviewCommentModal,
+  setBusinessAmendmentDetails,
+  setUpdateBusinessAmendmentReviewComment,
 } = businessAmendmentSlice.actions;
 
 export default businessAmendmentSlice.reducer;

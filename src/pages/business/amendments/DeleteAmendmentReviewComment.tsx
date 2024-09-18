@@ -35,6 +35,9 @@ const DeleteAmendmentReviewComment = () => {
   useEffect(() => {
     if (deleteAmendmentReviewIsSuccess) {
       deleteAmendmentReviewReset();
+      if (selectedAmendmentReviewComment) {
+        toast.success('Amendment review comment deleted successfully');
+      }
       dispatch(
         removeFromBusinessAmendmentReviewComments(
           selectedAmendmentReviewComment?.id
@@ -54,6 +57,7 @@ const DeleteAmendmentReviewComment = () => {
     deleteAmendmentReviewIsSuccess,
     deleteAmendmentReviewReset,
     dispatch,
+    selectedAmendmentReviewComment,
     selectedAmendmentReviewComment?.id,
   ]);
 

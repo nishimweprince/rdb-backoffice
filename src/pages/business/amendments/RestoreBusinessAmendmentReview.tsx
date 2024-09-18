@@ -2,7 +2,7 @@ import { useState } from 'react'
 import BusinessAmendmentNavigation from './BusinessAmendmentNavigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store';
-import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
+import { BusinessAmendmentRequestSummary } from './BusinessAmendmentReview';
 
 const RestoreBusinessAmendmentReview = () => {
   // STATE VARIABLES

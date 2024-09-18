@@ -12,6 +12,7 @@ import {
   faFileLines
 } from "@fortawesome/free-solid-svg-icons"
 import { faCreativeCommonsNd } from "@fortawesome/free-brands-svg-icons"
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { motion, useAnimation } from "framer-motion"
 import { Link, useLocation } from "react-router-dom"
 import { useCallback, useEffect, useState } from "react"
@@ -19,6 +20,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch, RootState } from "@/states/store"
 import { toggleSidebar } from "@/states/features/sidebarSlice"
+import { faCoins } from "@fortawesome/free-solid-svg-icons";
+
 
 const StaffSidebar = () => {
   const { pathname } = useLocation()
@@ -64,7 +67,12 @@ const StaffSidebar = () => {
           title: "Foreign Accounts",
           path: "/foreign-applicants",
           icon: faUser
-        }
+        },
+        {
+          title: "Name Availability",
+          path: "/applications/name-availability",
+          icon: faSearch
+        },
       ]
     },
     {
@@ -81,6 +89,11 @@ const StaffSidebar = () => {
           title: "Control Panel",
           path: "/settings/control-panel",
           icon: faPenToSquare
+        },
+        {
+          title: "Currency Settings",
+          path: "/settings/currency",
+          icon: faCoins
         }
       ]
     },

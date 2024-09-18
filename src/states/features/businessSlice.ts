@@ -12,6 +12,7 @@ import { AppDispatch } from '../store';
 import { toast } from 'react-toastify';
 import businessRegQueryApiSlice from '../api/businessRegQueryApiSlice';
 import { UUID } from 'crypto';
+import { BusinessReviewComment } from '@/types/models/businessReviewComment';
 
 const initialState: {
   businessesList: Business[];
@@ -24,6 +25,11 @@ const initialState: {
   selectedBusiness?: Business;
   deleteBusinessModal: boolean;
   nameAvailabilitiesList: {
+    name: string;
+    similarity: string | number;
+    status?: string;
+  }[];
+  nameAvailabilitiesListClone: {
     name: string;
     similarity: string | number;
     status?: string;
@@ -51,6 +57,26 @@ const initialState: {
   rejectBusinessIsSuccess: boolean;
   approveBusinessIsLoading: boolean;
   approveBusinessIsSuccess: boolean;
+  businessRecommendForRejectionModal: boolean;
+  businessRecommendForApprovalModal: boolean;
+  businessConfirmApproveModal: boolean;
+  businessConfirmRejectModal: boolean;
+  businessGeneralCommentsList: BusinessReviewComment[];
+  createBusinessGeneralCommentIsLoading: boolean;
+  createBusinessGeneralCommentIsSuccess: boolean;
+  createBusinessGeneralCommentIsError: boolean;
+  businessGeneralCommentsIsFetching: boolean;
+  businessGeneralCommentsIsSuccess: boolean;
+  businessGeneralCommentsIsError: boolean;
+  deleteBusinessGeneralCommentModal: boolean;
+  updateBusinessGeneralCommentModal: boolean;
+  selectedBusinessGeneralComment?: BusinessReviewComment;
+  recommendBusinessForRejectionIsLoading: boolean;
+  recommendBusinessForRejectionIsSuccess: boolean;
+  recommendBusinessForRejectionIsError: boolean;
+  currencySettings: {
+    business: Business[];
+  }
 } = {
   businessesList: [],
   business: {} as Business,
@@ -61,6 +87,7 @@ const initialState: {
   selectedBusiness: undefined,
   deleteBusinessModal: false,
   nameAvailabilitiesList: [],
+  nameAvailabilitiesListClone: [],
   similarBusinessNamesModal: false,
   businessDetails: undefined,
   businessAddress: undefined,
@@ -85,6 +112,26 @@ const initialState: {
   rejectBusinessIsSuccess: false,
   approveBusinessIsLoading: false,
   approveBusinessIsSuccess: false,
+  businessRecommendForApprovalModal: false,
+  businessRecommendForRejectionModal: false,
+  businessConfirmApproveModal: false,
+  businessConfirmRejectModal: false,
+  businessGeneralCommentsList: [],
+  createBusinessGeneralCommentIsLoading: false,
+  createBusinessGeneralCommentIsSuccess: false,
+  createBusinessGeneralCommentIsError: false,
+  businessGeneralCommentsIsFetching: false,
+  businessGeneralCommentsIsSuccess: false,
+  businessGeneralCommentsIsError: false,
+  deleteBusinessGeneralCommentModal: false,
+  updateBusinessGeneralCommentModal: false,
+  selectedBusinessGeneralComment: undefined,
+  recommendBusinessForRejectionIsLoading: false,
+  recommendBusinessForRejectionIsSuccess: false,
+  recommendBusinessForRejectionIsError: false,
+  currencySettings: {
+    business: [] as Business[]
+  }
 };
 
 // FETCH BUSINESSES
@@ -127,7 +174,7 @@ export const fetchBusinessesThunk = createAsyncThunk<
           size,
           serviceId,
           applicationStatus,
-          userId
+          userId,
         })
       ).unwrap();
       return response.data;
@@ -139,7 +186,7 @@ export const fetchBusinessesThunk = createAsyncThunk<
 );
 
 // FETCH BUSINESS THUNK
-export const getchBusinessThunk = createAsyncThunk<
+export const getBusinessThunk = createAsyncThunk<
   Business,
   UUID,
   { dispatch: AppDispatch }
@@ -228,15 +275,13 @@ export const fetchBusinessEmploymentInfoThunk = createAsyncThunk<
 >(
   'business/fetchBusinessEmploymentInfo',
   async ({ businessId }, { dispatch }) => {
-      const response = await dispatch(
-        businessRegQueryApiSlice.endpoints.fetchBusinessEmploymentInfo.initiate(
-          {
-            businessId,
-          }
-        )
-      ).unwrap();
-      dispatch(setBusinessEmploymentInfo(response?.data));
-      return response.data;
+    const response = await dispatch(
+      businessRegQueryApiSlice.endpoints.fetchBusinessEmploymentInfo.initiate({
+        businessId,
+      })
+    ).unwrap();
+    dispatch(setBusinessEmploymentInfo(response?.data));
+    return response.data;
   }
 );
 
@@ -260,34 +305,17 @@ export const fetchBusinessAttachmentsThunk = createAsyncThunk<
   }
 });
 
-// REQUEST BUSINESS APPROVER THUNK
-export const requestBusinessApproverThunk = createAsyncThunk<
-  void,
-  { businessId: businessId },
-  { dispatch: AppDispatch }
->('business/requestBusinessApprover', async ({ businessId }, { dispatch }) => {
-  try {
-    await dispatch(
-      businessRegApiSlice.endpoints.requestBusinessApprover.initiate({
-        businessId,
-      })
-    ).unwrap();
-  } catch (error) {
-    toast.error('An error occurred while requesting business approver');
-    throw error;
-  }
-});
-
 // REJECT BUSINESS THUNK
 export const rejectBusinessThunk = createAsyncThunk<
   Business,
-  { businessId: businessId },
+  { businessId: businessId, comment?: string },
   { dispatch: AppDispatch }
->('business/rejectBusiness', async ({ businessId }, { dispatch }) => {
+>('business/rejectBusiness', async ({ businessId, comment }, { dispatch }) => {
   try {
-    const response =  await dispatch(
+    const response = await dispatch(
       businessRegApiSlice.endpoints.rejectBusiness.initiate({
         businessId,
+        comment
       })
     ).unwrap();
     return response?.data?.data;
@@ -300,23 +328,77 @@ export const rejectBusinessThunk = createAsyncThunk<
 // APPROVE BUSINESS THUNK
 export const approveBusinessThunk = createAsyncThunk<
   Business,
-  { businessId: businessId, companyType: 'domestic' | 'foreign' | 'enterprise' },
+  {
+    businessId: businessId;
+    companyType: 'domestic' | 'foreign' | 'enterprise';
+    comment?: string;
+  },
   { dispatch: AppDispatch }
->('business/approveBusiness', async ({ businessId, companyType }, { dispatch }) => {
-  try {
-    const response = await dispatch(
-      businessRegApiSlice.endpoints.approveBusiness.initiate({
-        businessId,
-        companyType
-      })
-    ).unwrap();
+>(
+  'business/approveBusiness',
+  async ({ businessId, companyType, comment }, { dispatch }) => {
+    try {
+      const response = await dispatch(
+        businessRegApiSlice.endpoints.approveBusiness.initiate({
+          businessId,
+          companyType,
+          comment,
+        })
+      ).unwrap();
 
-    return response?.data?.data;
-  } catch (error) {
-    toast.error('An error occurred while approving business');
-    throw error;
+      return response?.data?.data;
+    } catch (error) {
+      toast.error('An error occurred while approving business');
+      throw error;
+    }
   }
-});
+);
+
+// CREATE BUSINESS GENERAL COMMENT THUNK
+export const createBusinessGeneralCommentThunk = createAsyncThunk<
+  BusinessReviewComment,
+  { businessId: businessId; comment: string },
+  { dispatch: AppDispatch }
+>(
+  `business/createBusinessGeneralComment`,
+  async ({ businessId, comment }, { dispatch }) => {
+    try {
+      const response = await dispatch(
+        businessRegApiSlice.endpoints.createBusinessGeneralComment.initiate({
+          businessId,
+          comment,
+        })
+      ).unwrap();
+      return response.data;
+    } catch (error) {
+      toast.error('An error occurred while creating general comment');
+      throw error;
+    }
+  }
+);
+
+// FETCH BUSINESS GENERAL COMMENTS THUNK
+export const fetchBusinessGeneralCommentsThunk = createAsyncThunk<
+  BusinessReviewComment[],
+  { businessId: businessId },
+  { dispatch: AppDispatch }
+>(
+  `business/fetchBusinessGeneralComments`,
+  async ({ businessId }, { dispatch }) => {
+    try {
+      const response = await dispatch(
+        businessRegQueryApiSlice.endpoints.fetchBusinessGeneralComments.initiate(
+          {
+            businessId,
+          }
+        )
+      ).unwrap();
+      return response.data;
+    } catch (error) {
+      return error;
+    }
+  }
+);
 
 export const businessSlice = createSlice({
   name: 'business',
@@ -357,6 +439,9 @@ export const businessSlice = createSlice({
     },
     setNameAvailabilitiesList: (state, action) => {
       state.nameAvailabilitiesList = action.payload;
+    },
+    setNameAvailabilitiesListClone: (state, action) => {
+      state.nameAvailabilitiesListClone= action.payload;
     },
     setSimilarBusinessNamesModal: (state, action) => {
       state.similarBusinessNamesModal = action.payload;
@@ -403,6 +488,56 @@ export const businessSlice = createSlice({
     },
     setApproveBusinessIsSuccess: (state, action) => {
       state.approveBusinessIsSuccess = action.payload;
+    },
+    setBusinessRecommendForApprovalModal: (state, action) => {
+      state.businessRecommendForApprovalModal = action.payload;
+    },
+    setBusinessRecommendForRejectionModal: (state, action) => {
+      state.businessRecommendForRejectionModal = action.payload;
+    },
+    setBusinessConfirmRejectModal: (state, action) => {
+      state.businessConfirmRejectModal = action.payload;
+    },
+    setBusinessConfirmApproveModal: (state, action) => {
+      state.businessConfirmApproveModal = action.payload;
+    },
+    setBusinessGeneralCommentsList: (state, action) => {
+      state.businessGeneralCommentsList = action.payload;
+    },
+    setUpdateBusinessesList: (state, action) => {
+      state.businessesList = state.businessesList.map((business) => {
+        if (business.id === action.payload.id) {
+          return action.payload;
+        }
+        return business;
+      });
+    },
+    setDeleteBusinessGeneralCommentModal: (state, action) => {
+      state.deleteBusinessGeneralCommentModal = action.payload;
+    },
+    setUpdateBusinessGeneralCommentModal: (state, action) => {
+      state.updateBusinessGeneralCommentModal = action.payload;
+    },
+    setSelectedBusinessGeneralComment: (state, action) => {
+      state.selectedBusinessGeneralComment = action.payload;
+    },
+    removeFromBusinessGeneralCommentsList: (state, action) => {
+      state.businessGeneralCommentsList = state.businessGeneralCommentsList.filter(
+        (comment) => comment.id !== action.payload
+      );
+    },
+    setUpdateBusinessGeneralComment: (state, action) => {
+      state.businessGeneralCommentsList = state.businessGeneralCommentsList.map(
+        (comment) => {
+          if (comment.id === action.payload.id) {
+            return action.payload;
+          }
+          return comment;
+        }
+      );
+    },
+    setCurrencySettings: (state, action) => {
+      state.currencySettings.business = action.payload?.business;
     }
   },
   extraReducers: (builder) => {
@@ -451,7 +586,7 @@ export const businessSlice = createSlice({
       state.updateBusinessIsSuccess = false;
       state.updateBusinessIsLoading = true;
     });
-    builder.addCase(getchBusinessThunk.fulfilled, (state, action) => {
+    builder.addCase(getBusinessThunk.fulfilled, (state, action) => {
       state.business = action.payload;
       state.businessesList = state.businessesList.map((business) => {
         if (business.id === action.payload.id) {
@@ -463,12 +598,12 @@ export const businessSlice = createSlice({
       state.getBusinessIsSuccess = true;
       state.getBusinessIsError = false;
     });
-    builder.addCase(getchBusinessThunk.rejected, (state) => {
+    builder.addCase(getBusinessThunk.rejected, (state) => {
       state.getBusinessIsFetching = false;
       state.getBusinessIsSuccess = false;
       state.getBusinessIsError = true;
     });
-    builder.addCase(getchBusinessThunk.pending, (state) => {
+    builder.addCase(getBusinessThunk.pending, (state) => {
       state.getBusinessIsFetching = true;
       state.getBusinessIsSuccess = false;
       state.getBusinessIsError = false;
@@ -489,25 +624,6 @@ export const businessSlice = createSlice({
       state.businessEmploymentInfoIsFetching = false;
       state.businessEmploymentInfoIsSuccess = false;
     });
-    builder.addCase(requestBusinessApproverThunk.pending, (state) => {
-      state.updateBusinessIsLoading = true;
-      state.updateBusinessIsSuccess = false;
-    });
-    builder.addCase(requestBusinessApproverThunk.fulfilled, (state) => {
-      state.updateBusinessIsLoading = false;
-      state.updateBusinessIsSuccess = true;
-      state.businessesList = state.businessesList.map((business) => {
-        if (business.id === state.business.id) {
-          return state.business;
-        }
-        return business;
-      }
-      );
-    });
-    builder.addCase(requestBusinessApproverThunk.rejected, (state) => {
-      state.updateBusinessIsLoading = false;
-      state.updateBusinessIsSuccess = false;
-    });
     builder.addCase(rejectBusinessThunk.pending, (state) => {
       state.rejectBusinessIsLoading = true;
       state.rejectBusinessIsSuccess = false;
@@ -520,8 +636,7 @@ export const businessSlice = createSlice({
           return state.business;
         }
         return business;
-      }
-      );
+      });
     });
     builder.addCase(rejectBusinessThunk.rejected, (state) => {
       state.rejectBusinessIsLoading = false;
@@ -539,12 +654,48 @@ export const businessSlice = createSlice({
           return state.business;
         }
         return business;
-      }
-      );
+      });
     });
     builder.addCase(approveBusinessThunk.rejected, (state) => {
       state.approveBusinessIsLoading = false;
       state.approveBusinessIsSuccess = false;
+    });
+    builder.addCase(createBusinessGeneralCommentThunk.pending, (state) => {
+      state.createBusinessGeneralCommentIsLoading = true;
+      state.createBusinessGeneralCommentIsSuccess = false;
+      state.createBusinessGeneralCommentIsError = false;
+    });
+    builder.addCase(
+      createBusinessGeneralCommentThunk.fulfilled,
+      (state, action) => {
+        state.createBusinessGeneralCommentIsLoading = false;
+        state.createBusinessGeneralCommentIsSuccess = true;
+        state.businessGeneralCommentsList.unshift(action.payload);
+      }
+    );
+    builder.addCase(createBusinessGeneralCommentThunk.rejected, (state) => {
+      state.createBusinessGeneralCommentIsLoading = false;
+      state.createBusinessGeneralCommentIsSuccess = false;
+      state.createBusinessGeneralCommentIsError = true;
+    });
+    builder.addCase(fetchBusinessGeneralCommentsThunk.pending, (state) => {
+      state.businessGeneralCommentsIsFetching = true;
+      state.businessGeneralCommentsIsSuccess = false;
+      state.businessGeneralCommentsIsError = false;
+    });
+    builder.addCase(
+      fetchBusinessGeneralCommentsThunk.fulfilled,
+      (state, action) => {
+        state.businessGeneralCommentsList = action.payload;
+        state.businessGeneralCommentsIsFetching = false;
+        state.businessGeneralCommentsIsSuccess = true;
+        state.businessGeneralCommentsIsError = false;
+      }
+    );
+    builder.addCase(fetchBusinessGeneralCommentsThunk.rejected, (state) => {
+      state.businessGeneralCommentsIsFetching = false;
+      state.businessGeneralCommentsIsSuccess = false;
+      state.businessGeneralCommentsIsError = true;
     });
   },
 });
@@ -562,6 +713,7 @@ export const {
   setDeleteBusinessModal,
   setSelectedBusiness,
   setNameAvailabilitiesList,
+  setNameAvailabilitiesListClone,
   setSimilarBusinessNamesModal,
   setBusinessDetails,
   setBusinessAddress,
@@ -576,5 +728,17 @@ export const {
   setUploadAmendmentAttachmentIsSuccess,
   setUpdateBusinessIsSuccess,
   setRejectBusinessIsSuccess,
-  setApproveBusinessIsSuccess
+  setApproveBusinessIsSuccess,
+  setBusinessRecommendForApprovalModal,
+  setBusinessRecommendForRejectionModal,
+  setBusinessConfirmRejectModal,
+  setBusinessConfirmApproveModal,
+  setBusinessGeneralCommentsList,
+  setUpdateBusinessesList,
+  setDeleteBusinessGeneralCommentModal,
+  setUpdateBusinessGeneralCommentModal,
+  setSelectedBusinessGeneralComment,
+  removeFromBusinessGeneralCommentsList,
+  setUpdateBusinessGeneralComment,
+  setCurrencySettings
 } = businessSlice.actions;

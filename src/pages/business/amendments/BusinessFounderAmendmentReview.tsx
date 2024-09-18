@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import BusinessAmendmentNavigation from './BusinessAmendmentNavigation';
-import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
+import { BusinessAmendmentRequestSummary } from './BusinessAmendmentReview';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/states/store';
 import FounderDetailsTable from '@/pages/business-review/FounderDetailsTable';
@@ -19,6 +19,7 @@ import {
   setSelectedFounderDetail,
 } from '@/states/features/founderDetailSlice';
 import FounderDetails from '@/pages/business-review/BusinessFounderDetails';
+import { Organization } from '@/types/models/organization';
 
 const BusinessFounderAmendmentReview = () => {
   // STATE VARIABLES
@@ -100,23 +101,35 @@ const BusinessFounderAmendmentReview = () => {
             </h3>
             <Table
               columns={
-                founderDetailExtendedColumns as ColumnDef<PersonDetail>[]
+                founderDetailExtendedColumns as ColumnDef<FounderDetail & {
+                  name?: string;
+                  personDocNo?: string;
+                  shareHolderType?: string;
+                }>[]
               }
               data={[
-                (
-                  selectedBusinessAmendment?.newValue as unknown as {
-                    founderDetail: PersonDetail;
-                  }
-                )?.founderDetail,
+                selectedBusinessAmendment?.newValue as unknown as {
+                  founderDetail: PersonDetail & {
+                    id: string;
+                    firstName: string;
+                    lastName: string;
+                    personDocNo: string;
+                    personRole: { roleName: string };
+                  };
+                  organization: Organization;
+                },
               ]?.map((founder) => {
                 return {
+                  id: founder?.founderDetail?.id || '',
                   ...founder,
-                  name: `${founder?.firstName || ''} ${
-                    founder?.lastName || ''
-                  }`,
-                  personDocNo: founder?.personDocNo,
+                  name: `${
+                    founder?.founderDetail?.firstName ||
+                    founder?.organization?.organizationName ||
+                    ''
+                  } ${founder?.founderDetail?.lastName || ''}`,
+                  personDocNo: founder?.founderDetail?.personDocNo || founder?.organization?.tin,
                   shareHolderType: capitalizeString(
-                    founder?.personRole?.roleName
+                    founder?.founderDetail?.personRole?.roleName
                   ),
                 };
               })}

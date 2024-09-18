@@ -1,3 +1,4 @@
+import { Business } from "@/types/models/business"
 import {
   NavigationFlow,
   NavigationFlowMass
@@ -73,4 +74,41 @@ export const getBusinessActivityStatusColor = (status: string): string => {
     default:
       return ""
   }
+}
+
+export const getBusinessAmendmentStatusColor = (status: string): string => {
+  switch (status) {
+    case "AMENDMENT_SUBMITTED":
+      return "bg-slate-700"
+    case "VERIFIED":
+      return "bg-green-700"
+    case "APPROVED":
+      return "bg-green-700"
+    case "REJECTED":
+      return "bg-red-700"
+    case "RESUBMITTED":
+      return "bg-yellow-700"
+    case "ACTION_REQUIRED":
+      return "bg-yellow-700"
+    case "IN_REVIEW":
+      return "bg-blue-700"
+    case "PENDING_REJECTION":
+      return "bg-red-700"
+    case "PENDING_APPROVAL":
+    case "PENDING_DECISION":
+      return "bg-primary"
+    default:
+      return ""
+  }
+}
+
+export const getBusinessName = (business?: Business): string => {
+  if (!business) return ""
+  return (
+    business?.companyName ||
+    business?.enterpriseName ||
+    business?.enterpriseBusinessName ||
+    business?.branchName ||
+    ""
+  )
 }

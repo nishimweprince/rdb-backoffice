@@ -28,18 +28,18 @@ const JSX_MODAL: FC<ModalProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={`z-[10000] min-w-fit ${className} max-h-[90vh]`}>
+      <DialogContent
+        className={`z-[10000] min-w-fit ${className} max-h-[90vh] overflow-y-scroll`}
+      >
         <DialogHeader>
           <DialogTitle
-            className={`text-lg font-semibold text-primary uppercase ${headingClassName}`}
+            className={`text-lg font-semibold text-primary uppercase mt-[-10px] ${headingClassName}`}
           >
             {heading}
           </DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <section className='h-fit overflow-y-scroll'>
-          {children}
-        </section>
+        <section className="h-fit overflow-y-scroll">{children}</section>
       </DialogContent>
     </Dialog>
   );

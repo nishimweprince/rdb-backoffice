@@ -1,4 +1,5 @@
 import { AbstractDomain } from ".";
+import { User } from "./user";
 
 export interface NameReservation extends AbstractDomain {
     code: string;
@@ -7,4 +8,5 @@ export interface NameReservation extends AbstractDomain {
     comment?: string;
     expiryDate?: Date;
     renewalCount: number;
+    assignedApprover: User
 } 

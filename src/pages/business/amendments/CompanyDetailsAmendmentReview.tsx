@@ -2,8 +2,8 @@ import { useState } from 'react';
 import BusinessAmendmentNavigation from './BusinessAmendmentNavigation';
 import { RootState } from '@/states/store';
 import { useSelector } from 'react-redux';
-import { capitalizeString } from '@/helpers/strings.helper';
-import { BusinessAmendmentRequestSummary } from './BusinessAmendmentsReview';
+import { capitalizeString, formatDate } from '@/helpers/strings.helper';
+import { BusinessAmendmentRequestSummary } from './BusinessAmendmentReview';
 import { Business } from '@/types/models/business';
 
 const CompanyDetailsAmendmentReview = () => {
@@ -60,7 +60,7 @@ function renderCompanyDetails(
   return (
     <menu>
       <ul className="flex flex-col gap-3">
-        {Object.entries(displayValue)?.map(([key, value]) => {
+        {Object.entries(displayValue ?? {})?.map(([key, value]) => {
           const comparisonValueForKey = comparisonValue?.[key];
           if (
             [
@@ -98,6 +98,24 @@ function renderCompanyDetails(
               </li>
             );
           }
+
+          if (['issuanceDate'].includes(key)) {
+            return (
+              <li key={key} className="flex items-center gap-2">
+                <p>{capitalizeString(key)}:</p>
+                <p
+                  className={`font-medium ${
+                    comparisonValue &&
+                    comparisonValueForKey !== value &&
+                    'bg-green-700 text-white p-1 px-2 rounded-md'
+                  }`}
+                >
+                  {formatDate(value)}
+                </p>
+              </li>
+            );
+          }
+
           return (
             <li key={key} className="flex items-center gap-2">
               <p>{capitalizeString(key)}:</p>
@@ -108,7 +126,7 @@ function renderCompanyDetails(
                   'bg-green-700 text-white p-1 px-2 rounded-md'
                 }`}
               >
-                {capitalizeString(value)}
+                {capitalizeString(String(value))}
               </p>
             </li>
           );

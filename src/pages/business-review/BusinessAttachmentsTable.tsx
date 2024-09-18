@@ -1,10 +1,7 @@
-import CustomPopover from '@/components/inputs/CustomPopover';
 import CustomTooltip from '@/components/inputs/CustomTooltip';
 import Table from '@/components/table/Table';
 import { attachmentColumns } from '@/constants/business.constants';
 import { BusinessAttachment } from '@/types/models/attachment';
-import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Link } from 'react-router-dom';
 
@@ -15,7 +12,6 @@ type BusinessAttachmentsTableProps = {
 const BusinessAttachmentsTable = ({
   businessAttachmentsList,
 }: BusinessAttachmentsTableProps) => {
-
   // ATTACHMENT COLUMNS
   const attachmentExtendedColumns = [
     ...attachmentColumns,
@@ -25,43 +21,20 @@ const BusinessAttachmentsTable = ({
       accessorKey: 'actions',
       cell: ({ row }: { row: Row<BusinessAttachment> }) => {
         return (
-          <CustomPopover
-            trigger={
-              <menu className="w-full flex items-center justify-center cursor-pointer">
-                <CustomTooltip label="Click to view actions">
-                  <FontAwesomeIcon
-                    className="text-primary cursor-pointer"
-                    icon={faEllipsisVertical}
-                  />
-                </CustomTooltip>
-              </menu>
-            }
+          <CustomTooltip label='Click to open attachment'>
+            <Link
+            rel="noopener noreferrer"
+            className="w-full flex items-center text-primary underline gap-2 text-[13px] text-center p-1 px-2"
+            to={row?.original?.attachmentUrl}
+            onClick={(e) => {
+              e.preventDefault();
+              window.open(row?.original?.attachmentUrl, '_blank');
+            }}
+            target="_blank"
           >
-            <menu className="bg-white flex flex-col gap-1 p-0 rounded-md">
-              <Link
-                rel="noopener noreferrer"
-                className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
-                to={row?.original?.attachmentUrl}
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open(row?.original?.attachmentUrl, '_blank');
-                }}
-                target="_blank"
-              >
-                Open
-              </Link>
-              <Link
-                rel="noopener noreferrer"
-                to={'#'}
-                onClick={(e) => {
-                  e.preventDefault();
-                }}
-                className="w-full flex items-center gap-2 text-[13px] text-center p-1 px-2 rounded-sm hover:bg-gray-100"
-              >
-                Download
-              </Link>
-            </menu>
-          </CustomPopover>
+            Open
+          </Link>
+          </CustomTooltip>
         );
       },
     },

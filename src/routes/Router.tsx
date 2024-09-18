@@ -1,27 +1,28 @@
-import { Routes, Route } from "react-router-dom"
-import Login from "../pages/authentication/Login"
-import { ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
-import RequestResetPassword from "@/pages/authentication/RequestResetPassword"
-import VerifyPasswordReset from "@/pages/authentication/VerifyResetPassword"
-import NewResetPassword from "@/pages/authentication/NewResetPassword"
-import StaffDashboard from "@/pages/dashboard/StaffDashboard"
-import BusinessApplicationsList from "@/pages/business/applications/BusinessApplicationsList"
-import BusinessApplicationRoutes from "./BusinessApplicationRoutes"
-import BusinessApplicationReview from "@/pages/business-review/BusinessApplicationReview"
-import AuthenticationRoutes from "./AuthenticationRoutes"
-import StaffAuthenticatedRoutes from "@/outlets/StaffAuthenticatedRoutes"
-import LandingRoute from "./LandingRoute"
-import BusinessAmendmentsReview from "@/pages/business/amendments/BusinessAmendmentsReview"
-import ApplicationsRoutes from "./ApplicationsRoutes"
-import BusinessAmendmentRoutes from "./BusinessAmendmentRoutes"
-import RegistrarGeneral from "@/pages/settings/registrar-general"
-import AmendedBusinessesList from "@/pages/business/amendments/AmendedBusinessesList"
-import BusinessAmendmentsList from "@/pages/business/amendments/BusinessAmendmentsList"
-import ControlPanel from "@/pages/settings/control-panel"
-import ListBusinessActivities from "@/pages/settings/business-activities/ListBusinessActivities"
-import NameReservationsList from "@/pages/name-reservation/NameReservationsList"
-import NameReservationDetails from "@/pages/name-reservation/NameReservationDetails"
+import { Routes, Route } from 'react-router-dom';
+import Login from '../pages/authentication/Login';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import RequestResetPassword from '@/pages/authentication/RequestResetPassword';
+import VerifyPasswordReset from '@/pages/authentication/VerifyResetPassword';
+import NewResetPassword from '@/pages/authentication/NewResetPassword';
+import StaffDashboard from '@/pages/dashboard/StaffDashboard';
+import BusinessApplicationsList from '@/pages/business/applications/BusinessApplicationsList';
+import BusinessApplicationRoutes from './BusinessApplicationRoutes';
+import BusinessApplicationReview from '@/pages/business-review/BusinessApplicationReview';
+import AuthenticationRoutes from './AuthenticationRoutes';
+import StaffAuthenticatedRoutes from '@/outlets/StaffAuthenticatedRoutes';
+import BusinessAmendmentReview from '@/pages/business/amendments/BusinessAmendmentReview';
+import ApplicationsRoutes from './ApplicationsRoutes';
+import BusinessAmendmentRoutes from './BusinessAmendmentRoutes';
+import RegistrarGeneral from '@/pages/settings/registrar-general';
+import AmendedBusinessesList from '@/pages/business/amendments/AmendedBusinessesList';
+import BusinessAmendmentsList from '@/pages/business/amendments/BusinessAmendmentsList';
+import ControlPanel from '@/pages/settings/control-panel';
+import ListBusinessActivities from '@/pages/settings/business-activities/ListBusinessActivities';
+import NameReservationsList from '@/pages/name-reservation/NameReservationsList';
+import NameReservationDetails from '@/pages/name-reservation/NameReservationDetails';
+import NameAvailabilitySearch from '@/pages/name-availability/NameAvailability';
+import CurrencySettings from "@/pages/settings/currency-settings/CurrencySettings"
 
 const Router = () => {
   return (
@@ -61,7 +62,7 @@ const Router = () => {
             </Route>
             <Route path="amendments" element={<BusinessAmendmentRoutes />}>
               <Route path="" element={<BusinessAmendmentsList />} />
-              <Route path="review" element={<BusinessAmendmentsReview />} />
+              <Route path=":id/review" element={<BusinessAmendmentReview />} />
             </Route>
             <Route
               path="name-reservations"
@@ -70,6 +71,9 @@ const Router = () => {
             <Route
               path="name-reservations/:id/details"
               element={<NameReservationDetails />}
+            />
+            <Route path="name-availability"
+              element={<NameAvailabilitySearch />}
             />
           </Route>
         </Route>
@@ -81,18 +85,16 @@ const Router = () => {
             path="business-activities"
             element={<ListBusinessActivities />}
           />
+          <Route path="currency" element={<CurrencySettings />} />
         </Route>
         <Route path="/settings" element={<StaffAuthenticatedRoutes />}>
           <Route path="control-panel" element={<ControlPanel />} />
         </Route>
 
         {/* BUSINESS AMENDMENT ROUTE */}
-
-        {/* DEFAULT ROUTE */}
-        <Route path="*" element={<LandingRoute />} />
       </Routes>
     </>
-  )
-}
+  );
+};
 
-export default Router
+export default Router;
