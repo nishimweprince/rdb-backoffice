@@ -64,8 +64,7 @@ const ControlPanel = () => {
     {
       isLoading: updateValueIsLoading,
       isSuccess: updateValueIsSuccess,
-      isError: updateValueIsError,
-      error: updateValueError
+      isError: updateValueIsError
     }
   ] = useUpdateConfigurationValueMutation()
 
